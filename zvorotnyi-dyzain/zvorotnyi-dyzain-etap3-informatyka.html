@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Зворотний дизайн. Етап 3: Планування навчання — інтерактивна вправа (Інформатика, основний рівень)</title>
+<style>
+  :root{
+    --bg:#f6f4ef; --card:#ffffff; --ink:#1f2430; --muted:#5d6475; --line:#e2ddd2;
+    --accent:#1d7563; --accent-soft:#e4f3ef; --ok:#2e7d4f; --ok-soft:#e5f3ea;
+    --bad:#b3412f; --bad-soft:#f8e7e3; --warn:#9a6a00; --warn-soft:#fbf1d9;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:"Segoe UI",Roboto,Arial,sans-serif;background:var(--bg);color:var(--ink);line-height:1.55}
+  header{background:var(--accent);color:#fff;padding:28px 20px 22px}
+  header .wrap{max-width:1040px;margin:0 auto}
+  header h1{margin:0 0 6px;font-size:1.6rem}
+  header p{margin:0;opacity:.92}
+  main{max-width:1040px;margin:0 auto;padding:20px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:20px 22px;margin-bottom:20px}
+  h2{margin:0 0 10px;font-size:1.25rem;color:var(--accent)}
+  h3{margin:18px 0 8px;font-size:1.05rem}
+  .muted{color:var(--muted)}
+  .pill{display:inline-block;background:var(--accent-soft);color:var(--accent);border-radius:999px;padding:2px 10px;font-size:.85rem;font-weight:600;margin-left:6px}
+  table{width:100%;border-collapse:collapse;font-size:.95rem}
+  th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+  th{background:#faf8f3}
+  .item{display:grid;grid-template-columns:1fr 280px;gap:12px;align-items:center;padding:10px 12px;border:1px solid var(--line);border-radius:8px;margin-bottom:8px}
+  .item.full{grid-template-columns:1fr}
+  .item.ok{background:var(--ok-soft);border-color:#b9dcc6}
+  .item.bad{background:var(--bad-soft);border-color:#ebc3ba}
+  .item .fb{grid-column:1/-1;font-size:.88rem}
+  .opts label{display:flex;gap:8px;padding:5px 0;align-items:flex-start}
+  .opts input{margin-top:5px}
+  select,textarea,input[type=text]{font:inherit;width:100%;padding:8px 10px;border:1px solid #cfc8ba;border-radius:8px;background:#fff}
+  textarea{min-height:70px;resize:vertical}
+  button{font:inherit;cursor:pointer;border:none;border-radius:8px;padding:9px 16px;background:var(--accent);color:#fff;font-weight:600}
+  button.secondary{background:#fff;color:var(--accent);border:1px solid var(--accent)}
+  button.mini{padding:4px 10px;font-size:.85rem;background:#fff;color:var(--bad);border:1px solid #e0b8ae}
+  .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:12px}
+  .score{font-weight:700}
+  .codes{columns:2;column-gap:20px}
+  .codes label{display:flex;gap:8px;break-inside:avoid;padding:5px 0;font-size:.9rem}
+  .codes .grp{break-inside:avoid;margin-bottom:10px}
+  .codes .grp b{display:block;font-size:.9rem;color:var(--accent);margin:4px 0}
+  .field{margin-bottom:14px}
+  .field label.t{display:block;font-weight:600;margin-bottom:4px}
+  .field .hint{font-size:.85rem;color:var(--muted);margin-bottom:6px}
+  .seq td{padding:6px}
+  .seq textarea{min-height:56px}
+  .seq select{font-size:.88rem;padding:6px}
+  details.example{border:1px solid var(--line);border-radius:10px;margin-bottom:10px;background:#fcfbf8}
+  details.example summary{cursor:pointer;padding:12px 16px;font-weight:600}
+  details.example .body{padding:0 16px 14px}
+  details.example table{font-size:.88rem;margin:6px 0 10px}
+  .tag{display:inline-block;font-size:.78rem;background:var(--warn-soft);color:var(--warn);border-radius:6px;padding:1px 7px;margin-right:4px}
+  .check{list-style:none;padding:0;margin:8px 0}
+  .check li{padding:4px 0}
+  .check li.ok::before{content:"✔ ";color:var(--ok);font-weight:700}
+  .check li.bad::before{content:"✘ ";color:var(--bad);font-weight:700}
+  .result{border:2px solid var(--accent);background:var(--accent-soft)}
+  .big{font-size:2.4rem;font-weight:800;color:var(--accent)}
+  .bar{height:12px;background:#cfe6df;border-radius:6px;overflow:hidden;margin:6px 0 12px}
+  .bar>div{height:100%;background:var(--accent);width:0;transition:width .4s}
+  .stage{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:10px 0}
+  .stage div{border:1px solid var(--line);border-radius:8px;padding:10px;font-size:.9rem}
+  .stage div.on{border:2px solid var(--accent);background:var(--accent-soft)}
+  .note{background:var(--warn-soft);border-left:4px solid var(--warn);padding:10px 14px;border-radius:6px;margin:10px 0;font-size:.93rem}
+  @media (max-width:760px){.item{grid-template-columns:1fr}.codes{columns:1}.stage{grid-template-columns:1fr}.seq{font-size:.85rem}}
+  @media print{header{background:#fff;color:#000}button,.noprint{display:none!important}.card{break-inside:avoid}}
+
+  nav.tabs{position:sticky;top:0;z-index:10;display:flex;flex-wrap:wrap;gap:6px;background:var(--bg);padding:10px 0 12px;margin-bottom:6px;border-bottom:1px solid var(--line)}
+  nav.tabs .tab{background:#fff;color:var(--accent);border:1px solid var(--accent);padding:8px 14px;border-radius:8px 8px 0 0;font-weight:600}
+  nav.tabs .tab.active{background:var(--accent);color:#fff}
+  nav.tabs .tab .tb{display:inline-block;margin-left:6px;font-size:.78rem;font-weight:700;padding:0 6px;border-radius:999px;background:var(--accent-soft);color:var(--accent)}
+  nav.tabs .tab .tb:empty{display:none}
+  .tabpane{display:none}
+  .tabpane.active{display:block;animation:fade .25s}
+  @keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+  .tabnav{justify-content:space-between;border-top:1px solid var(--line);padding-top:12px;margin-top:18px}
+  @media print{.tabpane{display:block!important}nav.tabs,.tabnav{display:none!important}}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <h1>Зворотний дизайн. Етап 3: «Планування навчального досвіду»</h1>
+    <p>Інтерактивна вправа для вчителів інформатики профільної школи (основний рівень) · узгоджено з Державним стандартом профільної середньої освіти</p>
+  </div>
+</header>
+
+<main>
+
+<!-- ВСТУП -->
+<section class="card">
+  <h2>Про вправу</h2>
+  <p>Лише на третьому етапі вчитель планує уроки. Кожна навчальна дія має вести учнів до результатів Етапу 1 і готувати до доказів Етапу 2. Головне запитання етапу: <i>«Що учні мають робити на уроках, щоб досягти бажаних результатів і успішно продемонструвати докази?»</i></p>
+  <div class="stage">
+    <div><b>Етап 1.</b> Визначити бажані результати<br><span class="muted">цілі Держстандарту, перенесення, розуміння, КЗ, знання, вміння</span></div>
+    <div><b>Етап 2.</b> Визначити докази досягнення<br><span class="muted">завдання на виконання (GRASPS), інші докази, критерії</span></div>
+    <div class="on"><b>Етап 3.</b> Спланувати навчання<br><span class="muted">WHERETO, набуття → осмислення → перенесення, диференціація</span></div>
+  </div>
+
+  <h3>Модель WHERETO</h3>
+  <table>
+    <tr><th style="width:22%">Елемент</th><th>Що передбачити в плані</th></tr>
+    <tr><td><b>W</b> — Where / Why</td><td><b>Куди і навіщо:</b> учні знають мету модуля, ключові запитання, завдання на виконання та критерії оцінювання.</td></tr>
+    <tr><td><b>H</b> — Hook / Hold</td><td><b>Зацікавити й утримати:</b> проблемна ситуація, кейс, провокаційне запитання, що пробуджує інтерес.</td></tr>
+    <tr><td><b>E</b> — Equip / Experience / Explore</td><td><b>Озброїти, дати досвід, досліджувати:</b> навчання знань і вмінь, практика, дослідження.</td></tr>
+    <tr><td><b>R</b> — Rethink / Revise / Reflect</td><td><b>Переосмислити, вдосконалити, поміркувати:</b> повернення до ідей, доопрацювання роботи, рефлексія.</td></tr>
+    <tr><td><b>E</b> — Evaluate</td><td><b>Оцінити:</b> формувальне оцінювання, самооцінювання й взаємооцінювання з зворотним зв’язком.</td></tr>
+    <tr><td><b>T</b> — Tailor</td><td><b>Пристосувати:</b> диференціація за потребами, інтересами, темпом, зокрема для учнів з ООП.</td></tr>
+    <tr><td><b>O</b> — Organize</td><td><b>Організувати:</b> логічна послідовність, яка веде від залучення до перенесення.</td></tr>
+  </table>
+
+  <h3>Три типи навчальних цілей (A–M–T)</h3>
+  <table>
+    <tr><th style="width:22%">Тип</th><th>Що роблять учні</th></tr>
+    <tr><td><b>Набуття (A)</b></td><td>Засвоюють факти, поняття, вміння: міні-лекція, демонстрація, тренувальні вправи.</td></tr>
+    <tr><td><b>Осмислення (M)</b></td><td>Будують розуміння: аналізують, порівнюють, узагальнюють, обговорюють ключові запитання.</td></tr>
+    <tr><td><b>Перенесення (T)</b></td><td>Самостійно застосовують набуте в новій реальній ситуації, наприклад у завданні на виконання.</td></tr>
+  </table>
+
+  <div class="note"><b>Дві пастки планування:</b> «діяльність заради діяльності» (цікаво, але не веде до результатів) і «проходження змісту» (пояснення без осмислення й перенесення). Перевірка: чи пов’язана кожна дія з певним результатом Етапу 1 і доказом Етапу 2?</div>
+
+  <h3>Система оцінювання (100 балів)</h3>
+  <table>
+    <tr><th>Завдання</th><th>Зміст</th><th>Бали</th></tr>
+    <tr><td>1</td><td>Елементи WHERETO в навчальних діях (10 × 2 бали)</td><td>20</td></tr>
+    <tr><td>2</td><td>Набуття, осмислення чи перенесення (6 × 2,5 бала)</td><td>15</td></tr>
+    <tr><td>3</td><td>Узгодженість навчання з результатами й доказами (5 × 3 бали)</td><td>15</td></tr>
+    <tr><td>4а</td><td>Власний Етап 3: автоматична перевірка повноти (5 × 4 бали)</td><td>20</td></tr>
+    <tr><td>4б</td><td>Власний Етап 3: самооцінювання за рубрикою (6 критеріїв × 5 балів)</td><td>30</td></tr>
+    <tr><th colspan="2">Разом</th><th>100</th></tr>
+  </table>
+  <p class="muted" style="margin-top:10px">Рівні: <b>90–100</b> — високий; <b>75–89</b> — достатній; <b>60–74</b> — середній; <b>0–59</b> — початковий.</p>
+</section>
+
+<!-- ЗАВДАННЯ 1 -->
+<section class="card">
+  <h2>Завдання 1. Який елемент WHERETO реалізує навчальна дія? <span class="pill">20 балів</span></h2>
+  <p class="muted">Дії взято з плану модуля «Мій безпечний цифровий простір» (розділ «Цифрова безпека, етика та правові норми»).</p>
+  <div id="t1list"></div>
+  <div class="row"><button onclick="checkT1()">Перевірити</button><span class="score" id="t1score"></span></div>
+</section>
+
+<!-- ЗАВДАННЯ 2 -->
+<section class="card">
+  <h2>Завдання 2. Набуття, осмислення чи перенесення? <span class="pill">15 балів</span></h2>
+  <p class="muted">Дії взято з плану модуля «Дані розповідають історію» (розділ «Обчислювальне мислення та моделювання»).</p>
+  <div id="t2list"></div>
+  <div class="row"><button onclick="checkT2()">Перевірити</button><span class="score" id="t2score"></span></div>
+</section>
+
+<!-- ЗАВДАННЯ 3 -->
+<section class="card">
+  <h2>Завдання 3. Оберіть навчальну дію, узгоджену з Етапами 1 і 2 <span class="pill">15 балів</span></h2>
+  <p class="muted">Для кожної пари «результат Держстандарту + доказ» оберіть дію, яка найкраще готує учнів до успішного виконання.</p>
+  <div id="t3list"></div>
+  <div class="row"><button onclick="checkT3()">Перевірити</button><span class="score" id="t3score"></span></div>
+</section>
+
+<!-- ЗРАЗКИ -->
+<section class="card">
+  <h2>Підказки: зразки виконання Етапу 3 (інформатика, основний рівень)</h2>
+  <p class="muted">Зразки продовжують приклади Етапів 1 і 2 з попередніх вправ. Не копіюйте їх: сплануйте власну послідовність.</p>
+
+  <details class="example">
+    <summary>Зразок 1. «Цифрова безпека, етика та правові норми» — модуль «Мій безпечний цифровий простір» (5 уроків)</summary>
+    <div class="body">
+      <p><span class="tag">Етап 1</span> 12 ІФО 4.1.2.1; 12 ІФО 4.1.3.1; 12 ІФО 1.4.2.1 · <span class="tag">Етап 2</span> завдання «Кібераудит для волонтерського центру»</p>
+      <table>
+        <tr><th>№</th><th>Навчальна дія</th><th>WHERETO</th><th>A–M–T</th><th>Результат</th></tr>
+        <tr><td>1</td><td>Кейс «Зламаний акаунт волонтерського центру»: що пішло не так? Учні знайомляться з ключовими запитаннями, завданням на виконання й рубрикою.</td><td>H, W</td><td>M</td><td>4.1.3.1</td></tr>
+        <tr><td>2</td><td>Міні-лекція та практикум: надійні паролі, менеджер паролів, 2FA у навчальних акаунтах.</td><td>E</td><td>A</td><td>4.1.2.1</td></tr>
+        <tr><td>3</td><td>Аналіз 6 листів «фішинг чи ні?» у парах, вироблення спільних ознак маніпуляції. Вихідний квиток.</td><td>E, E (оцінити)</td><td>M</td><td>1.4.2.1</td></tr>
+        <tr><td>4</td><td>Ігровий кейс «Цифровий слід через 5 років»: учні повертаються до ключового запитання й уточнюють свою відповідь.</td><td>R</td><td>M</td><td>4.1.3.1</td></tr>
+        <tr><td>5</td><td>Робота над аудитом у групах: чернетка, взаємооцінювання за рубрикою, доопрацювання, виступ.</td><td>R, E</td><td>T</td><td>усі</td></tr>
+      </table>
+      <p><span class="tag">T</span> <b>Диференціація:</b> чек-лист аудиту з підказками для тих, хто потребує підтримки; додатковий кейс про корпоративну політику безпеки для тих, хто працює швидше; озвучені інструкції та збільшений шрифт у матеріалах.</p>
+    </div>
+  </details>
+
+  <details class="example">
+    <summary>Зразок 2. «Обчислювальне мислення та моделювання» — модуль «Дані розповідають історію» (6 уроків)</summary>
+    <div class="body">
+      <p><span class="tag">Етап 1</span> 12 ІФО 1.2.3.1; 12 ІФО 1.3.1.1; 12 ІФО 2.4.2.1 · <span class="tag">Етап 2</span> завдання «Сонячні панелі для школи: рішення на основі даних»</p>
+      <table>
+        <tr><th>№</th><th>Навчальна дія</th><th>WHERETO</th><th>A–M–T</th><th>Результат</th></tr>
+        <tr><td>1</td><td>Дві діаграми з тими самими даними, але різними висновками: «Чи можуть дані брехати?» Знайомство із завданням на виконання.</td><td>H, W</td><td>M</td><td>1.2.3.1</td></tr>
+        <tr><td>2</td><td>Практикум: очищення та впорядкування набору даних, формули, абсолютні посилання.</td><td>E</td><td>A</td><td>1.2.3.1</td></tr>
+        <tr><td>3</td><td>Побудова простої моделі «витрати — тариф — споживання», зміна параметрів, порівняння сценаріїв.</td><td>E</td><td>M</td><td>1.3.1.1</td></tr>
+        <tr><td>4</td><td>Дискусія «Кореляція чи причинність?» на прикладах з новин; вікторина як формувальне оцінювання.</td><td>R, E</td><td>M</td><td>1.2.3.1</td></tr>
+        <tr><td>5–6</td><td>Робота над моделлю для школи, консультації, взаємооцінювання чернеток, звіт-рекомендація для батьківської ради.</td><td>R, E, O</td><td>T</td><td>усі</td></tr>
+      </table>
+      <p><span class="tag">T</span> <b>Диференціація:</b> шаблон таблиці з готовими заголовками або «порожній аркуш» на вибір; ролі в групі (аналітик, дизайнер діаграм, автор звіту); відеоінструкції для повторного перегляду.</p>
+    </div>
+  </details>
+
+  <details class="example">
+    <summary>Зразок 3. «Інформаційні технології та цифрова трансформація суспільства» — модуль «ІТ у моїй майбутній професії» (4 уроки)</summary>
+    <div class="body">
+      <p><span class="tag">Етап 1</span> 12 ІФО 1.1.2.1; 12 ІФО 1.3.2.1; 12 ІФО 1.4.1.1 · <span class="tag">Етап 2</span> завдання «Цифровий паспорт професії»</p>
+      <table>
+        <tr><th>№</th><th>Навчальна дія</th><th>WHERETO</th><th>A–M–T</th><th>Результат</th></tr>
+        <tr><td>1</td><td>Гра «Професія 2015 vs 2035»: учні вгадують, як змінилися професії. Мета модуля, критерії «цифрового паспорта».</td><td>H, W</td><td>M</td><td>1.1.2.1</td></tr>
+        <tr><td>2</td><td>Дослідження в групах: інформаційні системи в обраних галузях (медицина, аграрна сфера, логістика тощо). Пошук і перевірка джерел за критеріями.</td><td>E</td><td>A, M</td><td>1.3.2.1, 1.4.1.1</td></tr>
+        <tr><td>3</td><td>Дебати «Автоматизація: загроза чи можливість?»; рефлексія щодо власних планів.</td><td>R</td><td>M</td><td>1.1.2.1</td></tr>
+        <tr><td>4</td><td>Створення та презентація «цифрового паспорта» для учнів 8–9 класів, взаємооцінювання.</td><td>E, O</td><td>T</td><td>усі</td></tr>
+      </table>
+      <p><span class="tag">T</span> <b>Диференціація:</b> вибір професії за інтересами; вибір формату продукту (вебсторінка, презентація, відео); банк перевірених джерел для стартової підтримки.</p>
+    </div>
+  </details>
+</section>
+
+<!-- ЗАВДАННЯ 4 -->
+<section class="card">
+  <h2>Завдання 4. Сплануйте власний Етап 3 <span class="pill">50 балів</span></h2>
+  <p class="muted">Використайте свої Етапи 1 і 2 з попередніх вправ або сформулюйте їх стисло заново.</p>
+
+  <div class="field">
+    <label class="t" for="sec">Розділ курсу</label>
+    <select id="sec">
+      <option value="">— оберіть —</option>
+      <option>Інформаційні технології та цифрова трансформація суспільства</option>
+      <option>Цифрове середовище та комунікації</option>
+      <option>Цифрова безпека, етика та правові норми</option>
+      <option>Обчислювальне мислення та моделювання</option>
+      <option>Практикум з інформаційних технологій</option>
+    </select>
+  </div>
+  <div class="field">
+    <label class="t" for="topic">Тема модуля</label>
+    <input type="text" id="topic" placeholder="Наприклад: «Хмарний офіс для шкільного проєкту»">
+  </div>
+  <div class="field">
+    <label class="t">Результати навчання з Держстандарту (з Етапу 1)</label>
+    <div class="hint">Оберіть 2–4 результати. Вони з’являться у списку «Результат» у плані нижче.</div>
+    <div class="codes" id="codes"></div>
+  </div>
+  <div class="field">
+    <label class="t" for="ev">Завдання на виконання та інші докази (з Етапу 2), стисло</label>
+    <textarea id="ev"></textarea>
+  </div>
+
+  <h3>Послідовність навчальних дій</h3>
+  <p class="muted" style="margin-top:0">Опишіть щонайменше 4 дії в порядку виконання. Для кожної вкажіть основний елемент WHERETO, тип цілі (A–M–T) і результат Держстандарту, до якого вона веде.</p>
+  <table class="seq">
+    <thead><tr><th style="width:4%">№</th><th>Навчальна дія</th><th style="width:19%">WHERETO</th><th style="width:15%">A–M–T</th><th style="width:17%">Результат</th><th style="width:5%"></th></tr></thead>
+    <tbody id="seqbody"></tbody>
+  </table>
+  <div class="row noprint"><button class="secondary" onclick="addRow()">+ Додати дію</button></div>
+
+  <div class="field" style="margin-top:14px">
+    <label class="t" for="tailor">T — Диференціація (як пристосуєте навчання до різних учнів?)</label>
+    <textarea id="tailor"></textarea>
+  </div>
+  <div class="field">
+    <label class="t" for="res">Ресурси й цифрові інструменти</label>
+    <textarea id="res" placeholder="Обладнання, сервіси, матеріали…"></textarea>
+  </div>
+
+  <h3>4а. Автоматична перевірка повноти (20 балів)</h3>
+  <div class="row"><button onclick="checkT4a()">Перевірити план</button><span class="score" id="t4ascore"></span></div>
+  <ul class="check" id="t4acheck"></ul>
+
+  <h3>4б. Самооцінювання за рубрикою (30 балів)</h3>
+  <p class="muted">Оцініть свій план за кожним критерієм. За можливості попросіть колегу оцінити його за цією ж рубрикою.</p>
+  <table>
+    <tr><th>Критерій</th><th style="width:190px">Оцінка</th></tr>
+    <tbody id="rubric"></tbody>
+  </table>
+  <div class="row"><button onclick="checkT4b()">Зарахувати самооцінювання</button><span class="score" id="t4bscore"></span></div>
+</section>
+
+<!-- ПІДСУМОК -->
+<section class="card result">
+  <h2>Підсумок</h2>
+  <div class="big" id="total">0 / 100</div>
+  <div class="bar"><div id="totalbar"></div></div>
+  <div id="level" class="muted"></div>
+  <table style="margin-top:12px">
+    <tr><th>Завдання</th><th>Бали</th><th>Максимум</th></tr>
+    <tr><td>1. Елементи WHERETO</td><td id="s1">—</td><td>20</td></tr>
+    <tr><td>2. Набуття — осмислення — перенесення</td><td id="s2">—</td><td>15</td></tr>
+    <tr><td>3. Узгодженість з Етапами 1 і 2</td><td id="s3">—</td><td>15</td></tr>
+    <tr><td>4а. Повнота плану</td><td id="s4a">—</td><td>20</td></tr>
+    <tr><td>4б. Самооцінювання</td><td id="s4b">—</td><td>30</td></tr>
+  </table>
+  <div class="row noprint">
+    <button onclick="downloadPlan()">Завантажити мій Етап 3 (.txt)</button>
+    <button class="secondary" onclick="window.print()">Друкувати / зберегти як PDF</button>
+    <button class="secondary" onclick="resetAll()">Почати знову</button>
+  </div>
+</section>
+
+<p class="muted" style="font-size:.82rem">Джерела: Державний стандарт профільної середньої освіти (постанова КМУ № 851 від 25.07.2024, застосовується з 01.09.2027); модельна навчальна програма «Інформатика. 10 клас. Основний рівень» (Ривкінд Й. Я. та ін., наказ МОН від 18.03.2026 № 483) — коди й формулювання конкретних очікуваних результатів; Wiggins G., McTighe J. Understanding by Design.</p>
+</main>
+
+<script>
+const WH = {W:"W — Куди і навіщо",H:"H — Зацікавити й утримати",E1:"E — Озброїти / досвід / дослідити",R:"R — Переосмислити / рефлексія",E2:"E — Оцінити",T:"T — Пристосувати (диференціація)",O:"O — Організувати послідовність"};
+const AMT = {A:"Набуття (A)",M:"Осмислення (M)",T:"Перенесення (T)"};
+const T1 = [
+  {t:"На першому уроці учні отримують опис завдання «Кібераудит для волонтерського центру» та рубрику, за якою його оцінюватимуть.",a:"W"},
+  {t:"Урок починається з реальної історії: блогер утратив канал через один клік на фішингове посилання. «Чи могло це статися з вами?»",a:"H"},
+  {t:"Учні під керівництвом учителя налаштовують двофакторну автентифікацію та менеджер паролів у навчальних акаунтах.",a:"E1"},
+  {t:"Після аналізу кейсів учні повертаються до своєї першої відповіді на запитання «Чи можна бути повністю захищеним у мережі?» і переписують її.",a:"R"},
+  {t:"Наприкінці уроку кожен заповнює вихідний квиток: 3 ознаки фішингу, які я тепер помічаю. Учитель аналізує відповіді та коригує наступний урок.",a:"E2"},
+  {t:"Учні, яким потрібна підтримка, отримують чек-лист аудиту з підказками, а ті, хто працює швидше, — додатковий кейс про політику безпеки компанії.",a:"T"},
+  {t:"Учитель вибудовує модуль так: кейс → набуття вмінь → аналіз ризиків → перенесення в аудиті, а не навпаки.",a:"O"},
+  {t:"Групи обмінюються чернетками аудиту, дають одна одній відгук і доопрацьовують свої рекомендації.",a:"R"},
+  {t:"Учні досліджують дозволи застосунків на власних смартфонах і складають таблицю «застосунок — дозвіл — чи потрібен він».",a:"E1"},
+  {t:"Учитель проводить коротку самоперевірку за рубрикою перед здачею: учні позначають, які критерії вже виконано.",a:"E2"}
+];
+const T2 = [
+  {t:"Учні виконують тренувальні вправи на абсолютні та відносні посилання в електронній таблиці.",a:"A"},
+  {t:"Учні порівнюють дві діаграми з тими самими даними й пояснюють, чому вони підштовхують до різних висновків.",a:"M"},
+  {t:"Учні самостійно збирають дані про енергоспоживання школи, будують модель і готують рекомендацію для батьківської ради.",a:"T"},
+  {t:"Учитель демонструє, як побудувати лінію тренду, а учні повторюють кроки на своєму наборі даних.",a:"A"},
+  {t:"У дискусії учні з’ясовують, чому зростання продажу морозива й кількості опіків від сонця не означає, що одне спричиняє інше.",a:"M"},
+  {t:"Учні застосовують свою модель до нової ситуації — оцінюють, чи варто класу купувати новий проєктор, — і обґрунтовують межі її точності.",a:"T"}
+];
+const T3 = [
+  {c:"Результат: 12 ІФО 2.2.2.1 — тестує, налагоджує та пропонує вдосконалення програмних проєктів. Доказ: учні отримують програму з прихованими помилками, складають тести й виправляють код.",
+   o:["Перегляд відео з історії програмування","Практикум у парах: складання тестів для граничних значень, пошук і виправлення помилок у навчальних програмах з поступовим ускладненням","Конспектування визначень «помилка», «тест», «налагодження»","Створення плаката «Види помилок»"],a:1,
+   e:"Лише практикум дає учням досвід тих самих дій, які потім вимагатиме доказ."},
+  {c:"Результат: 12 ІФО 1.4.1.1 — оцінює достовірність інформації та надійність її джерел. Доказ: оцінювання трьох реальних публікацій за власними критеріями.",
+   o:["Учитель розповідає про небезпеку фейків","Учні складають тест для однокласників","Учні в групах аналізують публікації, виробляють спільні критерії надійності й перевіряють їх на нових прикладах","Учні шукають у мережі визначення медіаграмотності"],a:2,
+   e:"Дія розвиває саме вміння оцінювати джерела та створювати критерії — так, як цього вимагає доказ."},
+  {c:"Результат: 12 ІФО 2.5.1.1 — демонструє здатність взаємодіяти в команді під час розробки проєктів. Доказ: спостереження за роботою групи з чек-листом і взаємооцінювання.",
+   o:["Розподіл ролей у групі, спільний план у хмарному сервісі, щоуроковий «стоп-кадр» з обговоренням того, що допомагає й заважає співпраці","Індивідуальне виконання частин проєкту без обговорення","Лекція про етапи формування команди","Тест про стилі командної роботи"],a:0,
+   e:"Навички співпраці формуються лише в співпраці з регулярною рефлексією щодо неї."},
+  {c:"Результат: 12 ІФО 3.2.1.1 — організовує власне інформаційне середовище для ефективного розв’язування типових задач. Доказ: учень налаштовує власний хмарний простір для навчального проєкту та обґрунтовує структуру.",
+   o:["Учитель показує свою структуру папок, учні її копіюють","Учні порівнюють кілька способів організації файлів і сервісів, обирають власну структуру й тестують її на реальному завданні","Учні читають статтю про хмарні сервіси","Учні складають кросворд з назв сервісів"],a:1,
+   e:"Копіювання структури вчителя не формує здатності обирати й обґрунтовувати власну організацію середовища."},
+  {c:"Результат: 12 ІФО 4.2.2.1 — враховує засади універсального дизайну під час використання ІТ. Доказ: учні перевіряють і вдосконалюють доступність вебсторінки класу.",
+   o:["Учні слухають розповідь про людей з інвалідністю","Учні оформлюють сторінку яскравішими кольорами","Учні виконують тест з термінами доступності","Учні пробують користуватися сторінками з екранним читачем і без миші, фіксують бар’єри та виправляють їх за чек-листом доступності"],a:3,
+   e:"Емпатійний досвід разом із практикою виправлення бар’єрів прямо готує до доказу."}
+];
+const CODES = [
+  ["1. Інформація, дані, моделі",[
+    ["12 ІФО 1.1.1.1","обґрунтовано обирає та доцільно використовує цифрові пристрої"],
+    ["12 ІФО 1.1.2.1","аналізує та оцінює сучасні тенденції розвитку ІТ в обраній галузі"],
+    ["12 ІФО 1.1.3.1","пояснює фактори розподілу й використання цифрових ресурсів у глобальному суспільстві"],
+    ["12 ІФО 1.2.1.1","розуміє та пояснює сутність інформаційних процесів в обраній галузі"],
+    ["12 ІФО 1.2.2.1","пояснює особливості кодування цифрових даних"],
+    ["12 ІФО 1.2.3.1","досліджує та аналізує набори даних, взаємозв’язки та залежності між ними"],
+    ["12 ІФО 1.3.1.1","створює, оцінює та використовує інформаційні моделі для розв’язування задач"],
+    ["12 ІФО 1.3.2.1","пояснює використання інформаційних систем в обраній галузі"],
+    ["12 ІФО 1.4.1.1","оцінює достовірність інформації та надійність її джерел"],
+    ["12 ІФО 1.4.2.1","використовує різні методи захисту / протидії маніпуляціям у цифровому світі"]]],
+  ["2. Алгоритми, програми, інформаційні продукти",[
+    ["12 ІФО 2.1.1.1","пояснює та застосовує основні алгоритми для розв’язування задач"],
+    ["12 ІФО 2.1.2.1","оцінює ефективність власних і відомих алгоритмів"],
+    ["12 ІФО 2.1.3.1","використовує різні структури даних для розв’язування типових задач"],
+    ["12 ІФО 2.2.1.1","у співпраці реалізовує алгоритми у програмних проєктах"],
+    ["12 ІФО 2.2.2.1","тестує, налагоджує та пропонує вдосконалення програмних проєктів"],
+    ["12 ІФО 2.3.1.1","бере участь у створенні програмних проєктів за модульною технологією"],
+    ["12 ІФО 2.4.1.1","створює і вдосконалює інформаційні продукти для розв’язування задач"],
+    ["12 ІФО 2.4.2.1","комбінує дані різних типів під час створення інформаційних продуктів"],
+    ["12 ІФО 2.4.3.1","самостійно опановує роботу з новими програмними продуктами"],
+    ["12 ІФО 2.4.4.1","оцінює якість інформаційних продуктів"],
+    ["12 ІФО 2.5.1.1","демонструє здатність взаємодіяти в команді під час розробки проєктів"],
+    ["12 ІФО 2.5.2.1","розуміє ідеї та емоції інших членів команди та конструктивно реагує"]]],
+  ["3. Цифрове середовище",[
+    ["12 ІФО 3.1.1.1","досліджує можливості цифрових пристроїв з метою їх застосування"],
+    ["12 ІФО 3.2.1.1","організовує власне інформаційне середовище для розв’язування типових задач"],
+    ["12 ІФО 3.2.2.1","фіксує типові апаратні / програмні збої, пояснює причини та способи усунення"],
+    ["12 ІФО 3.3.1.1","обґрунтовано обирає технологічні засоби для індивідуальної або групової діяльності"]]],
+  ["4. Безпека, етика, право",[
+    ["12 ІФО 4.1.1.1","піклується про власну безпеку, добробут і здоров’я під час використання ІТ"],
+    ["12 ІФО 4.1.2.1","обирає та застосовує політики кібербезпеки для власного середовища"],
+    ["12 ІФО 4.1.3.1","враховує наслідки власних дій у цифровому середовищі та вплив на цифрову репутацію"],
+    ["12 ІФО 4.2.1.1","дотримується норм соціальної, міжкультурної та міжособистісної взаємодії"],
+    ["12 ІФО 4.2.2.1","враховує засади універсального дизайну"],
+    ["12 ІФО 4.3.1.1","дотримується норм законодавства у сфері інтелектуальної власності"]]]
+];
+const RUBRIC = [
+  "Узгодженість: кожна навчальна дія веде до результатів Етапу 1 і готує до доказів Етапу 2",
+  "Учні знають, куди й навіщо рухаються (W), а початок модуля пробуджує інтерес (H)",
+  "Збалансовано набуття, осмислення й перенесення; перенесення не відкладено лише на останній урок",
+  "Передбачено переосмислення, доопрацювання, рефлексію та формувальне оцінювання з зворотним зв’язком (R, E)",
+  "Диференціація враховує різні потреби, інтереси й темп учнів, зокрема учнів з ООП (T)",
+  "Послідовність логічна, час і ресурси реалістичні (O)"
+];
+const scores = {s1:null,s2:null,s3:null,s4a:null,s4b:null};
+let rowCount = 0;
+
+function esc(s){return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));}
+function fmt(n){return (Math.round(n*100)/100).toString().replace(".",",");}
+function $(id){return document.getElementById(id);}
+
+function render(){
+  $("t1list").innerHTML = T1.map((q,i)=>`
+    <div class="item" id="t1i${i}"><div>${i+1}. ${esc(q.t)}</div>
+    <select id="t1s${i}"><option value="">— елемент WHERETO —</option>${Object.entries(WH).map(([k,v])=>`<option value="${k}">${v}</option>`).join("")}</select>
+    <div class="fb" id="t1f${i}"></div></div>`).join("");
+  $("t2list").innerHTML = T2.map((q,i)=>`
+    <div class="item" id="t2i${i}"><div>${i+1}. ${esc(q.t)}</div>
+    <select id="t2s${i}"><option value="">— тип цілі —</option>${Object.entries(AMT).map(([k,v])=>`<option value="${k}">${v}</option>`).join("")}</select>
+    <div class="fb" id="t2f${i}"></div></div>`).join("");
+  $("t3list").innerHTML = T3.map((q,i)=>`
+    <div class="item full" id="t3i${i}"><div><b>${i+1}.</b> ${esc(q.c)}</div>
+    <div class="opts">${q.o.map((o,j)=>`<label><input type="radio" name="t3r${i}" value="${j}"><span>${esc(o)}</span></label>`).join("")}</div>
+    <div class="fb" id="t3f${i}"></div></div>`).join("");
+  $("codes").innerHTML = CODES.map(([g,list])=>`<div class="grp"><b>${g}</b>${
+    list.map(([c,d])=>`<label><input type="checkbox" class="code" value="${c}" data-d="${esc(d)}" onchange="refreshCodeSelects()"><span><b>${c}</b> — ${esc(d)}</span></label>`).join("")}</div>`).join("");
+  $("rubric").innerHTML = RUBRIC.map((r,i)=>`
+    <tr><td>${i+1}. ${r}</td><td><select id="r${i}"><option value="">— оцінка —</option>
+    <option value="5">5 — повністю</option><option value="3">3 — частково</option><option value="0">0 — не відповідає</option></select></td></tr>`).join("");
+  $("seqbody").innerHTML=""; rowCount=0;
+  for(let i=0;i<5;i++) addRow();
+}
+function selectedCodes(){return [...document.querySelectorAll(".code:checked")].map(c=>c.value);}
+function codeOptions(cur){
+  const list=selectedCodes();
+  return `<option value="">—</option>`+list.map(c=>`<option value="${c}" ${c===cur?"selected":""}>${c.replace("12 ІФО ","")}</option>`).join("")+
+    `<option value="ALL" ${cur==="ALL"?"selected":""}>усі обрані</option>`;
+}
+function refreshCodeSelects(){
+  document.querySelectorAll(".rcode").forEach(s=>{const v=s.value; s.innerHTML=codeOptions(v);});
+}
+function addRow(){
+  rowCount++;
+  const tr=document.createElement("tr");
+  tr.className="srow";
+  tr.innerHTML=`<td class="num"></td>
+    <td><textarea class="ract" placeholder="Що роблять учні?"></textarea></td>
+    <td><select class="rwh"><option value="">—</option>${Object.entries(WH).map(([k,v])=>`<option value="${k}">${v}</option>`).join("")}</select></td>
+    <td><select class="ramt"><option value="">—</option>${Object.entries(AMT).map(([k,v])=>`<option value="${k}">${v}</option>`).join("")}</select></td>
+    <td><select class="rcode">${codeOptions("")}</select></td>
+    <td><button class="mini" title="Видалити" onclick="this.closest('tr').remove();renum()">✕</button></td>`;
+  $("seqbody").appendChild(tr); renum();
+}
+function renum(){document.querySelectorAll("#seqbody tr").forEach((tr,i)=>tr.querySelector(".num").textContent=i+1);}
+function rows(){
+  return [...document.querySelectorAll("#seqbody tr")].map(tr=>({
+    act:tr.querySelector(".ract").value.trim(), wh:tr.querySelector(".rwh").value,
+    amt:tr.querySelector(".ramt").value, code:tr.querySelector(".rcode").value
+  })).filter(r=>r.act.length>0);
+}
+
+function checkT1(){
+  let s=0;
+  T1.forEach((q,i)=>{
+    const v=$("t1s"+i).value, ok=v===q.a; if(ok)s+=2;
+    $("t1i"+i).className="item "+(ok?"ok":"bad");
+    $("t1f"+i).innerHTML=ok?"✔ Правильно.":"✘ Правильна відповідь: <b>"+WH[q.a]+"</b>.";
+  });
+  scores.s1=s; $("t1score").textContent=`Результат: ${s} / 20`; updateTotal();
+}
+function checkT2(){
+  let s=0;
+  T2.forEach((q,i)=>{
+    const v=$("t2s"+i).value, ok=v===q.a; if(ok)s+=2.5;
+    $("t2i"+i).className="item "+(ok?"ok":"bad");
+    $("t2f"+i).innerHTML=ok?"✔ Правильно.":"✘ Правильна відповідь: <b>"+AMT[q.a]+"</b>.";
+  });
+  scores.s2=s; $("t2score").textContent=`Результат: ${fmt(s)} / 15`; updateTotal();
+}
+function checkT3(){
+  let s=0;
+  T3.forEach((q,i)=>{
+    const r=document.querySelector(`input[name="t3r${i}"]:checked`), ok=r&&+r.value===q.a; if(ok)s+=3;
+    $("t3i"+i).className="item full "+(ok?"ok":"bad");
+    $("t3f"+i).innerHTML=(ok?"✔ Правильно. ":"✘ Найкраще узгоджена дія: <b>"+esc(q.o[q.a])+"</b>. ")+esc(q.e);
+  });
+  scores.s3=s; $("t3score").textContent=`Результат: ${s} / 15`; updateTotal();
+}
+function checkT4a(){
+  const codes=selectedCodes().length, R=rows();
+  const amt=new Set(R.map(r=>r.amt).filter(Boolean));
+  const wh=new Set(R.map(r=>r.wh).filter(Boolean));
+  if($("tailor").value.trim().length>=20) wh.add("T");
+  const linked=R.filter(r=>r.code).length;
+  const checks=[
+    {ok:codes>=2&&codes<=4, t:`Обрано 2–4 результати Держстандарту (зараз: ${codes})`},
+    {ok:R.length>=4, t:`Описано ≥ 4 навчальні дії (зараз: ${R.length})`},
+    {ok:amt.size===3, t:`У плані є всі три типи цілей: набуття, осмислення, перенесення (зараз: ${amt.size} з 3)`},
+    {ok:wh.size>=5, t:`Охоплено ≥ 5 з 7 елементів WHERETO, з урахуванням поля диференціації (зараз: ${wh.size})`},
+    {ok:R.length>0&&linked===R.length, t:`Кожну дію пов’язано з результатом Держстандарту (${linked} з ${R.length})`}
+  ];
+  let s=0; checks.forEach(c=>{if(c.ok)s+=4;});
+  $("t4acheck").innerHTML=checks.map(c=>`<li class="${c.ok?"ok":"bad"}">${esc(c.t)}</li>`).join("");
+  scores.s4a=s; $("t4ascore").textContent=`Результат: ${s} / 20`; updateTotal();
+}
+function checkT4b(){
+  let s=0, missing=0;
+  RUBRIC.forEach((r,i)=>{const v=$("r"+i).value; if(v==="")missing++; else s+=+v;});
+  if(missing){$("t4bscore").textContent=`Оцініть усі критерії (не оцінено: ${missing})`;return;}
+  scores.s4b=s; $("t4bscore").textContent=`Результат: ${s} / 30`; updateTotal();
+}
+function updateTotal(){
+  let t=0; for(const k in scores){const v=scores[k]; $(k).textContent=v===null?"—":fmt(v); if(v!==null)t+=v;}
+  $("total").textContent=`${fmt(t)} / 100`; $("totalbar").style.width=t+"%";
+  const done=Object.values(scores).every(v=>v!==null);
+  const lvl = t>=90?"Високий рівень: ви впевнено плануєте навчання, узгоджене з результатами й доказами.":
+              t>=75?"Достатній рівень: доопрацюйте елементи, позначені як помилкові чи часткові.":
+              t>=60?"Середній рівень: перегляньте модель WHERETO, логіку A–M–T і зразки.":
+                    "Початковий рівень: поверніться до теорії та зразків, потім виконайте завдання ще раз.";
+  $("level").textContent = done?lvl:"Проміжний результат. Виконайте всі завдання й натисніть «Перевірити» в кожному з них.";
+}
+function downloadPlan(){
+  const codes=[...document.querySelectorAll(".code:checked")].map(c=>`  • ${c.value} — ${c.dataset.d}`).join("\n")||"  —";
+  const seq=rows().map((r,i)=>`  ${i+1}. ${r.act}\n     WHERETO: ${WH[r.wh]||"—"} | Тип: ${AMT[r.amt]||"—"} | Результат: ${r.code==="ALL"?"усі обрані":(r.code||"—")}`).join("\n")||"  —";
+  const txt=`ЗВОРОТНИЙ ДИЗАЙН. ЕТАП 3: ПЛАН НАВЧАННЯ
+Предмет: Інформатика, 10 клас (основний рівень)
+Розділ: ${$("sec").value||"—"}
+Тема модуля: ${$("topic").value||"—"}
+
+РЕЗУЛЬТАТИ НАВЧАННЯ (Державний стандарт профільної середньої освіти)
+${codes}
+
+ДОКАЗИ (ЕТАП 2)
+  ${$("ev").value.trim()||"—"}
+
+ПОСЛІДОВНІСТЬ НАВЧАЛЬНИХ ДІЙ
+${seq}
+
+ДИФЕРЕНЦІАЦІЯ
+  ${$("tailor").value.trim()||"—"}
+
+РЕСУРСИ Й ЦИФРОВІ ІНСТРУМЕНТИ
+  ${$("res").value.trim()||"—"}
+
+РЕЗУЛЬТАТ ВПРАВИ: ${$("total").textContent}
+`;
+  const blob=new Blob([txt],{type:"text/plain;charset=utf-8"});
+  const a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download="etap3-zvorotnyi-dyzain.txt"; a.click();
+  setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+}
+function resetAll(){
+  for(const k in scores)scores[k]=null;
+  ["topic","ev","tailor","res"].forEach(id=>$(id).value="");
+  $("sec").value="";
+  ["t1score","t2score","t3score","t4ascore","t4bscore"].forEach(id=>$(id).textContent="");
+  $("t4acheck").innerHTML="";
+  render(); updateTotal(); window.scrollTo({top:0,behavior:"smooth"});
+}
+render(); updateTotal();
+
+/* ---------- ВКЛАДКИ ---------- */
+const TAB_LABELS=["Про вправу","Завдання 1","Завдання 2","Завдання 3","Підказки","Завдання 4","Підсумок"];
+const TAB_MAX={1:"s1",2:"s2",3:"s3"};
+let tabSecs=[];
+function showTab(i){
+  tabSecs.forEach((s,j)=>s.classList.toggle("active",i===j));
+  document.querySelectorAll("nav.tabs .tab").forEach((b,j)=>{b.classList.toggle("active",i===j);b.setAttribute("aria-selected",i===j);});
+  const nav=document.querySelector("nav.tabs");
+  if(nav&&window.scrollY>nav.offsetTop) window.scrollTo({top:nav.offsetTop,behavior:"smooth"});
+}
+(function initTabs(){
+  const main=document.querySelector("main");
+  tabSecs=[...main.querySelectorAll(":scope > section.card")];
+  const nav=document.createElement("nav"); nav.className="tabs"; nav.setAttribute("role","tablist");
+  tabSecs.forEach((s,i)=>{
+    s.classList.add("tabpane"); s.setAttribute("role","tabpanel");
+    const b=document.createElement("button"); b.type="button"; b.className="tab"; b.setAttribute("role","tab");
+    b.innerHTML=(TAB_LABELS[i]||("Розділ "+(i+1)))+'<span class="tb" id="tb'+i+'"></span>';
+    b.onclick=()=>showTab(i); nav.appendChild(b);
+    const r=document.createElement("div"); r.className="row tabnav";
+    r.innerHTML=(i>0?`<button type="button" class="secondary" onclick="showTab(${i-1})">← ${TAB_LABELS[i-1]}</button>`:"<span></span>")+
+                (i<tabSecs.length-1?`<button type="button" onclick="showTab(${i+1})">${TAB_LABELS[i+1]} →</button>`:"");
+    s.appendChild(r);
+  });
+  main.insertBefore(nav,tabSecs[0]);
+  showTab(0);
+})();
+function updateTabBadges(){
+  const f=v=>(Math.round(v*100)/100).toString().replace(".",",");
+  for(const i in TAB_MAX){const v=scores[TAB_MAX[i]]; document.getElementById("tb"+i).textContent=v===null?"":f(v);}
+  const a=scores.s4a,b=scores.s4b;
+  document.getElementById("tb5").textContent=(a===null&&b===null)?"":f((a||0)+(b||0));
+  let t=0,any=false; for(const k in scores){if(scores[k]!==null){t+=scores[k];any=true;}}
+  document.getElementById("tb6").textContent=any?f(t):"";
+}
+const _updateTotal=updateTotal; updateTotal=function(){_updateTotal(); updateTabBadges();};
+const _resetAll=resetAll; resetAll=function(){_resetAll(); updateTabBadges(); showTab(0);};
+updateTabBadges();
+</script>
+</body>
+</html>
