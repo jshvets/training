@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Інтерактивна вправа «Етапи зворотного дизайну»</title>
+<style>
+  :root{
+    --ink:#1d2433; --muted:#5b6478; --line:#dfe3ea; --bg:#f6f7f9; --card:#fff;
+    --s1:#2f6fdb; --s1bg:#eaf1fd; --s2:#c2620a; --s2bg:#fdf1e6; --s3:#1f8a5b; --s3bg:#e7f6ef;
+    --ok:#1f8a5b; --bad:#c0392b; --accent:#3b3f99;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;color:var(--ink);background:var(--bg);line-height:1.55}
+  header{background:linear-gradient(135deg,#283080,#3b5bd6);color:#fff;padding:32px 20px 28px}
+  header .wrap{max-width:980px;margin:0 auto}
+  header h1{margin:0 0 6px;font-size:1.9rem}
+  header p{margin:0;opacity:.92}
+  .stages-strip{display:flex;gap:8px;margin-top:18px;flex-wrap:wrap}
+  .stages-strip span{background:rgba(255,255,255,.16);padding:6px 12px;border-radius:20px;font-size:.92rem}
+  main{max-width:980px;margin:0 auto;padding:20px}
+  nav.tabs{display:flex;gap:6px;flex-wrap:wrap;position:sticky;top:0;background:var(--bg);padding:10px 0;z-index:5;border-bottom:1px solid var(--line)}
+  nav.tabs button{border:1px solid var(--line);background:#fff;padding:8px 12px;border-radius:8px;cursor:pointer;font-size:.92rem;color:var(--ink)}
+  nav.tabs button.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+  section.panel{display:none;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:22px;margin-top:16px}
+  section.panel.active{display:block}
+  h2{margin-top:0;font-size:1.35rem}
+  h3{font-size:1.08rem;margin:20px 0 8px}
+  .pts{display:inline-block;background:#eef0fb;color:var(--accent);font-weight:600;font-size:.85rem;padding:2px 10px;border-radius:12px;margin-left:6px;vertical-align:middle}
+  .note{background:#fbfaf3;border-left:4px solid #d9b52c;padding:10px 14px;border-radius:6px;font-size:.93rem;margin:12px 0}
+  table{border-collapse:collapse;width:100%;font-size:.93rem;margin:10px 0}
+  th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+  th{background:#f1f3f7}
+  .s1{color:var(--s1)} .s2{color:var(--s2)} .s3{color:var(--s3)}
+  .tag{display:inline-block;padding:1px 8px;border-radius:10px;font-size:.8rem;font-weight:600}
+  .tag.s1{background:var(--s1bg)} .tag.s2{background:var(--s2bg)} .tag.s3{background:var(--s3bg)}
+  code{background:#eef0f4;padding:1px 6px;border-radius:4px;font-size:.88em}
+  .btn{border:none;background:var(--accent);color:#fff;padding:10px 18px;border-radius:8px;cursor:pointer;font-size:.95rem;margin:6px 6px 0 0}
+  .btn.secondary{background:#fff;color:var(--accent);border:1px solid var(--accent)}
+  .btn:disabled{opacity:.5;cursor:not-allowed}
+  .feedback{margin-top:12px;padding:10px 14px;border-radius:8px;display:none;font-size:.95rem}
+  .feedback.show{display:block}
+  .feedback.good{background:#e7f6ef;color:#145c3d}
+  .feedback.mid{background:#fdf6e3;color:#7a5600}
+  .feedback.low{background:#fbeaea;color:#8a241a}
+  /* task1 */
+  .sort-item{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 12px;border:1px solid var(--line);border-radius:8px;margin:8px 0;flex-wrap:wrap}
+  .sort-item .txt{flex:1 1 320px}
+  .choice{display:flex;gap:6px}
+  .choice button{border:1px solid var(--line);background:#fff;border-radius:6px;padding:6px 10px;cursor:pointer;font-size:.85rem}
+  .choice button.sel1{background:var(--s1);color:#fff;border-color:var(--s1)}
+  .choice button.sel2{background:var(--s2);color:#fff;border-color:var(--s2)}
+  .choice button.sel3{background:var(--s3);color:#fff;border-color:var(--s3)}
+  .sort-item.right{border-color:var(--ok);background:#f3fbf7}
+  .sort-item.wrong{border-color:var(--bad);background:#fdf4f3}
+  .mark{font-weight:700;margin-left:6px}
+  /* task2 */
+  .order-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid var(--line);border-radius:8px;margin:8px 0;background:#fff}
+  .order-item .num{width:28px;height:28px;border-radius:50%;background:#eef0fb;color:var(--accent);display:flex;align-items:center;justify-content:center;font-weight:700;flex:none}
+  .order-item .txt{flex:1}
+  .order-item button{border:1px solid var(--line);background:#fff;border-radius:6px;width:34px;height:30px;cursor:pointer}
+  .order-item.right{border-color:var(--ok);background:#f3fbf7}
+  .order-item.wrong{border-color:var(--bad);background:#fdf4f3}
+  /* task3 */
+  .match-row{border:1px solid var(--line);border-radius:8px;padding:12px;margin:10px 0}
+  .match-row .code{font-weight:700;color:var(--s1)}
+  .match-row select{width:100%;padding:8px;border-radius:6px;border:1px solid var(--line);margin-top:8px;font-size:.92rem;background:#fff}
+  .match-row.right{border-color:var(--ok);background:#f3fbf7}
+  .match-row.wrong{border-color:var(--bad);background:#fdf4f3}
+  /* task4 */
+  .q{border:1px solid var(--line);border-radius:8px;padding:12px 14px;margin:12px 0}
+  .q label{display:block;padding:6px 8px;border-radius:6px;cursor:pointer}
+  .q label:hover{background:#f4f5f9}
+  .q.right{border-color:var(--ok);background:#f3fbf7}
+  .q.wrong{border-color:var(--bad);background:#fdf4f3}
+  .q .expl{display:none;font-size:.9rem;color:var(--muted);margin-top:6px}
+  .q.checked .expl{display:block}
+  /* task5 */
+  .builder label.fl{display:block;font-weight:600;margin:14px 0 4px}
+  .builder textarea,.builder select{width:100%;padding:9px;border-radius:8px;border:1px solid var(--line);font-family:inherit;font-size:.93rem}
+  .builder textarea{min-height:78px;resize:vertical}
+  .stagebox{border-left:5px solid;padding:6px 14px 14px;border-radius:6px;margin:16px 0}
+  .stagebox.b1{border-color:var(--s1);background:var(--s1bg)}
+  .stagebox.b2{border-color:var(--s2);background:var(--s2bg)}
+  .stagebox.b3{border-color:var(--s3);background:var(--s3bg)}
+  .rubric td.lv{white-space:nowrap}
+  .rubric input{transform:scale(1.15);margin-right:4px}
+  .autocheck{font-size:.88rem;color:var(--muted)}
+  /* examples */
+  details{border:1px solid var(--line);border-radius:10px;padding:10px 16px;margin:12px 0;background:#fff}
+  details summary{cursor:pointer;font-weight:600;font-size:1.02rem}
+  details .st{margin:10px 0;padding:8px 12px;border-radius:6px}
+  details .st.a{background:var(--s1bg)} details .st.b{background:var(--s2bg)} details .st.c{background:var(--s3bg)}
+  /* results */
+  .scorebar{height:14px;background:#eceef3;border-radius:8px;overflow:hidden;margin:6px 0 14px}
+  .scorebar div{height:100%;background:linear-gradient(90deg,#3b5bd6,#1f8a5b);width:0;transition:width .6s}
+  .big{font-size:2.4rem;font-weight:700;color:var(--accent)}
+  .floating{position:fixed;right:14px;bottom:14px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:8px 14px;box-shadow:0 4px 14px rgba(0,0,0,.08);font-size:.9rem;z-index:10}
+  .floating b{color:var(--accent);font-size:1.1rem}
+  footer{max-width:980px;margin:0 auto;padding:10px 20px 70px;color:var(--muted);font-size:.85rem}
+  @media print{nav.tabs,.floating,.btn{display:none!important}section.panel{display:block!important;break-inside:avoid}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <h1>Етапи зворотного дизайну</h1>
+    <p>Інтерактивна вправа для педагогів профільної школи (10–12 класи). Результати навчання узгоджено з Державним стандартом профільної середньої освіти (постанова КМУ № 851 від 25.07.2024).</p>
+    <div class="stages-strip">
+      <span>① Бажані результати</span><span>② Прийнятні докази</span><span>③ План навчання</span><span>Разом: 100 балів</span>
+    </div>
+  </div>
+</header>
+
+<main>
+<nav class="tabs" id="tabs">
+  <button data-t="intro" class="active">Вступ</button>
+  <button data-t="examples">Приклади-підказки</button>
+  <button data-t="t1">Завдання 1</button>
+  <button data-t="t2">Завдання 2</button>
+  <button data-t="t3">Завдання 3</button>
+  <button data-t="t4">Завдання 4</button>
+  <button data-t="t5">Завдання 5</button>
+  <button data-t="results">Результат</button>
+</nav>
+
+<!-- ============ ВСТУП ============ -->
+<section class="panel active" id="intro">
+  <h2>Про вправу</h2>
+  <p><b>Зворотний дизайн</b> (backward design, Г. Віггінс і Дж. Мак-Тай) — це спосіб планувати навчання «від кінця». Спершу вчитель визначає, якого результату мають досягти учні, потім вирішує, за якими доказами він переконається, що результат досягнуто, і лише наостанок планує уроки та активності.</p>
+
+  <table>
+    <tr><th>Етап</th><th>Ключове питання вчителя</th><th>Що спирається на Стандарт</th></tr>
+    <tr><td><span class="tag s1">1. Бажані результати</span></td><td>Що учні мають знати, розуміти й уміти? Які ідеї мають зрозуміти надовго?</td><td>Загальні й конкретні результати навчання освітньої галузі та їхні коди, ключові компетентності, наскрізні вміння</td></tr>
+    <tr><td><span class="tag s2">2. Прийнятні докази</span></td><td>Як я дізнаюся, що учні досягли результату? Що буде переконливим доказом?</td><td>Орієнтири для оцінювання основного та поглибленого (П) рівнів</td></tr>
+    <tr><td><span class="tag s3">3. План навчання</span></td><td>Які активності, ресурси й послідовність дій приведуть учнів до цих доказів?</td><td>Наскрізні вміння, форми організації освітнього процесу з освітньої програми</td></tr>
+  </table>
+
+  <h3>Як Стандарт кодує результати навчання</h3>
+  <p>Стандарт кодує результати так: у коді вказано рік навчання, скорочену назву освітньої галузі, номер групи результатів, загального й конкретного результату, номер орієнтира для оцінювання. Позначка <b>«П»</b> означає поглиблений рівень. Наприклад, <code>12 УМД 1.4.3-1 П</code>: «12» — рік навчання, «УМД» — галузь (українська мова), 1 — група, 4 — загальний результат, 3 — конкретний результат, 1 — орієнтир, П — поглиблений рівень.</p>
+  <p>Стандарт поділяє профільну освіту на два цикли: <b>профільно-адаптаційний</b> (10-й рік навчання) і <b>профільний</b> (11–12-й роки). За Стандартом навчатимуть з 1 вересня 2027 року.</p>
+
+  <h3>Результати навчання вправи та їх зв'язок зі Стандартом</h3>
+  <table>
+    <tr><th>Після виконання вправи учасник (учасниця)…</th><th>Ключові компетентності (п. 8 Стандарту)</th><th>Наскрізні вміння (п. 10 Стандарту)</th></tr>
+    <tr><td>РН1. Розрізняє три етапи зворотного дизайну і відносить до них дії вчителя (завд. 1)</td><td>Навчання впродовж життя</td><td>Читати з розумінням; критично і системно мислити</td></tr>
+    <tr><td>РН2. Відтворює логічну послідовність проєктування від результату до діяльності (завд. 2)</td><td>Навчання впродовж життя; інноваційність</td><td>Критично і системно мислити; логічно обґрунтовувати позицію</td></tr>
+    <tr><td>РН3. Добирає доказ (завдання оцінювання), що прямо відповідає коду результату зі Стандарту (завд. 3)</td><td>Громадянські та соціальні компетентності; вільне володіння державною мовою (за обраною галуззю)</td><td>Оцінювати ризики; приймати рішення</td></tr>
+    <tr><td>РН4. Пояснює принципи зворотного дизайну і розпізнає типові помилки планування (завд. 4)</td><td>Навчання впродовж життя</td><td>Критично і системно мислити; розв'язувати проблеми</td></tr>
+    <tr><td>РН5. Проєктує фрагмент навчання в трьох етапах на основі результату Стандарту та оцінює власний план за рубрикою (завд. 5)</td><td>Інноваційність; підприємливість; навчання впродовж життя</td><td>Діяти творчо; виявляти ініціативу; висловлювати власну думку в письмовій формі</td></tr>
+  </table>
+
+  <h3>Система оцінювання (100 балів)</h3>
+  <table>
+    <tr><th>Завдання</th><th>Формат</th><th>Нарахування</th><th>Макс.</th></tr>
+    <tr><td>1. Розподіліть дії за етапами</td><td>Класифікація, 10 тверджень</td><td>2 бали за кожне правильне</td><td>20</td></tr>
+    <tr><td>2. Відновіть послідовність</td><td>Упорядкування, 5 кроків</td><td>3 бали за кожен крок на своєму місці</td><td>15</td></tr>
+    <tr><td>3. Узгодьте результат і доказ</td><td>Відповідність, 5 пар</td><td>5 балів за кожну правильну пару</td><td>25</td></tr>
+    <tr><td>4. Перевірте розуміння</td><td>Тест, 5 запитань</td><td>3 бали за кожну правильну відповідь</td><td>15</td></tr>
+    <tr><td>5. Сконструюйте власний план</td><td>Відкрите завдання + рубрика</td><td>5 критеріїв × 0 / 3 / 5 балів</td><td>25</td></tr>
+    <tr><th colspan="3">Разом</th><th>100</th></tr>
+  </table>
+  <table>
+    <tr><th>Бали</th><th>Рівень</th><th>Що це означає</th></tr>
+    <tr><td>90–100</td><td>Високий</td><td>Упевнено проєктує навчання за зворотним дизайном і узгоджує всі три етапи зі Стандартом</td></tr>
+    <tr><td>75–89</td><td>Достатній</td><td>Розуміє логіку етапів, є окремі неточності в доборі доказів або критеріїв</td></tr>
+    <tr><td>60–74</td><td>Середній</td><td>Розрізняє етапи, але узгодженість «результат → доказ → діяльність» ще нестійка</td></tr>
+    <tr><td>0–59</td><td>Початковий</td><td>Варто переглянути приклади-підказки та виконати вправу повторно</td></tr>
+  </table>
+  <div class="note">Порада: перед завданнями 3 і 5 перегляньте вкладку «Приклади-підказки». Коди результатів у вправі взято з тексту Стандарту. Плануючи реальний курс, звіряйте їх з додатками для вашої освітньої галузі.</div>
+  <button class="btn" onclick="go('examples')">Переглянути приклади →</button>
+  <button class="btn secondary" onclick="go('t1')">Почати одразу</button>
+</section>
+
+<!-- ============ ПРИКЛАДИ ============ -->
+<section class="panel" id="examples">
+  <h2>Приклади виконання (підказки)</h2>
+  <p>Шість зразків показують, як від коду результату зі Стандарту перейти до доказів і навчальної діяльності: приклади 1–3 стосуються громадянської та історичної й мовно-літературної галузей, приклади 4–6 — інформатичної. Їх можна використати як взірець для завдання 5.</p>
+
+  <details open>
+    <summary>Приклад 1. Історія України, 10 клас (профільно-адаптаційний цикл) — «Чи можна вірити джерелу?»</summary>
+    <div class="st a"><b class="s1">Етап 1. Бажані результати</b><br>
+      <b>Результат зі Стандарту:</b> <code>ГІО 3.3</code> «Визначає достовірність історичної та суспільної інформації», конкретний результат <code>ГІО 3.3.1</code> «установлює достовірність джерела інформації» (група 3 «Критичне мислення…»).<br>
+      <b>Тривале розуміння:</b> будь-яке джерело має автора, мету й контекст, і вони впливають на те, як джерело подає події.<br>
+      <b>Ключові питання:</b> Кому вигідно, щоб я повірив цьому джерелу? Чим свідчення очевидця відрізняється від факту?<br>
+      <b>Учні вмітимуть:</b> визначати автора, час, мету й адресата джерела; зіставляти його з іншими джерелами.</div>
+    <div class="st b"><b class="s2">Етап 2. Прийнятні докази</b><br>
+      <b>Завдання на перенесення (GRASPS):</b> ви — фактчекер(-ка) історичного медіа. Редакція отримала «спогад» про події 1918 року, який поширюють у соцмережах. Підготуйте висновок для редакції (до 1 стор.): чи можна публікувати матеріал і чому.<br>
+      <b>Критерії:</b> визначено походження та автора; зіставлено з ≥2 незалежними джерелами; аргументовано висновок; дотримано академічної доброчесності.<br>
+      <b>Формувальне оцінювання:</b> вихідна картка «3 ознаки сумнівного джерела».</div>
+    <div class="st c"><b class="s3">Етап 3. План навчання</b><br>
+      1) «Гачок»: два протилежні дописи про одну подію. 2) Мінілекція та алгоритм аналізу джерела. 3) Робота в парах з добіркою документів (тренування). 4) Взаємооцінювання чернеток за чеклістом. 5) Виконання підсумкового завдання й рефлексія.<br>
+      <i>Наскрізні вміння:</i> читати з розумінням, критично мислити, логічно обґрунтовувати позицію.</div>
+  </details>
+
+  <details>
+    <summary>Приклад 2. Українська мова, 10 клас — «Конспект, що працює»</summary>
+    <div class="st a"><b class="s1">Етап 1. Бажані результати</b><br>
+      <b>Результат зі Стандарту:</b> <code>10 УМД 1.2.2-1</code> «самостійно складає і компонує складний план, створює конспект, тези почутого».<br>
+      <b>Тривале розуміння:</b> добрий конспект — це не стенограма, а відбір і структурування головного для конкретної мети.<br>
+      <b>Ключове питання:</b> Як вирішити, що з почутого варто записати?<br>
+      <b>Учні вмітимуть:</b> вирізняти тезу й аргументи, будувати складний план, скорочувати без втрати змісту.</div>
+    <div class="st b"><b class="s2">Етап 2. Прийнятні докази</b><br>
+      <b>Завдання на перенесення:</b> прослухати 10-хвилинний науково-популярний подкаст і підготувати конспект-шпаргалку для однокласника, який його не слухав. Однокласник має за конспектом відповісти на 3 запитання.<br>
+      <b>Критерії:</b> є складний план; збережено основні тези; використано систему скорочень і графічні виділення; однокласник правильно відповідає на ≥2 з 3 запитань.</div>
+    <div class="st c"><b class="s3">Етап 3. План навчання</b><br>
+      1) Порівняння «поганого» і «доброго» конспекту. 2) Моделювання вчителем «думання вголос». 3) Тренування на коротких аудіо з поступовим ускладненням. 4) Обмін конспектами і перевірка «чи зрозуміло без аудіо». 5) Підсумкове завдання.<br>
+      <i>Наскрізні вміння:</i> читати (слухати) з розумінням, співпрацювати з іншими.</div>
+  </details>
+
+  <details>
+    <summary>Приклад 3. Громадянська освіта, 11 клас (профільний цикл) — «Моя відповідальність у громаді»</summary>
+    <div class="st a"><b class="s1">Етап 1. Бажані результати</b><br>
+      <b>Результат зі Стандарту:</b> <code>ГІО 5.2</code> «Діє з урахуванням принципів прав людини…», конкретний результат <code>ГІО 5.2.3</code> «відповідально ставиться до своїх обовʼязків, які виникають з належності до спільноти і держави».<br>
+      <b>Тривале розуміння:</b> права й обов'язки взаємопов'язані; громада стає сильнішою, коли кожен робить свою частину.<br>
+      <b>Ключове питання:</b> Де закінчується «мене це не стосується»?</div>
+    <div class="st b"><b class="s2">Етап 2. Прийнятні докази</b><br>
+      <b>Завдання на перенесення:</b> команда розробляє та реалізує мініініціативу для громади (2–3 тижні) і презентує її раді учнівського самоврядування.<br>
+      <b>Критерії (рубрика, основний / поглиблений рівень):</b> обґрунтовано проблему; розподілено обов'язки й дотримано їх; оцінено ризики; рефлексійний щоденник показує усвідомлення власної ролі.</div>
+    <div class="st c"><b class="s3">Етап 3. План навчання</b><br>
+      1) Кейс-обговорення. 2) Картування потреб громади. 3) Планування з розподілом ролей. 4) Реалізація та проміжні консультації. 5) Презентація і рефлексія.<br>
+      <i>Наскрізні вміння:</i> виявляти ініціативу, оцінювати ризики, приймати рішення, співпрацювати з іншими.</div>
+  </details>
+
+  <h3 style="margin-top:26px">Інформатична освітня галузь (ІФО)</h3>
+  <div class="note">Групи загальних результатів ІФО за Стандартом: <b>1</b> — пошук, аналіз і критичне оцінювання даних та інформації; <b>2</b> — створення інформаційних продуктів і програм; <b>3</b> — організація та використання цифрових середовищ; <b>4</b> — усвідомлення наслідків використання ІТ, дотримання етичних і правових норм.</div>
+
+  <details open>
+    <summary>Приклад 4. Інформатика, профільний цикл — «Фейк чи факт: перевіряємо цифровий контент»</summary>
+    <div class="st a"><b class="s1">Етап 1. Бажані результати</b><br>
+      <b>Результат зі Стандарту:</b> загальний результат <code>ІФО 1.4</code> «Критично оцінює інформацію, отриману з різних джерел», конкретний результат <code>12 ІФО 1.4.1-1</code> «оцінює достовірність інформації та надійність її джерел, використовуючи надані критерії та пропонуючи власні».<br>
+      <b>Тривале розуміння:</b> цифровий контент (фото, відео, текст, згенерований ШІ) лишає технічні «сліди»: метадані, історію поширення, артефакти генерації. Їх можна перевірити інструментами, а не лише інтуїцією.<br>
+      <b>Ключові питання:</b> Чи достатньо «виглядає правдоподібно», щоб поширити? Які критерії надійності джерела я можу запропонувати сам(а)?<br>
+      <b>Учні вмітимуть:</b> перевіряти метадані файлів, шукати зображення за зразком, відстежувати першоджерело, розпізнавати ознаки згенерованого контенту, формулювати власні критерії.</div>
+    <div class="st b"><b class="s2">Етап 2. Прийнятні докази</b><br>
+      <b>Завдання на перенесення (GRASPS):</b> ви — модератор(-ка) шкільного медіацентру. До редакції надійшли 3 «сенсаційні» матеріали (фото, відео, допис). Перевірте кожен і підготуйте звіт: вердикт, використані інструменти, доказові скриншоти, <i>власний</i> критерій надійності, якого не було в наданому чеклісті.<br>
+      <b>Критерії:</b> застосовано ≥3 технічні методи перевірки; вердикт підкріплено доказами; запропоновано обґрунтований власний критерій; дотримано етики (без поширення неперевіреного).<br>
+      <b>Формувальне оцінювання:</b> міні-квіз «Справжнє чи згенероване?», вихідна картка «Мій найнадійніший інструмент і чому».</div>
+    <div class="st c"><b class="s3">Етап 3. План навчання</b><br>
+      1) «Гачок»: гра «знайди фейк» у стрічці новин. 2) Демонстрація інструментів (метадані, зворотний пошук зображень, архіви вебсторінок). 3) Практикум у парах на добірці кейсів зі зростанням складності. 4) Спільне напрацювання чекліста й обговорення «чого в ньому бракує». 5) Підсумковий звіт і взаємооцінювання.<br>
+      <i>Наскрізні вміння:</i> критично і системно мислити, логічно обґрунтовувати позицію, оцінювати ризики.</div>
+  </details>
+
+  <details>
+    <summary>Приклад 5. Інформатика, профільний цикл — «Алгоритм для шкільного чат-бота»</summary>
+    <div class="st a"><b class="s1">Етап 1. Бажані результати</b><br>
+      <b>Результат зі Стандарту:</b> загальний результат <code>ІФО 2.1</code> «Розробляє і реалізовує алгоритми», конкретний результат <code>12 ІФО 2.1.1-1</code> «пояснює та застосовує основні алгоритми, які типово застосовують для розвʼязування задач з обраної галузі».<br>
+      <b>Тривале розуміння:</b> вибір алгоритму залежить від даних і задачі. «Працює» і «працює ефективно» — різні речі, і різницю можна виміряти.<br>
+      <b>Ключові питання:</b> Чому програма, яка працює на 10 записах, «зависає» на 100 000? Як обрати алгоритм, а не просто написати перший, що спав на думку?<br>
+      <b>Учні вмітимуть:</b> пояснювати й реалізовувати лінійний і бінарний пошук та алгоритми сортування, порівнювати їх за кількістю операцій і часом виконання.</div>
+    <div class="st b"><b class="s2">Етап 2. Прийнятні докази</b><br>
+      <b>Завдання на перенесення (GRASPS):</b> ви — команда розробників шкільного чат-бота, який за прізвищем знаходить розклад учня серед кількох тисяч записів. Реалізуйте пошук двома способами, заміряйте час на наборах даних різного розміру і представте адміністрації рекомендацію з графіком.<br>
+      <b>Критерії:</b> обидва алгоритми реалізовано коректно; проведено вимірювання на ≥3 обсягах даних; результати подано графіком; рекомендацію обґрунтовано (зокрема, чому для бінарного пошуку дані треба впорядкувати); код прокоментовано.<br>
+      <b>Формувальне оцінювання:</b> «трасування» алгоритму на папері, взаємне рев'ю коду за чеклістом.</div>
+    <div class="st c"><b class="s3">Етап 3. План навчання</b><br>
+      1) Унплагд-активність: пошук «загаданого числа» за мінімум запитань. 2) Пояснення ідеї пошуку та сортування з візуалізацією. 3) Покрокова реалізація в Python з тестовими даними. 4) Лабораторна: заміри часу й побудова графіка. 5) Командна робота над ботом, презентація рекомендації.<br>
+      <i>Наскрізні вміння:</i> розв'язувати проблеми, критично і системно мислити, співпрацювати з іншими.</div>
+  </details>
+
+  <details>
+    <summary>Приклад 6. Інформатика, поглиблений рівень — «Цифровий сейф учнівського самоврядування»</summary>
+    <div class="st a"><b class="s1">Етап 1. Бажані результати</b><br>
+      <b>Результат зі Стандарту:</b> <code>12 ІФО 4.1.2-4 П</code> «застосовує засоби та стратегії захисту конфіденційності та цілісності даних» (група 4 — усвідомлення наслідків використання ІТ, дотримання етичних і правових норм).<br>
+      <b>Тривале розуміння:</b> безпека даних — це не одна програма, а система рішень: технічних (шифрування, резервні копії, контроль доступу) і людських (звички, правила, відповідальність).<br>
+      <b>Ключові питання:</b> Що станеться, якщо завтра зникнуть або «витечуть» наші дані? Хто має право бачити чужі персональні дані і чому?<br>
+      <b>Учні вмітимуть:</b> налаштовувати двофакторну автентифікацію й права доступу, створювати стратегію резервного копіювання, перевіряти цілісність файлів за хеш-сумою, шифрувати конфіденційні документи.</div>
+    <div class="st b"><b class="s2">Етап 2. Прийнятні докази</b><br>
+      <b>Завдання на перенесення (GRASPS):</b> ви — аудитори з кібербезпеки. Учнівське самоврядування зберігає в хмарі списки учасників, протоколи й фото заходів. Проведіть аудит ризиків, налаштуйте захист на тестовому акаунті та підготуйте «Політику безпеки даних» на 1 сторінку зрозумілою для однолітків мовою.<br>
+      <b>Критерії (основний / поглиблений рівень):</b> виявлено ≥5 ризиків для конфіденційності й цілісності; практично налаштовано 2FA, ролі доступу та резервне копіювання; продемонстровано перевірку цілісності (хеш); політика враховує правові норми щодо персональних даних; для рівня «П» — обґрунтовано вибір стратегій і запропоновано план реагування на інцидент.<br>
+      <b>Формувальне оцінювання:</b> кейс-квіз «Знайди вразливість», самоперевірка налаштувань за контрольним списком.</div>
+    <div class="st c"><b class="s3">Етап 3. План навчання</b><br>
+      1) «Гачок»: розбір реального (знеособленого) кейсу витоку даних. 2) Модель «конфіденційність — цілісність — доступність». 3) Практикум: 2FA, ролі, шифрування архіву, обчислення хешу до і після зміни файлу. 4) Командний аудит і моделювання загроз. 5) Захист політики перед «замовником» (учнівською радою) та рефлексія.<br>
+      <i>Наскрізні вміння:</i> оцінювати ризики, приймати рішення, виявляти ініціативу, співпрацювати з іншими.</div>
+  </details>
+  <button class="btn" onclick="go('t1')">До завдання 1 →</button>
+</section>
+
+<!-- ============ ЗАВДАННЯ 1 ============ -->
+<section class="panel" id="t1">
+  <h2>Завдання 1. Розподіліть дії за етапами <span class="pts">20 балів</span></h2>
+  <p>До якого етапу зворотного дизайну належить кожна дія вчителя? Натисніть кнопку <span class="tag s1">Етап 1</span>, <span class="tag s2">Етап 2</span> або <span class="tag s3">Етап 3</span>. За кожну правильну відповідь — 2 бали.</p>
+  <div id="sortList"></div>
+  <button class="btn" onclick="check1()">Перевірити</button>
+  <button class="btn secondary" onclick="reset1()">Почати знову</button>
+  <div class="feedback" id="fb1"></div>
+</section>
+
+<!-- ============ ЗАВДАННЯ 2 ============ -->
+<section class="panel" id="t2">
+  <h2>Завдання 2. Відновіть послідовність проєктування <span class="pts">15 балів</span></h2>
+  <p>Розташуйте кроки в правильному порядку стрілками ▲▼. За кожен крок на своєму місці — 3 бали.</p>
+  <div id="orderList"></div>
+  <button class="btn" onclick="check2()">Перевірити</button>
+  <button class="btn secondary" onclick="reset2()">Перемішати знову</button>
+  <div class="feedback" id="fb2"></div>
+</section>
+
+<!-- ============ ЗАВДАННЯ 3 ============ -->
+<section class="panel" id="t3">
+  <h2>Завдання 3. Узгодьте результат зі Стандарту і доказ <span class="pts">25 балів</span></h2>
+  <p>Для кожного результату навчання зі Стандарту оберіть завдання, яке буде <b>найпереконливішим доказом</b> його досягнення (етап 2). За кожну правильну пару — 5 балів.</p>
+  <div id="matchList"></div>
+  <button class="btn" onclick="check3()">Перевірити</button>
+  <button class="btn secondary" onclick="reset3()">Почати знову</button>
+  <div class="feedback" id="fb3"></div>
+</section>
+
+<!-- ============ ЗАВДАННЯ 4 ============ -->
+<section class="panel" id="t4">
+  <h2>Завдання 4. Перевірте розуміння <span class="pts">15 балів</span></h2>
+  <p>Оберіть одну правильну відповідь. За кожну — 3 бали.</p>
+  <div id="quiz"></div>
+  <button class="btn" onclick="check4()">Перевірити</button>
+  <button class="btn secondary" onclick="reset4()">Почати знову</button>
+  <div class="feedback" id="fb4"></div>
+</section>
+
+<!-- ============ ЗАВДАННЯ 5 ============ -->
+<section class="panel" id="t5">
+  <h2>Завдання 5. Сконструюйте власний фрагмент навчання <span class="pts">25 балів</span></h2>
+  <p>Оберіть результат зі Стандарту (або впишіть свій код з додатків для вашої галузі) і заповніть три етапи. Потім оцініть план за рубрикою. Взірець є у вкладці <a href="#" onclick="go('examples');return false;">«Приклади-підказки»</a>.</p>
+  <div class="builder">
+    <label class="fl" for="b_code">Результат навчання зі Стандарту</label>
+    <select id="b_code" onchange="toggleOwn()">
+      <option value="">— оберіть —</option>
+      <option>ГІО 3.3.1 — установлює достовірність джерела інформації</option>
+      <option>ГІО 1.1.1 — виявляє суб'єктивність відчуття часу</option>
+      <option>ГІО 5.2.3 — відповідально ставиться до своїх обовʼязків, які виникають з належності до спільноти і держави</option>
+      <option>10 УМД 1.2.2-1 — самостійно складає і компонує складний план, створює конспект, тези почутого</option>
+      <option>12 УМД 2.4.2-1 П — визначає естетичний і прагматичний потенціал прочитаного тексту</option>
+      <option>МИО 1.1.1 — знаходить і систематизує мистецьку інформацію</option>
+      <option>СЗО 2.4.1-1 — визначає алгоритм і моделює безпечну поведінку для запобігання виникненню небезпечних ситуацій</option>
+      <option>ФІО 1.1.1 — формулює власну вимірювану спрямовану в часі мету рухової діяльності</option>
+      <option>12 ІФО 1.1.1-1 П — оцінює можливості, функціонал, обмеження, переваги використання інформаційних технологій</option>
+      <option>12 ІФО 1.2.2-2 П — пояснює принципи стиснення даних, обґрунтовано обирає метод стиснення, ураховуючи можливість їх втрати</option>
+      <option>12 ІФО 1.4.1-1 — оцінює достовірність інформації та надійність її джерел, використовуючи надані критерії та пропонуючи власні</option>
+      <option>12 ІФО 2.1.1-1 — пояснює та застосовує основні алгоритми, які типово застосовують для розвʼязування задач з обраної галузі</option>
+      <option>12 ІФО 2.2.1-4 П — створює нові, розширює або змінює наявні програмні проекти</option>
+      <option>12 ІФО 3.2.2-2 П — діагностує апаратні або програмні збої, усуває типові несправності під контролем учителя</option>
+      <option>12 ІФО 4.1.2-4 П — застосовує засоби та стратегії захисту конфіденційності та цілісності даних</option>
+      <option value="own">Інший (впишу сам/сама)</option>
+    </select>
+    <textarea id="b_own" style="display:none;margin-top:8px;min-height:50px" placeholder="Код і формулювання результату з додатка Стандарту для вашої галузі"></textarea>
+
+    <div class="stagebox b1"><h3 class="s1">Етап 1. Бажані результати</h3>
+      <label class="fl" for="b_1">Тривале розуміння, ключове питання, що учні знатимуть і вмітимуть</label>
+      <textarea id="b_1" placeholder="Напр.: Тривале розуміння: … Ключове питання: …? Учні вмітимуть: …"></textarea></div>
+    <div class="stagebox b2"><h3 class="s2">Етап 2. Прийнятні докази</h3>
+      <label class="fl" for="b_2">Завдання на перенесення, критерії оцінювання, формувальне оцінювання</label>
+      <textarea id="b_2" placeholder="Напр.: Ви — … Ваше завдання — … Критерії: 1) … 2) … Формувальне оцінювання: …"></textarea></div>
+    <div class="stagebox b3"><h3 class="s3">Етап 3. План навчання</h3>
+      <label class="fl" for="b_3">Послідовність активностей, ресурси, наскрізні вміння</label>
+      <textarea id="b_3" placeholder="Напр.: 1) «Гачок» … 2) … 3) … Наскрізні вміння: …"></textarea></div>
+
+    <h3>Самооцінювання за рубрикою</h3>
+    <p class="autocheck" id="autocheck"></p>
+    <table class="rubric" id="rubric"></table>
+    <button class="btn" onclick="check5()">Зарахувати бали</button>
+    <button class="btn secondary" onclick="downloadPlan()">Завантажити мій план (.txt)</button>
+    <div class="feedback" id="fb5"></div>
+  </div>
+</section>
+
+<!-- ============ РЕЗУЛЬТАТ ============ -->
+<section class="panel" id="results">
+  <h2>Підсумковий результат</h2>
+  <div class="big" id="totalBig">0 / 100</div>
+  <div class="scorebar"><div id="bar"></div></div>
+  <p id="levelText"></p>
+  <table id="resTable"></table>
+  <button class="btn" onclick="window.print()">Надрукувати / зберегти PDF</button>
+  <button class="btn secondary" onclick="resetAll()">Скинути всю вправу</button>
+</section>
+</main>
+
+<div class="floating">Бали: <b id="floatScore">0</b> / 100</div>
+
+<footer>
+  Джерела: Державний стандарт профільної середньої освіти, затверджений постановою Кабінету Міністрів України від 25 липня 2024 р. № 851 (застосовується з 1 вересня 2027 р.); G. Wiggins, J. McTighe, «Understanding by Design».
+</footer>
+
+<script>
+/* ---------- навігація ---------- */
+function go(id){
+  document.querySelectorAll('section.panel').forEach(s=>s.classList.toggle('active',s.id===id));
+  document.querySelectorAll('#tabs button').forEach(b=>b.classList.toggle('active',b.dataset.t===id));
+  if(id==='results') renderResults();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+document.querySelectorAll('#tabs button').forEach(b=>b.onclick=()=>go(b.dataset.t));
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+const scores={t1:null,t2:null,t3:null,t4:null,t5:null};
+const maxes={t1:20,t2:15,t3:25,t4:15,t5:25};
+const names={t1:'1. Розподіл дій за етапами',t2:'2. Послідовність проєктування',t3:'3. Узгодження результату і доказу',t4:'4. Перевірка розуміння',t5:'5. Власний план (рубрика)'};
+function updateFloat(){const t=Object.values(scores).reduce((s,v)=>s+(v||0),0);document.getElementById('floatScore').textContent=t;}
+function fb(id,got,max,extra){
+  const el=document.getElementById(id);const r=got/max;
+  el.className='feedback show '+(r>=.9?'good':r>=.6?'mid':'low');
+  el.innerHTML=`<b>${got} з ${max} балів.</b> `+(extra||'');
+}
+
+/* ---------- Завдання 1 ---------- */
+const sortData=[
+  {t:'Обрати з додатка Стандарту код результату навчання для теми',s:1},
+  {t:'Сформулювати ключове (суттєве) питання, на яке немає однозначної відповіді',s:1},
+  {t:'Окреслити «тривале розуміння» — велику ідею, яку учні мають зрозуміти надовго',s:1},
+  {t:'Визначити, які знання та вміння учні мають опанувати',s:1},
+  {t:'Розробити підсумкове завдання на перенесення в реальному контексті (GRASPS)',s:2},
+  {t:'Скласти критерії оцінювання та рубрику з орієнтирами основного й поглибленого рівнів',s:2},
+  {t:'Запланувати формувальне оцінювання: вихідні картки, самооцінювання, взаємооцінювання',s:2},
+  {t:'Вибудувати послідовність уроків і активностей (наприклад, за моделлю WHERETO)',s:3},
+  {t:'Дібрати методи, ресурси та форми роботи (групова, проєктна, дослідницька)',s:3},
+  {t:'Передбачити тренувальні вправи та диференційовану підтримку перед підсумковим завданням',s:3}
+];
+let sortOrder=[],sortAns={};
+function render1(){
+  const box=document.getElementById('sortList');box.innerHTML='';
+  sortOrder.forEach((idx,i)=>{
+    const d=sortData[idx];const row=document.createElement('div');row.className='sort-item';row.id='si'+idx;
+    row.innerHTML=`<div class="txt">${i+1}. ${d.t}<span class="mark"></span></div><div class="choice">
+      ${[1,2,3].map(n=>`<button class="${sortAns[idx]===n?'sel'+n:''}" onclick="pick1(${idx},${n})">Етап ${n}</button>`).join('')}</div>`;
+    box.appendChild(row);
+  });
+}
+function pick1(idx,n){sortAns[idx]=n;render1();}
+function check1(){
+  if(Object.keys(sortAns).length<sortData.length){if(!confirm('Розподілено не всі твердження. Перевірити все одно?'))return;}
+  let ok=0;
+  sortData.forEach((d,idx)=>{const row=document.getElementById('si'+idx);const m=row.querySelector('.mark');
+    if(sortAns[idx]===d.s){ok++;row.classList.add('right');row.classList.remove('wrong');m.textContent=' ✓';m.style.color='var(--ok)';}
+    else{row.classList.add('wrong');row.classList.remove('right');m.textContent=` ✗ (правильно: етап ${d.s})`;m.style.color='var(--bad)';}
+  });
+  scores.t1=ok*2;updateFloat();
+  fb('fb1',scores.t1,20,'Етап 1 відповідає на питання «що?», етап 2 — «як я дізнаюся?», етап 3 — «як навчати?». Орієнтири для оцінювання Стандарту стосуються доказів (етап 2).');
+}
+function reset1(){sortOrder=shuffle([...sortData.keys()]);sortAns={};render1();document.getElementById('fb1').className='feedback';scores.t1=null;updateFloat();}
+
+/* ---------- Завдання 2 ---------- */
+const orderData=[
+  'Проаналізувати Державний стандарт і модельну програму, обрати результати навчання (коди)',
+  'Сформулювати тривале розуміння та ключові питання теми',
+  'Визначити прийнятні докази: завдання на перенесення, критерії, формувальне оцінювання',
+  'Спланувати навчальну діяльність, що готує учнів до виконання підсумкового завдання',
+  'Перевірити узгодженість: кожна активність веде до доказу, а кожен доказ підтверджує результат'
+];
+let orderCur=[];
+function render2(checked){
+  const box=document.getElementById('orderList');box.innerHTML='';
+  orderCur.forEach((idx,pos)=>{
+    const row=document.createElement('div');row.className='order-item'+(checked?(idx===pos?' right':' wrong'):'');
+    row.innerHTML=`<div class="num">${pos+1}</div><div class="txt">${orderData[idx]}</div>
+      <button onclick="mv(${pos},-1)" aria-label="вгору">▲</button><button onclick="mv(${pos},1)" aria-label="вниз">▼</button>`;
+    box.appendChild(row);
+  });
+}
+function mv(p,d){const q=p+d;if(q<0||q>=orderCur.length)return;[orderCur[p],orderCur[q]]=[orderCur[q],orderCur[p]];render2(false);}
+function check2(){let ok=0;orderCur.forEach((idx,pos)=>{if(idx===pos)ok++;});scores.t2=ok*3;updateFloat();render2(true);
+  fb('fb2',scores.t2,15,'Правильна логіка: Стандарт → розуміння і питання → докази → діяльність → перевірка узгодженості. Діяльність плануємо лише після того, як визначили, що вважатимемо доказом.');}
+function reset2(){do{orderCur=shuffle([0,1,2,3,4]);}while(orderCur.every((v,i)=>v===i));render2(false);document.getElementById('fb2').className='feedback';scores.t2=null;updateFloat();}
+
+/* ---------- Завдання 3 ---------- */
+const matchData=[
+  {code:'10 УМД 1.2.2-1',txt:'самостійно складає і компонує складний план, створює конспект, тези почутого',ev:'Прослухати подкаст і створити конспект-шпаргалку, за яким однокласник відповість на запитання'},
+  {code:'12 УМД 1.4.3-1 П',txt:'пояснює причини виникнення розбіжностей в інтерпретації фактів, явищ, подій',ev:'Порівняти два медіатексти про одну подію та в аналітичному есе пояснити, чому їхні інтерпретації різняться'},
+  {code:'ГІО 3.3.1',txt:'установлює достовірність джерела інформації',ev:'Перевірити «історичний» допис із соцмереж за алгоритмом фактчекінгу та написати висновок для редакції'},
+  {code:'12 ІФО 2.1.1-1',txt:'пояснює та застосовує основні алгоритми, які типово застосовують для розвʼязування задач з обраної галузі',ev:'Реалізувати два алгоритми пошуку для шкільного чат-бота, заміряти їхню швидкодію на різних обсягах даних і обґрунтувати вибір'},
+  {code:'12 ІФО 4.1.2-4 П',txt:'застосовує засоби та стратегії захисту конфіденційності та цілісності даних',ev:'Провести аудит хмарного сховища учнівського самоврядування, налаштувати 2FA, ролі доступу й резервне копіювання та скласти політику безпеки'}
+];
+const distractors=['Тест на відтворення дат і визначень з теми (10 запитань)','Переписати правило з підручника в зошит','Відповісти на тест «Що таке алгоритм?» з вибором одного варіанта'];
+let matchSel={},matchOpts=[];
+function render3(){
+  const box=document.getElementById('matchList');box.innerHTML='';
+  matchData.forEach((m,i)=>{
+    const row=document.createElement('div');row.className='match-row';row.id='mr'+i;
+    row.innerHTML=`<div><span class="code">${m.code}</span> — «${m.txt}»</div>
+      <select onchange="matchSel[${i}]=this.value"><option value="">— оберіть доказ —</option>
+      ${matchOpts.map(o=>`<option ${matchSel[i]===o?'selected':''}>${o}</option>`).join('')}</select><div class="mark"></div>`;
+    box.appendChild(row);
+  });
+}
+function check3(){let ok=0;
+  matchData.forEach((m,i)=>{const row=document.getElementById('mr'+i);const mk=row.querySelector('.mark');
+    if(matchSel[i]===m.ev){ok++;row.className='match-row right';mk.textContent='✓ Доказ прямо перевіряє дію, названу в результаті.';mk.style.color='var(--ok)';}
+    else{row.className='match-row wrong';mk.textContent='✗ Правильно: '+m.ev;mk.style.color='var(--bad)';}
+  });
+  scores.t3=ok*5;updateFloat();
+  fb('fb3',scores.t3,25,'Ключ до узгодження — дієслово в результаті («складає», «пояснює», «установлює», «застосовує»). Доказ має вимагати від учня саме цієї дії. Тест на відтворення не підтверджує жодного з цих результатів.');}
+function reset3(){matchOpts=shuffle(matchData.map(m=>m.ev).concat(distractors));matchSel={};render3();document.getElementById('fb3').className='feedback';scores.t3=null;updateFloat();}
+
+/* ---------- Завдання 4 ---------- */
+const quizData=[
+  {q:'Чому цей підхід називають «зворотним» дизайном?',o:['Бо уроки проводять у зворотному хронологічному порядку','Бо планування починають з бажаних результатів і доказів, а не з тем підручника чи активностей','Бо спершу учні виконують контрольну роботу, а потім вивчають матеріал','Бо вчитель отримує зворотний зв\'язок лише в кінці семестру'],a:1,e:'Планування «від кінця»: спершу результат, далі докази, і лише потім діяльність.'},
+  {q:'Яке з формулювань є ключовим (суттєвим) питанням?',o:['У якому році проголошено IV Універсал?','Хто був першим головою Центральної Ради?','Чи може джерело бути правдивим, якщо його автор упереджений?','Скільки статей у Конституції України?'],a:2,e:'Ключове питання відкрите, провокує дискусію і повертає до великої ідеї. Решта — фактологічні запитання.'},
+  {q:'Учителька знайшла захопливу квест-гру і лише потім почала думати, що з її допомогою перевірити. Яку типову помилку планування вона робить?',o:['«Пастку активностей»: діяльність обрано раніше за результати й докази','«Пастку охоплення»: намагання встигнути весь підручник','Надмірне формувальне оцінювання','Помилки немає — головне, щоб учням було цікаво'],a:0,e:'Віггінс і Мак-Тай описують дві «пастки»: орієнтація на активності та на охоплення змісту. Тут перша.'},
+  {q:'Який доказ найкраще підтверджує результат ГІО 3.3.1 «установлює достовірність джерела інформації»?',o:['Тест на знання дат і термінів','Переказ параграфа підручника','Аналіз реального допису: походження, автор, мета, зіставлення з іншими джерелами, висновок','Створення кросворду з теми'],a:2,e:'Доказ має вимагати від учня саме тієї дії, яку названо в результаті, — установити достовірність.'},
+  {q:'Що означає позначка «П» у коді результату 12 УМД 1.4.3-1 П?',o:['Перший цикл навчання','Практичне завдання','Поглиблений рівень','Проміжне оцінювання'],a:2,e:'Літерою «П» Стандарт позначає результати поглибленого рівня. Цифра 12 означає рік навчання, а «-1» — номер орієнтира для оцінювання.'}
+];
+let quizAns={};
+function render4(){
+  const box=document.getElementById('quiz');box.innerHTML='';
+  quizData.forEach((d,i)=>{
+    const q=document.createElement('div');q.className='q';q.id='q'+i;
+    q.innerHTML=`<b>${i+1}. ${d.q}</b>`+d.o.map((o,j)=>`<label><input type="radio" name="q${i}" value="${j}" ${quizAns[i]===j?'checked':''} onchange="quizAns[${i}]=${j}"> ${o}</label>`).join('')+`<div class="expl">${d.e}</div>`;
+    box.appendChild(q);
+  });
+}
+function check4(){let ok=0;quizData.forEach((d,i)=>{const q=document.getElementById('q'+i);const r=quizAns[i]===d.a;if(r)ok++;q.className='q checked '+(r?'right':'wrong');
+  if(!r){q.querySelector('.expl').innerHTML='<b>Правильна відповідь:</b> '+d.o[d.a]+'. '+d.e;}});
+  scores.t4=ok*3;updateFloat();fb('fb4',scores.t4,15,'Пояснення до кожного запитання — під варіантами відповідей.');}
+function reset4(){quizAns={};render4();document.getElementById('fb4').className='feedback';scores.t4=null;updateFloat();}
+
+/* ---------- Завдання 5 ---------- */
+const rubricData=[
+  {c:'Результат прив\'язано до коду Стандарту і сформульовано через дію учня',f:['b_code'],l:['Немає коду або результат нечіткий','Є код, але дія учня не конкретизована','Є код, результат конкретний і вимірюваний']},
+  {c:'Тривале розуміння і ключове питання відкриті та проблемні',f:['b_1'],l:['Відсутні або фактологічні','Є, але питання має однозначну відповідь','Велика ідея + відкрите питання, що спонукає думати']},
+  {c:'Доказ — завдання на перенесення, яке прямо перевіряє обраний результат',f:['b_2'],l:['Доказу немає або він не відповідає результату','Доказ відповідає частково (лише відтворення)','Автентичне завдання вимагає саме дії з результату']},
+  {c:'Є чіткі критерії оцінювання (з урахуванням основного / поглибленого рівня)',f:['b_2'],l:['Критеріїв немає','Критерії загальні («добре», «повно»)','Конкретні, спостережувані критерії, рівні розрізнено']},
+  {c:'Активності узгоджені з доказом і розвивають наскрізні вміння',f:['b_3'],l:['Активності не пов\'язані з доказом','Зв\'язок частковий, наскрізні вміння не названо','Кожен крок готує до доказу, названо наскрізні вміння']}
+];
+const lvPts=[0,3,5];
+function render5(){
+  const t=document.getElementById('rubric');
+  t.innerHTML='<tr><th>Критерій</th><th>0 балів</th><th>3 бали</th><th>5 балів</th></tr>'+
+    rubricData.map((r,i)=>`<tr><td>${i+1}. ${r.c}</td>`+r.l.map((l,j)=>`<td class="lv"><label><input type="radio" name="r${i}" value="${j}"> ${l}</label></td>`).join('')+'</tr>').join('');
+  t.querySelectorAll('td.lv').forEach(td=>td.style.whiteSpace='normal');
+}
+function toggleOwn(){document.getElementById('b_own').style.display=document.getElementById('b_code').value==='own'?'block':'none';}
+function fieldFilled(id){
+  if(id==='b_code'){const v=document.getElementById('b_code').value;if(!v)return false;if(v==='own')return document.getElementById('b_own').value.trim().length>=8;return true;}
+  return document.getElementById(id).value.trim().length>=40;
+}
+function check5(){
+  let total=0,missing=[],capped=[];
+  rubricData.forEach((r,i)=>{
+    const sel=document.querySelector(`input[name="r${i}"]:checked`);
+    if(!sel){missing.push(i+1);return;}
+    let p=lvPts[+sel.value];
+    if(!r.f.every(fieldFilled)&&p>0){p=0;capped.push(i+1);}
+    total+=p;
+  });
+  if(missing.length){const el=document.getElementById('fb5');el.className='feedback show low';el.innerHTML='Оцініть усі критерії рубрики (не оцінено: '+missing.join(', ')+').';return;}
+  scores.t5=total;updateFloat();
+  let msg='Порівняйте свій план із прикладами-підказками та за потреби доопрацюйте його. ';
+  if(capped.length)msg+=`<br><b>Увага:</b> за критерії ${capped.join(', ')} нараховано 0 балів, бо відповідне поле не заповнене або занадто коротке (менше 40 символів).`;
+  fb('fb5',total,25,msg);
+}
+function downloadPlan(){
+  const v=id=>document.getElementById(id).value.trim();
+  const code=v('b_code')==='own'?v('b_own'):v('b_code');
+  const txt=`ПЛАН ЗА ЗВОРОТНИМ ДИЗАЙНОМ\n\nРезультат зі Стандарту: ${code||'—'}\n\nЕТАП 1. Бажані результати\n${v('b_1')||'—'}\n\nЕТАП 2. Прийнятні докази\n${v('b_2')||'—'}\n\nЕТАП 3. План навчання\n${v('b_3')||'—'}\n\nСамооцінка за рубрикою: ${scores.t5===null?'не зараховано':scores.t5+' / 25'}\n`;
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([txt],{type:'text/plain;charset=utf-8'}));a.download='mii-plan-zvorotnyi-dyzain.txt';a.click();
+}
+function reset5(){['b_code','b_own','b_1','b_2','b_3'].forEach(id=>document.getElementById(id).value='');toggleOwn();render5();document.getElementById('fb5').className='feedback';scores.t5=null;updateFloat();}
+
+/* ---------- Результат ---------- */
+function renderResults(){
+  const total=Object.values(scores).reduce((s,v)=>s+(v||0),0);
+  document.getElementById('totalBig').textContent=total+' / 100';
+  document.getElementById('bar').style.width=total+'%';
+  const undone=Object.keys(scores).filter(k=>scores[k]===null);
+  let lv=total>=90?['Високий','Ви впевнено проєктуєте навчання «від результату» і узгоджуєте всі етапи зі Стандартом.']:
+         total>=75?['Достатній','Логіку етапів засвоєно. Зверніть увагу на точність добору доказів і критеріїв.']:
+         total>=60?['Середній','Етапи ви розрізняєте, але зв\'язок «результат → доказ → діяльність» ще варто закріпити.']:
+         ['Початковий','Перегляньте приклади-підказки і виконайте вправу ще раз.'];
+  document.getElementById('levelText').innerHTML=`<b>Рівень: ${lv[0]}.</b> ${lv[1]}`+(undone.length?`<br><span style="color:var(--bad)">Не перевірено завдань: ${undone.map(k=>k.slice(1)).join(', ')}.</span>`:'');
+  document.getElementById('resTable').innerHTML='<tr><th>Завдання</th><th>Бали</th><th>Максимум</th></tr>'+
+    Object.keys(scores).map(k=>`<tr><td>${names[k]}</td><td>${scores[k]===null?'—':scores[k]}</td><td>${maxes[k]}</td></tr>`).join('')+
+    `<tr><th>Разом</th><th>${total}</th><th>100</th></tr>`;
+}
+function resetAll(){if(!confirm('Скинути всі відповіді?'))return;reset1();reset2();reset3();reset4();reset5();renderResults();}
+
+/* ---------- старт ---------- */
+reset1();reset2();reset3();reset4();render5();updateFloat();
+</script>
+</body>
+</html>
