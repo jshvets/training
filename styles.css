@@ -1,0 +1,279 @@
+/* ============================================
+   Репозиторій інтерактивних вправ — стилі
+   ============================================ */
+
+@import url("https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700&family=Manrope:wght@400;600;700&display=swap");
+
+:root {
+  --bg-1: #f7f5ff;
+  --bg-2: #ffffff;
+  --accent-1: #6d4dff;
+  --accent-2: #0aa5d6;
+  --accent-3: #ff4f9a;
+  --text: #241f45;
+  --muted: #6b6790;
+  --glass: rgba(255, 255, 255, 0.65);
+  --glass-border: rgba(109, 77, 255, 0.14);
+  --radius: 20px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  padding: clamp(32px, 6vw, 80px) clamp(16px, 5vw, 64px);
+  font-family: "Manrope", system-ui, sans-serif;
+  color: var(--text);
+  background: radial-gradient(ellipse at top, var(--bg-2), var(--bg-1) 70%);
+  background-attachment: fixed;
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* Плаваючі кольорові плями на фоні */
+body::before,
+body::after {
+  content: "";
+  position: fixed;
+  z-index: -1;
+  width: 45vmax;
+  height: 45vmax;
+  border-radius: 50%;
+  filter: blur(90px);
+  opacity: 0.28;
+  animation: float 18s ease-in-out infinite alternate;
+  pointer-events: none;
+}
+
+body::before {
+  top: -15vmax;
+  left: -10vmax;
+  background: var(--accent-1);
+}
+
+body::after {
+  bottom: -18vmax;
+  right: -12vmax;
+  background: var(--accent-2);
+  animation-delay: -9s;
+}
+
+@keyframes float {
+  0%   { transform: translate(0, 0) scale(1); }
+  50%  { transform: translate(6vw, 4vh) scale(1.1); }
+  100% { transform: translate(-4vw, 8vh) scale(0.95); }
+}
+
+/* ---------- Заголовок ---------- */
+.title {
+  max-width: 1100px;
+  margin: 0 auto 48px;
+  font-family: "Unbounded", sans-serif;
+  font-weight: 700;
+  font-size: clamp(1.6rem, 4.5vw, 3.2rem);
+  line-height: 1.15;
+  letter-spacing: 0.02em;
+  text-align: center;
+  background: linear-gradient(90deg, var(--accent-2), var(--accent-1), var(--accent-3), var(--accent-2));
+  background-size: 300% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: shine 8s linear infinite, rise 0.8s ease-out both;
+}
+
+.title::after {
+  content: "";
+  display: block;
+  width: 90px;
+  height: 4px;
+  margin: 20px auto 0;
+  border-radius: 4px;
+  background: linear-gradient(90deg, var(--accent-1), var(--accent-2));
+}
+
+@keyframes shine {
+  to { background-position: 300% 0; }
+}
+
+/* ---------- Розділи (зовнішній список) ---------- */
+body > ol {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0;
+  list-style: none;
+  counter-reset: section;
+}
+
+body > ol > li {
+  counter-increment: section;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 14px;
+  margin: 0 0 22px;
+  font-family: "Unbounded", sans-serif;
+  font-weight: 500;
+  font-size: clamp(1.1rem, 2.4vw, 1.5rem);
+  animation: rise 0.8s 0.15s ease-out both;
+}
+
+body > ol > li::before {
+  content: counter(section);
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  font-size: 1.1rem;
+  background: linear-gradient(135deg, var(--accent-1), var(--accent-3));
+  box-shadow: 0 8px 20px rgba(109, 77, 255, 0.3);
+  color: #fff;
+}
+
+/* ---------- Вправи (вкладений список) ---------- */
+ol ol {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 20px;
+  width: 100%;
+  margin: 0 0 56px;
+  padding: 0;
+  list-style: none;
+  counter-reset: step;
+}
+
+ol ol li {
+  counter-increment: step;
+  animation: rise 0.7s ease-out both;
+}
+
+ol ol li:nth-child(1) { animation-delay: 0.25s; }
+ol ol li:nth-child(2) { animation-delay: 0.35s; }
+ol ol li:nth-child(3) { animation-delay: 0.45s; }
+ol ol li:nth-child(4) { animation-delay: 0.55s; }
+ol ol li:nth-child(5) { animation-delay: 0.65s; }
+ol ol li:nth-child(6) { animation-delay: 0.75s; }
+
+/* Картка-посилання */
+ol ol a {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 28px;
+  height: 100%;
+  min-height: 160px;
+  padding: 24px;
+  border-radius: var(--radius);
+  font-family: "Manrope", sans-serif;
+  font-weight: 700;
+  font-size: 1.05rem;
+  line-height: 1.4;
+  color: var(--text);
+  text-decoration: none;
+  background: var(--glass);
+  border: 1px solid var(--glass-border);
+  box-shadow: 0 6px 20px rgba(60, 40, 140, 0.08);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  overflow: hidden;
+  isolation: isolate;
+  transition: transform 0.35s cubic-bezier(.2, .8, .2, 1),
+              box-shadow 0.35s ease,
+              border-color 0.35s ease;
+}
+
+/* Номер вправи */
+ol ol a::before {
+  content: counter(step, decimal-leading-zero);
+  font-family: "Unbounded", sans-serif;
+  font-size: 2.4rem;
+  font-weight: 700;
+  line-height: 1;
+  background: linear-gradient(135deg, var(--accent-2), var(--accent-1));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  opacity: 0.85;
+  transition: opacity 0.35s ease;
+}
+
+/* Стрілка + градієнтна заливка при наведенні */
+ol ol a::after {
+  content: "→";
+  position: absolute;
+  top: 22px;
+  right: 22px;
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  font-size: 1.1rem;
+  border: 1px solid var(--glass-border);
+  color: var(--accent-1);
+  background: rgba(109, 77, 255, 0.06);
+  transition: transform 0.35s ease, background 0.35s ease;
+}
+
+ol ol a:hover,
+ol ol a:focus-visible {
+  transform: translateY(-6px);
+  background: #ffffff;
+  border-color: rgba(109, 77, 255, 0.45);
+  box-shadow: 0 18px 40px rgba(60, 40, 140, 0.16),
+              0 0 0 1px rgba(109, 77, 255, 0.2);
+  outline: none;
+}
+
+ol ol a:hover::before,
+ol ol a:focus-visible::before {
+  opacity: 1;
+}
+
+ol ol a:hover::after,
+ol ol a:focus-visible::after {
+  transform: rotate(-45deg);
+  background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
+  border-color: transparent;
+  color: #fff;
+}
+
+ol ol a:active {
+  transform: translateY(-2px) scale(0.99);
+}
+
+/* ---------- Анімація появи ---------- */
+@keyframes rise {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ---------- Адаптивність ---------- */
+@media (max-width: 520px) {
+  ol ol {
+    grid-template-columns: 1fr;
+  }
+
+  ol ol a {
+    min-height: 130px;
+  }
+}
+
+/* Для тих, хто вимкнув анімації в системі */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}
