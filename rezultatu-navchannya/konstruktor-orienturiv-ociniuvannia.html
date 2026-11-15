@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Конструктор орієнтирів оцінювання з теми</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&family=Unbounded:wght@500;600&display=swap" rel="stylesheet">
+<style>
+/* Layout: шапка зі зведенням → три колонки: кроки алгоритму · робоча область кроку · підказки до кроку */
+:root{
+  --bg:#eef1f6; --surface:#ffffff; --surface-2:#f6f8fb; --ink:#18202e; --muted:#5a6577; --line:#d6dce6;
+  --accent:#1d4b9b; --accent-ink:#ffffff; --accent-soft:#e3ebf8;
+  --hint:#8a5a0b; --hint-soft:#fbf0dc;
+  --ok:#25744a; --ok-soft:#e1f2e8; --warn:#a63f27; --warn-soft:#fae6e0;
+  --font-display:"Unbounded","IBM Plex Sans",system-ui,sans-serif;
+  --font-body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --font-mono:"IBM Plex Mono",ui-monospace,Consolas,monospace;
+  --r:10px; color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0f141d; --surface:#171e2a; --surface-2:#1d2533; --ink:#e7ecf4; --muted:#9aa6b8; --line:#2c3647;
+  --accent:#7ea6ec; --accent-ink:#0f141d; --accent-soft:#1f2d47;
+  --hint:#e6b866; --hint-soft:#2e2615; --ok:#6fcf98; --ok-soft:#16301f; --warn:#f08f78; --warn-soft:#3a1d16; color-scheme:dark;}}
+:root[data-theme="dark"]{
+  --bg:#0f141d; --surface:#171e2a; --surface-2:#1d2533; --ink:#e7ecf4; --muted:#9aa6b8; --line:#2c3647;
+  --accent:#7ea6ec; --accent-ink:#0f141d; --accent-soft:#1f2d47;
+  --hint:#e6b866; --hint-soft:#2e2615; --ok:#6fcf98; --ok-soft:#16301f; --warn:#f08f78; --warn-soft:#3a1d16; color-scheme:dark;}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:15px/1.55 var(--font-body)}
+h1,h2,h3{text-wrap:balance;margin:0}
+h1{font:600 19px/1.25 var(--font-display);letter-spacing:-.01em}
+h2{font:600 17px/1.3 var(--font-display);letter-spacing:-.01em}
+h3{font-size:15px;font-weight:600}
+p{margin:0}
+.muted{color:var(--muted)}
+.small{font-size:13px}
+code,.code{font-family:var(--font-mono);font-size:12.5px}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+header.top{background:var(--surface);border-bottom:1px solid var(--line);padding:14px 20px;display:flex;flex-wrap:wrap;gap:12px 20px;align-items:center;justify-content:space-between}
+.brand{display:flex;flex-direction:column;gap:2px}
+.toolbar{display:flex;flex-wrap:wrap;gap:8px}
+.btn{border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:7px 12px;cursor:pointer;font-weight:500;font-size:14px;line-height:1.3}
+.btn:hover{border-color:var(--accent)}
+.btn.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.btn.ghost{background:transparent}
+.btn.danger{color:var(--warn)}
+.btn.sm{padding:4px 9px;font-size:13px}
+.btn[disabled]{opacity:.5;cursor:not-allowed}
+
+.summary{display:flex;flex-wrap:wrap;gap:8px;padding:10px 20px;background:var(--surface-2);border-bottom:1px solid var(--line)}
+.chip{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:3px 10px;font-size:13px;white-space:nowrap}
+.chip b{font-variant-numeric:tabular-nums}
+.chip.warn{border-color:var(--warn);color:var(--warn);background:var(--warn-soft)}
+.chip.ok{border-color:var(--ok);color:var(--ok);background:var(--ok-soft)}
+
+.banner{margin:12px 20px 0;padding:10px 14px;border-radius:var(--r);background:var(--accent-soft);display:flex;gap:12px;align-items:center;flex-wrap:wrap;justify-content:space-between}
+
+.app{display:grid;grid-template-columns:250px minmax(0,1fr) 300px;gap:16px;padding:16px 20px 40px;align-items:start}
+nav.steps{position:sticky;top:12px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:10px}
+.stage{font-size:11.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);padding:10px 8px 4px;font-weight:600}
+.stepbtn{display:grid;grid-template-columns:26px 1fr;gap:8px;align-items:center;width:100%;text-align:left;border:0;background:transparent;border-radius:8px;padding:6px 8px;cursor:pointer;font-size:14px}
+.stepbtn:hover{background:var(--surface-2)}
+.stepbtn .num{width:24px;height:24px;border-radius:50%;display:grid;place-items:center;font-size:12px;font-weight:600;border:1.5px solid var(--line);font-variant-numeric:tabular-nums}
+.stepbtn.done .num{background:var(--ok-soft);border-color:var(--ok);color:var(--ok)}
+.stepbtn.active{background:var(--accent-soft)}
+.stepbtn.active .num{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+
+main.work{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:20px 22px;min-width:0}
+.stephead{display:flex;flex-direction:column;gap:6px;margin-bottom:16px;padding-bottom:14px;border-bottom:1px solid var(--line)}
+.eyebrow{font-size:12px;color:var(--accent);font-weight:600;letter-spacing:.04em;text-transform:uppercase}
+.lead{max-width:68ch;color:var(--muted)}
+.stepnav{display:flex;justify-content:space-between;gap:10px;margin-top:22px;padding-top:14px;border-top:1px solid var(--line)}
+
+aside.hints{position:sticky;top:12px;display:flex;flex-direction:column;gap:12px}
+.hintcard{background:var(--hint-soft);border:1px solid color-mix(in srgb,var(--hint) 30%,transparent);border-radius:var(--r);padding:12px 14px}
+.hintcard h3{color:var(--hint);font-size:13px;text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px}
+.hintcard ul{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:5px;font-size:14px}
+.hintcard.ex{background:var(--surface);border-color:var(--line)}
+.hintcard.ex h3{color:var(--accent)}
+.hintcard.err{background:var(--surface);border-color:var(--line)}
+.hintcard.err h3{color:var(--warn)}
+
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px 16px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px 16px}
+.field{display:flex;flex-direction:column;gap:4px;min-width:0}
+.field.full{grid-column:1/-1}
+label.lbl{font-size:13px;font-weight:600}
+.help{font-size:12.5px;color:var(--muted)}
+input[type=text],input[type=number],input[type=search],select,textarea{width:100%;border:1px solid var(--line);border-radius:8px;background:var(--surface);padding:7px 10px;font-size:14.5px}
+textarea{resize:vertical;min-height:62px;line-height:1.45}
+input:focus,select:focus,textarea:focus{border-color:var(--accent);outline:none;box-shadow:0 0 0 3px var(--accent-soft)}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.seg button{border:0;background:var(--surface);padding:7px 12px;cursor:pointer;font-size:14px}
+.seg button+button{border-left:1px solid var(--line)}
+.seg button.on{background:var(--accent);color:var(--accent-ink)}
+
+.card{border:1px solid var(--line);border-radius:var(--r);padding:12px 14px;background:var(--surface);display:flex;flex-direction:column;gap:10px}
+.card.sel{border-color:var(--accent);box-shadow:inset 3px 0 0 var(--accent)}
+.card.support{border-color:var(--hint);box-shadow:inset 3px 0 0 var(--hint)}
+.stack{display:flex;flex-direction:column;gap:10px}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.spread{display:flex;gap:8px;align-items:flex-start;justify-content:space-between;flex-wrap:wrap}
+.pill{display:inline-block;font-family:var(--font-mono);font-size:12px;padding:1px 7px;border-radius:6px;background:var(--surface-2);border:1px solid var(--line);white-space:nowrap}
+.pill.adv{border-color:var(--accent);color:var(--accent)}
+.tag{display:inline-block;font-size:12px;font-weight:600;padding:1px 8px;border-radius:999px;white-space:nowrap}
+.tag.lead{background:var(--accent-soft);color:var(--accent)}
+.tag.support{background:var(--hint-soft);color:var(--hint)}
+.tag.match{background:var(--ok-soft);color:var(--ok)}
+.b1{background:#eceff3;color:#4a5363}.b2{background:#e4eefc;color:#22508f}.b3{background:#e2f3ea;color:#22693f}.b4{background:#fdf0d9;color:#86560b}.b5{background:#fbe5de;color:#9a3a22}.b6{background:#eee5fb;color:#5b3596}
+:root[data-theme="dark"] .b1,:root[data-theme="dark"] .b2,:root[data-theme="dark"] .b3,:root[data-theme="dark"] .b4,:root[data-theme="dark"] .b5,:root[data-theme="dark"] .b6{filter:brightness(.55) saturate(1.3);color:#fff}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .b1,:root:not([data-theme="light"]) .b2,:root:not([data-theme="light"]) .b3,:root:not([data-theme="light"]) .b4,:root:not([data-theme="light"]) .b5,:root:not([data-theme="light"]) .b6{filter:brightness(.55) saturate(1.3);color:#fff}}
+
+details.grp{border:1px solid var(--line);border-radius:var(--r);background:var(--surface)}
+details.grp>summary{cursor:pointer;padding:10px 14px;font-weight:600;list-style:none;display:flex;gap:10px;justify-content:space-between;align-items:center}
+details.grp>summary::-webkit-details-marker{display:none}
+details.grp>summary::after{content:"▾";color:var(--muted)}
+details.grp[open]>summary::after{content:"▴"}
+.grpbody{padding:0 14px 14px;display:flex;flex-direction:column;gap:8px}
+.cr{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:start;padding:8px 10px;border-radius:8px;border:1px solid transparent}
+.cr:hover{background:var(--surface-2)}
+.cr.on{border-color:var(--accent);background:var(--accent-soft)}
+.cr.on.sup{border-color:var(--hint);background:var(--hint-soft)}
+.cr input[type=checkbox]{margin-top:4px;width:17px;height:17px;accent-color:var(--accent)}
+.or{display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:start;padding:6px 8px;border-radius:8px}
+.or.on{background:var(--accent-soft)}
+.or input{margin-top:4px;width:16px;height:16px;accent-color:var(--accent)}
+
+.cmp{display:grid;grid-template-columns:150px 1fr 1fr;gap:8px 12px;align-items:start}
+.cmp .h{font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+.cmp .k{font-weight:600;font-size:13.5px;padding-top:7px}
+.cmp .std{background:var(--surface-2);border-radius:8px;padding:7px 10px;font-size:14px;min-height:36px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chipbtn{border:1px dashed var(--line);background:var(--surface);border-radius:999px;padding:2px 10px;font-size:13px;cursor:pointer}
+.chipbtn:hover{border-color:var(--accent);color:var(--accent)}
+.chipbtn.on{border-style:solid;border-color:var(--accent);background:var(--accent-soft);color:var(--accent)}
+
+.preview{border:1px solid var(--accent);background:var(--accent-soft);border-radius:var(--r);padding:12px 14px}
+.preview .t{font-size:16px;font-weight:500}
+.lint{display:flex;flex-direction:column;gap:4px;font-size:13px}
+.lint .w{color:var(--warn)}
+.lint .g{color:var(--ok)}
+.res{display:grid;grid-template-columns:34px 1fr auto;gap:10px;align-items:start;border:1px solid var(--line);border-radius:var(--r);padding:10px 12px}
+.res .no{font:600 15px var(--font-display);color:var(--accent);padding-top:1px}
+.res .meta{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.res .acts{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+
+.dist{display:flex;height:28px;border-radius:8px;overflow:hidden;border:1px solid var(--line)}
+.dist div{display:grid;place-items:center;font-size:12px;font-weight:600;min-width:0;overflow:hidden;white-space:nowrap}
+.legend{display:flex;flex-wrap:wrap;gap:6px 12px;font-size:12.5px}
+
+.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:var(--r)}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th,td{border-bottom:1px solid var(--line);padding:7px 10px;text-align:left;vertical-align:top}
+th{background:var(--surface-2);font-size:12.5px;font-weight:600}
+td.c{text-align:center;font-variant-numeric:tabular-nums}
+tr:last-child td{border-bottom:0}
+.mx td:first-child{min-width:320px}
+.mx td.hit{background:var(--accent-soft);color:var(--accent);font-weight:700;text-align:center}
+.mx td.miss{text-align:center;color:var(--line)}
+.status{font-size:12.5px;font-weight:600;white-space:nowrap}
+.status.ok{color:var(--ok)}.status.bad{color:var(--warn)}
+.checks{display:flex;flex-direction:column;gap:6px;margin:0;padding:0;list-style:none}
+.checks li{display:grid;grid-template-columns:22px 1fr;gap:6px;font-size:14px}
+.checks .i{font-weight:700}
+.checks .ok .i{color:var(--ok)}.checks .bad .i{color:var(--warn)}
+
+.rub{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.rub .field label{font-size:12.5px}
+.plan{border:1px solid var(--line);border-radius:var(--r);padding:18px 20px;background:var(--surface);display:flex;flex-direction:column;gap:14px}
+.plan h2{font-size:18px}
+.plan h3{margin-top:6px}
+.plan table{font-size:13.5px}
+.empty{padding:18px;border:1px dashed var(--line);border-radius:var(--r);color:var(--muted);text-align:center}
+
+.toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:9px 16px;border-radius:999px;font-size:14px;opacity:0;pointer-events:none;transition:opacity .2s}
+.toast.show{opacity:1}
+@media (prefers-reduced-motion:reduce){.toast{transition:none}}
+
+@media (max-width:1180px){
+  .app{grid-template-columns:230px minmax(0,1fr)}
+  aside.hints{grid-column:2;position:static}
+}
+@media (max-width:780px){
+  .app{grid-template-columns:1fr;padding:12px}
+  nav.steps{position:static;display:flex;overflow-x:auto;gap:4px;padding:6px}
+  .stage{display:none}
+  .stepbtn{grid-template-columns:24px auto;white-space:nowrap;width:auto}
+  aside.hints{grid-column:1}
+  .grid2,.grid3{grid-template-columns:1fr}
+  .cmp{grid-template-columns:1fr}
+  .cmp .h{display:none}
+  .rub{grid-template-columns:1fr 1fr}
+  main.work{padding:16px}
+  header.top,.summary{padding-left:12px;padding-right:12px}
+  .banner{margin:12px 12px 0}
+}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="brand">
+    <h1>Конструктор орієнтирів оцінювання з теми</h1>
+    <p class="muted small">Від вимог Державного стандарту (Додаток 14, інформатична галузь) до результатів навчання з теми · 10 кроків</p>
+  </div>
+  <div class="toolbar">
+    <button class="btn" id="btnExample" type="button">Відкрити приклад «Бази даних»</button>
+    <button class="btn" id="btnNew" type="button">Новий план</button>
+    <button class="btn primary" id="btnToPlan" type="button">Готовий план</button>
+  </div>
+</header>
+<div class="summary" id="summary"></div>
+<div id="bannerSlot"></div>
+<div class="app">
+  <nav class="steps" id="steps" aria-label="Кроки алгоритму"></nav>
+  <main class="work" id="work"></main>
+  <aside class="hints" id="hints" aria-label="Підказки"></aside>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+const STD = {"groups":[{"n":"1","t":"Пошук, подання, перетворення, аналіз, узагальнення та систематизація даних, критичне оцінювання інформації для розв’язання життєвих проблем"},{"n":"2","t":"Створення інформаційних продуктів і програм для ефективного розв’язання задач/проблем, творчого самовираження індивідуально і у співпраці з іншими особами за допомогою цифрових пристроїв чи без них"},{"n":"3","t":"Організація та усвідомлене використання цифрових середовищ для доступу до інформації, спілкування та співпраці як творця та/або споживача"},{"n":"4","t":"Усвідомлення результатів використання інформаційних технологій для себе, суспільства, навколишнього середовища і сталого розвитку суспільства, дотримання етичних і правових норм інформаційної взаємодії"}],"items":[{"c":"ІФО 1.1","k":"general","t":"Досліджує і оцінює вплив інформаційних технологій на своє життя, навколишній світ і розвиток","n":"1.1"},{"c":"12 ІФО 1.1.1","k":"concrete","t":"обґрунтовано обирає та доцільно використовує цифрові пристрої та/або інформаційні технології для розвʼязування задач з різних галузей, забезпечення життєвих потреб, спілкування, власного розвитку та навчання","n":"1.1.1"},{"c":"12 ІФО 1.1.1-1","k":"basic","t":"обґрунтовано обирає та доцільно використовує цифрові пристрої та/або інформаційні технології для розвʼязування задач з обраної галузі, зокрема під час здійснення професійної діяльності, забезпечення життєвих потреб, спілкування, власного розвитку та навчання","n":"1.1.1"},{"c":"12 ІФО 1.1.1-1 П","k":"adv","t":"оцінює можливості, функціонал, обмеження, переваги використання інформаційних технологій для вирішення проблем обраної галузі","n":"1.1.1"},{"c":"12 ІФО 1.1.1-2 П","k":"adv","t":"пояснює та наводить аргументи доцільності та ефективності використання цифрових пристроїв/інформаційних технологій в обраній галузі для вирішення життєвих, зокрема професійних, задач","n":"1.1.1"},{"c":"12 ІФО 1.1.1-3 П","k":"adv","t":"доцільно добирає цифрові пристрої та/або інформаційні технології для забезпечення життєвих потреб, спілкування державною, рідною та іноземною мовами, власного розвитку і навчання","n":"1.1.1"},{"c":"12 ІФО 1.1.2","k":"concrete","t":"аналізує та оцінює сучасні тенденції розвитку інформаційних технологій у різних галузях","n":"1.1.2"},{"c":"12 ІФО 1.1.2-1","k":"basic","t":"аналізує та оцінює сучасні тенденції розвитку інформаційних технологій в обраній галузі, їх специфіку та обсяги впливу","n":"1.1.2"},{"c":"12 ІФО 1.1.2-1 П","k":"adv","t":"наводить приклади застосування, пояснює перспективи використання та обмеження сучасних інформаційних технологій, а також оцінює їх вплив на власне життя і суспільство","n":"1.1.2"},{"c":"12 ІФО 1.1.2-2 П","k":"adv","t":"пояснює та враховує переваги і ризики використання конкретних сучасних інформаційних технологій в обраній галузі","n":"1.1.2"},{"c":"12 ІФО 1.1.2-3 П","k":"adv","t":"використовує доступні передові інформаційні технології для розвʼязування задач з обраної галузі","n":"1.1.2"},{"c":"12 ІФО 1.1.2-4 П","k":"adv","t":"висловлює прогнози щодо розвитку обраної галузі під впливом інформаційних технологій","n":"1.1.2"},{"c":"12 ІФО 1.1.3","k":"concrete","t":"пояснює і враховує фактори, які впливають на розподіл і використання цифрових ресурсів у глобальному суспільстві","n":"1.1.3"},{"c":"12 ІФО 1.1.3-1","k":"basic","t":"пояснює фактори, які впливають на розподіл і використання цифрових ресурсів у глобальному суспільстві","n":"1.1.3"},{"c":"12 ІФО 1.1.3-1 П","k":"adv","t":"наводить приклади факторів, які впливають на розподіл і використання цифрових ресурсів у глобальному суспільстві","n":"1.1.3"},{"c":"12 ІФО 1.1.3-2 П","k":"adv","t":"розробляє критерії оцінювання переваг і негативних впливів комп’ютерних інновацій на особистий розвиток, суспільство та довкілля, аргументує висновки","n":"1.1.3"},{"c":"12 ІФО 1.1.3-3 П","k":"adv","t":"описує суспільні проблеми, повʼязані з цифровим розривом та нерівним доступом до обчислювальних ресурсів","n":"1.1.3"},{"c":"12 ІФО 1.1.3-4 П","k":"adv","t":"використовує галузеву термінологію та розширює словниковий запас, спілкуючись державною, рідною та іноземною мовами на тему інформаційних технологій","n":"1.1.3"},{"c":"ІФО 1.2","k":"general","t":"Знаходить, збирає, зберігає, представляє, перетворює, структурує, аналізує і узагальнює дані різних типів","n":"1.2"},{"c":"12 ІФО 1.2.1","k":"concrete","t":"розуміє та пояснює сутність інформаційних процесів, які виконуються в різних галузях","n":"1.2.1"},{"c":"12 ІФО 1.2.1-1","k":"basic","t":"розуміє та пояснює сутність інформаційних процесів, які виконуються в обраній галузі","n":"1.2.1"},{"c":"12 ІФО 1.2.1-1 П","k":"adv","t":"аналізує інформаційні процеси, що здійснюються в інформаційних системах різних галузей","n":"1.2.1"},{"c":"12 ІФО 1.2.1-2 П","k":"adv","t":"задовольняє власні інформаційні потреби, активно шукає нові рішення та ідеї, зокрема читаючи та аналізуючи текстові джерела","n":"1.2.1"},{"c":"12 ІФО 1.2.2","k":"concrete","t":"пояснює принципи кодування цифрових даних, які використовуються в різних галузях, і враховує їх під час створення інформаційних продуктів і розвʼязування задач","n":"1.2.2"},{"c":"12 ІФО 1.2.2-1","k":"basic","t":"пояснює особливості кодування цифрових даних, які використовуються в обраній галузі, і враховує їх під час створення інформаційних продуктів і розвʼязування задач","n":"1.2.2"},{"c":"12 ІФО 1.2.2-1 П","k":"adv","t":"розуміє та пояснює принципи кодування і декодування цифрових даних, які використовуються в обраній галузі, і враховує їх під час створення інформаційних продуктів","n":"1.2.2"},{"c":"12 ІФО 1.2.2-2 П","k":"adv","t":"пояснює принципи стиснення даних, обґрунтовано обирає метод стиснення, ураховуючи можливість їх втрати","n":"1.2.2"},{"c":"12 ІФО 1.2.2-3 П","k":"adv","t":"пояснює особливості та загальні принципи подання даних у файлах різних форматів","n":"1.2.2"},{"c":"12 ІФО 1.2.2-4 П","k":"adv","t":"обґрунтовано обирає формати файлів під час створення та збереження інформаційних продуктів з урахуванням принципів кодування цифрових даних, які використовуються в обраній галузі","n":"1.2.2"},{"c":"12 ІФО 1.2.3","k":"concrete","t":"досліджує та аналізує набори даних, взаємозв’язки та залежності між ними","n":"1.2.3"},{"c":"12 ІФО 1.2.3-1","k":"basic","t":"досліджує та аналізує набори даних, взаємозв’язки та залежності між ними","n":"1.2.3"},{"c":"12 ІФО 1.2.3-1 П","k":"adv","t":"класифікує, структурує та узагальнює дані з обраної галузі, використовуючи відповідні методи та засоби","n":"1.2.3"},{"c":"12 ІФО 1.2.3-2 П","k":"adv","t":"обирає ефективний спосіб пошуку, опрацювання та візуалізації структурованих даних","n":"1.2.3"},{"c":"ІФО 1.3","k":"general","t":"Будує інформаційні моделі об’єктів, явищ і процесів","n":"1.3"},{"c":"12 ІФО 1.3.1","k":"concrete","t":"створює, оцінює та використовує інформаційні моделі для розвʼязування задач з різних галузей, зокрема з використанням інформаційних технологій","n":"1.3.1"},{"c":"12 ІФО 1.3.1-1","k":"basic","t":"створює, оцінює та використовує інформаційні моделі для розвʼязування задач з обраної галузі, зокрема з використанням інформаційних технологій","n":"1.3.1"},{"c":"12 ІФО 1.3.1-1 П","k":"adv","t":"пояснює різні способи подання обʼєктів галузі","n":"1.3.1"},{"c":"12 ІФО 1.3.1-2 П","k":"adv","t":"будує і використовує інформаційні моделі для розв’язання проблем реального та віртуального світу, зокрема моделі “сутність — звʼязок”, із застосуванням інформаційних технологій","n":"1.3.1"},{"c":"12 ІФО 1.3.1-3 П","k":"adv","t":"аналізує та оцінює інформаційну модель для розвʼязування задачі за власними критеріями","n":"1.3.1"},{"c":"12 ІФО 1.3.1-4 П","k":"adv","t":"пояснює можливості та обмеження комп’ютерного моделювання","n":"1.3.1"},{"c":"12 ІФО 1.3.2","k":"concrete","t":"формує і пояснює власну інформаційну картину світу","n":"1.3.2"},{"c":"12 ІФО 1.3.2-1","k":"basic","t":"пояснює використання інформаційних систем в обраній галузі","n":"1.3.2"},{"c":"12 ІФО 1.3.2-1 П","k":"adv","t":"розпізнає та класифікує інформаційні системи різних типів (соціальні, біологічні, технічні тощо) та пояснює взаємозвʼязки між ними","n":"1.3.2"},{"c":"12 ІФО 1.3.2-2 П","k":"adv","t":"описує власне бачення світу як інформаційної системи","n":"1.3.2"},{"c":"ІФО 1.4","k":"general","t":"Критично оцінює інформацію, отриману з різних джерел","n":"1.4"},{"c":"12 ІФО 1.4.1","k":"concrete","t":"обґрунтовує власну позицію щодо достовірності інформації та надійності джерел, застосовуючи стратегії критичного мислення","n":"1.4.1"},{"c":"12 ІФО 1.4.1-1","k":"basic","t":"оцінює достовірність інформації та надійність її джерел, використовуючи надані критерії та пропонуючи власні","n":"1.4.1"},{"c":"12 ІФО 1.4.1-1 П","k":"adv","t":"обґрунтовує власну позицію щодо достовірності інформації та надійності джерел, застосовуючи стратегії критичного мислення","n":"1.4.1"},{"c":"12 ІФО 1.4.1-2 П","k":"adv","t":"відстежує появу нових способів і інструментів, а також пропонує власні стратегії перевірки достовірності інформації та надійності джерел","n":"1.4.1"},{"c":"12 ІФО 1.4.1-3 П","k":"adv","t":"аналізує та оцінює доказовість і вагу (сильні — слабкі) аргументів у текстах, своїх твердженнях і судженнях інших","n":"1.4.1"},{"c":"12 ІФО 1.4.1-4 П","k":"adv","t":"аргументовано обстоює використання надійних джерел і достовірної інформації","n":"1.4.1"},{"c":"12 ІФО 1.4.2","k":"concrete","t":"використовує стратегії захисту/протидії маніпуляціям, зокрема в цифровому світі","n":"1.4.2"},{"c":"12 ІФО 1.4.2-1","k":"basic","t":"використовує різні методи для захисту/протидії маніпуляціям, зокрема в цифровому світі","n":"1.4.2"},{"c":"12 ІФО 1.4.2-1 П","k":"adv","t":"оцінює роль і вплив маніпуляцій і пропаганди в особистому та суспільному житті, навчальній діяльності, цифровому світі","n":"1.4.2"},{"c":"12 ІФО 1.4.2-2 П","k":"adv","t":"аргументовано обирає методи і стратегії для розпізнавання маніпулятивних технік","n":"1.4.2"},{"c":"12 ІФО 1.4.2-3 П","k":"adv","t":"розпізнає маніпулятивні впливи, які здійснюються цифровими та іншими каналами передавання інформації","n":"1.4.2"},{"c":"12 ІФО 1.4.2-4 П","k":"adv","t":"описує, застосовує та за потреби розробляє стратегії захисту або протидії маніпуляціям, зокрема емоційним, у цифровому світі","n":"1.4.2"},{"c":"12 ІФО 1.4.2-5 П","k":"adv","t":"діє незалежно, уміє долати власні упередження","n":"1.4.2"},{"c":"ІФО 2.1","k":"general","t":"Розробляє і реалізовує алгоритми","n":"2.1"},{"c":"12 ІФО 2.1.1","k":"concrete","t":"обирає відомі та розробляє власні алгоритми для розвʼязування задач з різних галузей","n":"2.1.1"},{"c":"12 ІФО 2.1.1-1","k":"basic","t":"пояснює та застосовує основні алгоритми, які типово застосовують для розвʼязування задач з обраної галузі","n":"2.1.1"},{"c":"12 ІФО 2.1.1-1 П","k":"adv","t":"окреслює алгоритмічну складову задач з обраної галузі","n":"2.1.1"},{"c":"12 ІФО 2.1.1-2 П","k":"adv","t":"обирає різні стратегії вирішення проблем (індуктивні, дедуктивні, евристичні, алгоритмічні)","n":"2.1.1"},{"c":"12 ІФО 2.1.1-3 П","k":"adv","t":"аргументовано обирає та складає алгоритми для розвʼязування задач з обраної галузі","n":"2.1.1"},{"c":"12 ІФО 2.1.2","k":"concrete","t":"оцінює ефективність власних і відомих алгоритмів для розвʼязування задач з різних галузей","n":"2.1.2"},{"c":"12 ІФО 2.1.2-1","k":"basic","t":"оцінює ефективність власних і відомих алгоритмів для розвʼязування задач з обраної галузі за наданими критеріями","n":"2.1.2"},{"c":"12 ІФО 2.1.2-1 П","k":"adv","t":"пояснює поняття часової та ємнісної складності алгоритмів і способи їх оцінювання","n":"2.1.2"},{"c":"12 ІФО 2.1.2-2 П","k":"adv","t":"оцінює ефективність алгоритмів розвʼязування задач з обраної галузі, застосовуючи критерії часової та ємнісної складності","n":"2.1.2"},{"c":"12 ІФО 2.1.3","k":"concrete","t":"обґрунтовує вибір структур даних для розвʼязування задач з різних галузей","n":"2.1.3"},{"c":"12 ІФО 2.1.3-1","k":"basic","t":"використовує різні структури даних для розвʼязування типових задач з обраної галузі","n":"2.1.3"},{"c":"12 ІФО 2.1.3-1 П","k":"adv","t":"аргументовано обирає структури даних для розвʼязування задач з обраної галузі","n":"2.1.3"},{"c":"ІФО 2.2","k":"general","t":"Створює і налагоджує програмні проекти","n":"2.2"},{"c":"12 ІФО 2.2.1","k":"concrete","t":"самостійно або в співпраці реалізовує розроблені алгоритми у програмних проектах для розв’язування задач з різних галузей","n":"2.2.1"},{"c":"12 ІФО 2.2.1-1","k":"basic","t":"у співпраці реалізовує алгоритми в програмних проектах для розвʼязування типових задач з обраної галузі","n":"2.2.1"},{"c":"12 ІФО 2.2.1-1 П","k":"adv","t":"формулює очікуваний результат розробки та вимоги до програмного проекту для розвʼязування задач з обраної галузі","n":"2.2.1"},{"c":"12 ІФО 2.2.1-2 П","k":"adv","t":"обґрунтовано обирає інформаційні технології для реалізації програмних проектів","n":"2.2.1"},{"c":"12 ІФО 2.2.1-3 П","k":"adv","t":"описує етапи виконання комп’ютером коду високого рівня (компіляція, інтерпретація, оптимізація)","n":"2.2.1"},{"c":"12 ІФО 2.2.1-4 П","k":"adv","t":"створює нові, розширює або змінює наявні програмні проекти","n":"2.2.1"},{"c":"12 ІФО 2.2.1-5 П","k":"adv","t":"випробовує нові ідеї, обґрунтовано ризикує під час розроблення програмних проектів","n":"2.2.1"},{"c":"12 ІФО 2.2.2","k":"concrete","t":"тестує, налагоджує та вдосконалює програмні проекти, ураховуючи/ аналізуючи відгуки користувачів і зміни середовища розроблення та виконання","n":"2.2.2"},{"c":"12 ІФО 2.2.2-1","k":"basic","t":"тестує, налагоджує та пропонує вдосконалення програмних проектів","n":"2.2.2"},{"c":"12 ІФО 2.2.2-1 П","k":"adv","t":"пропонує і застосовує методи перевірки коректності роботи програмного проекту","n":"2.2.2"},{"c":"12 ІФО 2.2.2-2 П","k":"adv","t":"створює тестові приклади для перевірки різних сценаріїв роботи програмного проекту","n":"2.2.2"},{"c":"12 ІФО 2.2.2-3 П","k":"adv","t":"самостійно або в співпраці налагоджує програмні проекти","n":"2.2.2"},{"c":"12 ІФО 2.2.2-4 П","k":"adv","t":"активно шукає і пропонує конструктивні рішення для розвитку та перевірки ідей, удосконалення програмного проекту на основі власних оцінок, відгуків користувачів і зміни умов його реалізації","n":"2.2.2"},{"c":"ІФО 2.3","k":"general","t":"Розробляє модульні проекти","n":"2.3"},{"c":"12 ІФО 2.3.1","k":"concrete","t":"створює програмні проекти за модульною технологією індивідуально чи в проектній групі","n":"2.3.1"},{"c":"12 ІФО 2.3.1-1","k":"basic","t":"бере участь у створенні програмних проектів за модульною технологією в проектній групі","n":"2.3.1"},{"c":"12 ІФО 2.3.1-1 П","k":"adv","t":"застосовує принципи декомпозиції та синтезу під час розвʼязування задач з обраної галузі","n":"2.3.1"},{"c":"12 ІФО 2.3.1-2 П","k":"adv","t":"обґрунтовано обирає бібліотеки або інші зовнішні модулі для розвʼязування задач з обраної галузі","n":"2.3.1"},{"c":"12 ІФО 2.3.1-3 П","k":"adv","t":"обґрунтовано та доцільно використовує функції, класи або інші компоненти в програмних проектах","n":"2.3.1"},{"c":"12 ІФО 2.3.1-4 П","k":"adv","t":"інтегрує компоненти програмного проекту","n":"2.3.1"},{"c":"12 ІФО 2.3.1-5 П","k":"adv","t":"документує програмний проект, що складається з окремих компонентів","n":"2.3.1"},{"c":"ІФО 2.4","k":"general","t":"Створює та опрацьовує інформаційні продукти з використанням даних різних типів","n":"2.4"},{"c":"12 ІФО 2.4.1","k":"concrete","t":"створює та вдосконалює інформаційні продукти для розвʼязування задач з різних галузей","n":"2.4.1"},{"c":"12 ІФО 2.4.1-1","k":"basic","t":"створює та вдосконалює інформаційні продукти для розвʼязування задач з обраної галузі з використанням кількох інформаційних технологій","n":"2.4.1"},{"c":"12 ІФО 2.4.1-1 П","k":"adv","t":"обґрунтовано обирає комплекс програмних засобів для опрацювання даних різних типів у процесі створення інформаційних продуктів","n":"2.4.1"},{"c":"12 ІФО 2.4.1-2 П","k":"adv","t":"створює та вдосконалює інформаційні продукти з використанням кількох інформаційних технологій","n":"2.4.1"},{"c":"12 ІФО 2.4.2","k":"concrete","t":"комбінує дані різних типів під час створення інформаційних продуктів","n":"2.4.2"},{"c":"12 ІФО 2.4.2-1","k":"basic","t":"комбінує дані різних типів під час створення інформаційних продуктів","n":"2.4.2"},{"c":"12 ІФО 2.4.2-1 П","k":"adv","t":"обирає доречні типи даних для створення інформаційних продуктів","n":"2.4.2"},{"c":"12 ІФО 2.4.2-2 П","k":"adv","t":"інтегрує різнотипні дані під час створення інформаційних продуктів","n":"2.4.2"},{"c":"12 ІФО 2.4.3","k":"concrete","t":"активно шукає і пропонує нестандартні та інноваційні рішення під час створення інформаційних продуктів","n":"2.4.3"},{"c":"12 ІФО 2.4.3-1","k":"basic","t":"самостійно опановує роботу з новими програмними продуктами","n":"2.4.3"},{"c":"12 ІФО 2.4.3-1 П","k":"adv","t":"продукує нові ідеї щодо створення, удосконалення та застосування інформаційних продуктів, використовує ідеї інших і доопрацьовує їх","n":"2.4.3"},{"c":"12 ІФО 2.4.3-2 П","k":"adv","t":"аналізує наявні розробки та шукає інноваційні рішення під час створення інформаційних продуктів","n":"2.4.3"},{"c":"12 ІФО 2.4.4","k":"concrete","t":"оцінює якість інформаційних продуктів для розв’язування задач з різних галузей","n":"2.4.4"},{"c":"12 ІФО 2.4.4-1","k":"basic","t":"оцінює якість інформаційних продуктів для розв’язування типових задач з обраної галузі","n":"2.4.4"},{"c":"12 ІФО 2.4.4-1 П","k":"adv","t":"пропонує критерії оцінювання інформаційних продуктів та їх відповідності поставленій задачі","n":"2.4.4"},{"c":"12 ІФО 2.4.4-2 П","k":"adv","t":"оцінює якість інформаційних продуктів на основі вироблених критеріїв","n":"2.4.4"},{"c":"ІФО 2.5","k":"general","t":"Співпрацює в команді для створення інформаційного продукту","n":"2.5"},{"c":"12 ІФО 2.5.1","k":"concrete","t":"демонструє здатність гнучко взаємодіяти в команді та пристосовуватися до нових умов під час розроблення проектів з використанням інформаційних технологій","n":"2.5.1"},{"c":"12 ІФО 2.5.1-1","k":"basic","t":"демонструє здатність взаємодіяти в команді під час розроблення проектів з використанням інформаційних технологій","n":"2.5.1"},{"c":"12 ІФО 2.5.1-1 П","k":"adv","t":"оцінює роль і внесок кожного члена команди під час створення інформаційних продуктів","n":"2.5.1"},{"c":"12 ІФО 2.5.1-2 П","k":"adv","t":"планує і організовує власну та командну діяльність під час розроблення проектів з використанням інформаційних технологій","n":"2.5.1"},{"c":"12 ІФО 2.5.1-3 П","k":"adv","t":"бере активну участь у розробленні інформаційних продуктів у складі команди, надає належну оцінку ідеям, підтримку та допомогу за потреби","n":"2.5.1"},{"c":"12 ІФО 2.5.1-4 П","k":"adv","t":"гнучко реагує на зміни умов і вимог під час створення інформаційних продуктів","n":"2.5.1"},{"c":"12 ІФО 2.5.2","k":"concrete","t":"розуміє ідеї та емоції інших членів команди та конструктивно реагує на них під час розроблення проектів з використанням інформаційних технологій","n":"2.5.2"},{"c":"12 ІФО 2.5.2-1","k":"basic","t":"розуміє ідеї та емоції інших членів команди та конструктивно реагує на них під час розроблення проектів з використанням інформаційних технологій","n":"2.5.2"},{"c":"12 ІФО 2.5.2-1 П","k":"adv","t":"враховує різні погляди, національні та культурні особливості для прийняття зважених рішень під час створення інформаційного продукту","n":"2.5.2"},{"c":"12 ІФО 2.5.2-2 П","k":"adv","t":"використовує та ефективно опрацьовує ідеї інших членів команди під час розроблення програмного проекту з належними посиланнями","n":"2.5.2"},{"c":"12 ІФО 2.5.2-3 П","k":"adv","t":"розпізнає власний емоційний стан і емоційний стан членів команди, ураховує його вплив під час розроблення проектів з використанням інформаційних технологій","n":"2.5.2"},{"c":"ІФО 3.1","k":"general","t":"Використовує широкий спектр цифрових пристроїв","n":"3.1"},{"c":"12 ІФО 3.1.1","k":"concrete","t":"самостійно опановує цифрові пристрої, досліджуючи їх можливості, та застосовує їх для розвʼязування задач з різних галузей","n":"3.1.1"},{"c":"12 ІФО 3.1.1-1","k":"basic","t":"досліджує можливості цифрових пристроїв з метою їх застосування для розв’язування типових задач з обраної галузі","n":"3.1.1"},{"c":"12 ІФО 3.1.1-1 П","k":"adv","t":"пояснює принципи функціонування різних цифрових пристроїв і їх розвиток","n":"3.1.1"},{"c":"12 ІФО 3.1.1-2 П","k":"adv","t":"обґрунтовує доцільність застосування різних цифрових пристроїв для розвʼязування задач з обраної галузі та використовує їх","n":"3.1.1"},{"c":"12 ІФО 3.1.1-3 П","k":"adv","t":"демонструє здатність до самостійного опанування нових пристроїв і технологій","n":"3.1.1"},{"c":"ІФО 3.2","k":"general","t":"Організовує власне інформаційне середовище","n":"3.2"},{"c":"12 ІФО 3.2.1","k":"concrete","t":"обґрунтовано обирає технологічні рішення для організації власного інформаційного середовища під час розвʼязування задач з різних галузей","n":"3.2.1"},{"c":"12 ІФО 3.2.1-1","k":"basic","t":"організовує власне інформаційне середовище з метою ефективного розвʼязування типових задач з обраної галузі","n":"3.2.1"},{"c":"12 ІФО 3.2.1-1 П","k":"adv","t":"аналізує інформаційні системи та їх компоненти, описує та порівнює їх функціонування і принципи організації","n":"3.2.1"},{"c":"12 ІФО 3.2.1-2 П","k":"adv","t":"компонує інформаційну систему під задачу та визначає ефективність її функціонування","n":"3.2.1"},{"c":"12 ІФО 3.2.1-3 П","k":"adv","t":"надає перевагу програмним засобам і ресурсам з інтерфейсом державною мовою (за наявності)","n":"3.2.1"},{"c":"12 ІФО 3.2.1-4 П","k":"adv","t":"будує індивідуальну траєкторію навчання, зокрема для розвитку власної цифрової компетентності та інформаційної культури, використовуючи можливості сучасних цифрових освітніх середовищ","n":"3.2.1"},{"c":"12 ІФО 3.2.2","k":"concrete","t":"визначає та формулює можливі причини типових апаратних та/або програмних збоїв, пояснює спосіб їх усунення","n":"3.2.2"},{"c":"12 ІФО 3.2.2-1","k":"basic","t":"фіксує типові апаратні та/або програмні збої, описує їх можливі причини, пояснює спосіб їх усунення","n":"3.2.2"},{"c":"12 ІФО 3.2.2-1 П","k":"adv","t":"описує можливі причини типових апаратних або програмних збоїв і способи їх усунення","n":"3.2.2"},{"c":"12 ІФО 3.2.2-2 П","k":"adv","t":"діагностує апаратні або програмні збої, усуває типові несправності під контролем учителя","n":"3.2.2"},{"c":"12 ІФО 3.2.2-3 П","k":"adv","t":"аналізує необхідність оновлення компонентів інформаційної системи","n":"3.2.2"},{"c":"ІФО 3.3","k":"general","t":"Використовує комунікаційні технології та мережі для власного розвитку, спілкування і співпраці","n":"3.3"},{"c":"12 ІФО 3.3.1","k":"concrete","t":"свідомо використовує технологічні засоби для індивідуальної або групової діяльності та комунікації","n":"3.3.1"},{"c":"12 ІФО 3.3.1-1","k":"basic","t":"обґрунтовано обирає та використовує технологічні засоби для індивідуальної або групової діяльності та комунікації","n":"3.3.1"},{"c":"12 ІФО 3.3.1-1 П","k":"adv","t":"пропонує критерії вибору, обґрунтовано обирає, налаштовує та ефективно використовує технологічні засоби для індивідуальної або групової діяльності та комунікації","n":"3.3.1"},{"c":"ІФО 4.1","k":"general","t":"Обґрунтовує вплив технологій на навколишнє середовище і власний добробут, захищає себе і свій інформаційний простір","n":"4.1"},{"c":"12 ІФО 4.1.1","k":"concrete","t":"піклується про власну та громадську безпеку, добробут і здоровʼя під час використання інформаційних технологій","n":"4.1.1"},{"c":"12 ІФО 4.1.1-1","k":"basic","t":"піклується про власну безпеку, добробут і здоровʼя під час використання інформаційних технологій","n":"4.1.1"},{"c":"12 ІФО 4.1.1-1 П","k":"adv","t":"розуміє проблему інформаційного перевантаження під час роботи в цифровому середовищі та описує його наслідки","n":"4.1.1"},{"c":"12 ІФО 4.1.1-2 П","k":"adv","t":"описує способи регулювання власного інформаційного навантаження та застосовує їх (обмеження, тайм-менеджмент, відключення певних функцій програм, перемикання на інші види діяльності, фізичні вправи тощо)","n":"4.1.1"},{"c":"12 ІФО 4.1.1-3 П","k":"adv","t":"використовує цифрові засоби та технології для забезпечення особистої та громадської безпеки в умовах надзвичайних ситуацій","n":"4.1.1"},{"c":"12 ІФО 4.1.2","k":"concrete","t":"обирає і застосовує стратегію кібербезпеки для власного інформаційного середовища","n":"4.1.2"},{"c":"12 ІФО 4.1.2-1","k":"basic","t":"обирає і застосовує політики кібербезпеки для власного інформаційного середовища","n":"4.1.2"},{"c":"12 ІФО 4.1.2-1 П","k":"adv","t":"наводить приклади вразливостей інформаційних систем і можливих наслідків зловмисного їх використання","n":"4.1.2"},{"c":"12 ІФО 4.1.2-2 П","k":"adv","t":"пояснює поняття конфіденційності, цілісності та доступності даних","n":"4.1.2"},{"c":"12 ІФО 4.1.2-3 П","k":"adv","t":"порівнює заходи та засоби інформаційної безпеки за наданими критеріями та аргументовано обирає їх","n":"4.1.2"},{"c":"12 ІФО 4.1.2-4 П","k":"adv","t":"застосовує засоби та стратегії захисту конфіденційності та цілісності даних","n":"4.1.2"},{"c":"12 ІФО 4.1.2-5 П","k":"adv","t":"критично оцінює нові інформаційні технології щодо їх відповідності засадам кібербезпеки","n":"4.1.2"},{"c":"12 ІФО 4.1.3","k":"concrete","t":"враховує наслідки власних дій у цифровому середовищі та їх вплив на власну цифрову репутацію та цифрову репутацію інших осіб","n":"4.1.3"},{"c":"12 ІФО 4.1.3-1","k":"basic","t":"враховує наслідки власних дій у цифровому середовищі та їх вплив на власну цифрову репутацію та цифрову репутацію інших осіб","n":"4.1.3"},{"c":"12 ІФО 4.1.3-1 П","k":"adv","t":"прогнозує наслідки дій у цифровому середовищі, їх вплив на власну цифрову репутацію та цифрову репутацію інших осіб","n":"4.1.3"},{"c":"12 ІФО 4.1.3-2 П","k":"adv","t":"пояснює можливості впливу цифрової репутації на взаємини в реальному світі","n":"4.1.3"},{"c":"12 ІФО 4.1.3-3 П","k":"adv","t":"враховує наслідки поширення інформації для особистої репутації або репутації групи, яку представляє","n":"4.1.3"},{"c":"ІФО 4.2","k":"general","t":"Усвідомлено дотримується норм соціальної, міжкультурної і міжособистісної взаємодії","n":"4.2"},{"c":"12 ІФО 4.2.1","k":"concrete","t":"дотримується норм соціальної, міжкультурної і міжособистісної взаємодії під час спілкування та співпраці в глобальному інформаційному просторі","n":"4.2.1"},{"c":"12 ІФО 4.2.1-1","k":"basic","t":"дотримується норм соціальної, міжкультурної і міжособистісної взаємодії під час спілкування та співпраці в інформаційному просторі","n":"4.2.1"},{"c":"12 ІФО 4.2.1-1 П","k":"adv","t":"розуміє і враховує особливості (зокрема національні, мовні й культурні) аудиторії, з якою взаємодіє","n":"4.2.1"},{"c":"12 ІФО 4.2.1-2 П","k":"adv","t":"адаптується під потреби аудиторії під час цифрової комунікації, зокрема з використанням програмних засобів штучного інтелекту та перекладу текстів","n":"4.2.1"},{"c":"12 ІФО 4.2.1-3 П","k":"adv","t":"дотримується норм етичної поведінки під час цифрової комунікації","n":"4.2.1"},{"c":"12 ІФО 4.2.1-4 П","k":"adv","t":"конструктивно реагує на агресивні висловлювання, зокрема в глобальному інформаційному просторі","n":"4.2.1"},{"c":"12 ІФО 4.2.1-5 П","k":"adv","t":"наводить приклади стратегій запобігання та протидії кібербулінгу та застосовує їх за потреби","n":"4.2.1"},{"c":"12 ІФО 4.2.1-6 П","k":"adv","t":"наводить приклади та розуміє упередження, повʼязані з використанням інформаційних технологій, і їх наслідки","n":"4.2.1"},{"c":"12 ІФО 4.2.2","k":"concrete","t":"враховує потребу в забезпеченні універсального дизайну під час використання інформаційних технологій і створення інформаційних продуктів","n":"4.2.2"},{"c":"12 ІФО 4.2.2-1","k":"basic","t":"враховує засади універсального дизайну під час використання інформаційних технологій і створення інформаційних продуктів","n":"4.2.2"},{"c":"12 ІФО 4.2.2-1 П","k":"adv","t":"пояснює поняття універсального дизайну інформаційних продуктів і демонструє його реалізацію в обраній галузі","n":"4.2.2"},{"c":"12 ІФО 4.2.2-2 П","k":"adv","t":"враховує засади універсального дизайну та ергономічності під час створення інформаційних продуктів","n":"4.2.2"},{"c":"12 ІФО 4.2.2-3 П","k":"adv","t":"оцінює інформаційні технології та системи за критеріями інклюзивності, доступності та рівності","n":"4.2.2"},{"c":"ІФО 4.3","k":"general","t":"Усвідомлено дотримується норм правової взаємодії","n":"4.3"},{"c":"12 ІФО 4.3.1","k":"concrete","t":"дотримується норм законодавства, що регулює правові відносини у сфері інтелектуальної власності та використання інформаційних технологій","n":"4.3.1"},{"c":"12 ІФО 4.3.1-1","k":"basic","t":"дотримується норм законодавства, що регулює правові відносини у сфері інтелектуальної власності та використання інформаційних технологій","n":"4.3.1"},{"c":"12 ІФО 4.3.1-1 П","k":"adv","t":"знає норми законодавства, що регулюють правові відносини у сфері інтелектуальної власності та використання інформаційних технологій","n":"4.3.1"},{"c":"12 ІФО 4.3.1-2 П","k":"adv","t":"розпізнає різновиди прав інтелектуальної власності на інформаційні продукти та дотримується їх","n":"4.3.1"},{"c":"12 ІФО 4.3.1-3 П","k":"adv","t":"пояснює призначення простих засобів захисту авторських прав і доречно застосовує їх","n":"4.3.1"},{"c":"12 ІФО 4.3.1-4 П","k":"adv","t":"аргументовано обирає вид ліцензії програмних засобів та інформаційних продуктів для розвʼязання задач з обраної галузі","n":"4.3.1"},{"c":"12 ІФО 4.3.1-5 П","k":"adv","t":"аргументовано пояснює суспільні та правові наслідки порушення прав інтелектуальної власності","n":"4.3.1"},{"c":"12 ІФО 4.3.1-6 П","k":"adv","t":"пояснює особливості реалізації та захисту прав людини в контексті інформаційних технологій","n":"4.3.1"},{"c":"12 ІФО 4.3.1-7 П","k":"adv","t":"обстоює особисті права на інтелектуальну власність з дотриманням норм права та етики","n":"4.3.1"}]};
+const ITEMS = STD.items;
+const BY = {}; ITEMS.forEach(i => BY[i.c] = i);
+const GENERALS = ITEMS.filter(i => i.k === 'general');
+const CONCRETES = ITEMS.filter(i => i.k === 'concrete');
+const genNum = n => n.split('.').slice(0, 2).join('.');
+const orientsOf = (num, kind) => ITEMS.filter(i => i.n === num && i.k === kind);
+const lvlKind = () => state.topic.level === 'adv' ? 'adv' : 'basic';
+
+const BLOOM = [null,
+  {n:'Запам’ятовування', v:['називає','розпізнає','відтворює','перелічує']},
+  {n:'Розуміння', v:['пояснює','наводить приклади','розрізняє','описує','класифікує','інтерпретує']},
+  {n:'Застосування', v:['використовує','застосовує','виконує','будує','складає','перетворює','налаштовує','створює за зразком']},
+  {n:'Аналіз', v:['порівнює','досліджує','аналізує','виявляє','тестує','налагоджує','структурує']},
+  {n:'Оцінювання', v:['оцінює','обґрунтовує','аргументує','перевіряє','обґрунтовано добирає','критично оцінює']},
+  {n:'Створення', v:['проєктує','розробляє','моделює','пропонує','створює власний','прогнозує']}
+];
+const BCOL = ['', 'b1','b2','b3','b4','b5','b6'];
+const VERB_STEMS = [
+  [6,['розробля','проєкту','проектує','пропону','продуку','прогноз','моделю','генеру']],
+  [5,['оціню','обґрунтов','аргумент','вдоскона','перевіря']],
+  [4,['аналізу','дослідж','порівню','виявля','тесту','налагоджу','структуру','узагальню']],
+  [3,['використову','застосову','створю','будує','складає','виконує','перетворю','реалізову','опановує','обирає','добирає','дотриму','комбіну','інтегру','демонстру','бере','організову','розробл']],
+  [2,['пояснює','описує','наводить','розрізня','класифіку','розуміє','розпізна','висловлю','враховує']],
+  [1,['назива','перелічу','відтворю']]
+];
+const VERB_END = /(є|ує|ює|ить|ає|яє|іє|ться|еться|ується|юється)$/;
+function verbLevel(word){
+  const w = word.toLowerCase().replace(/[^а-яіїєґ’'-]/g,'');
+  if (!VERB_END.test(w)) return 0;
+  for (const [l, stems] of VERB_STEMS) if (stems.some(s => w.startsWith(s))) return l;
+  return 0;
+}
+function textLevel(t){ return Math.max(0, ...t.split(/\s+/).map(verbLevel)); }
+
+/* ---------- state ---------- */
+const KEY = 'orientyry-plan-v1';
+function blank(){
+  return {step:1, exampleBanner:false,
+    topic:{subject:'Інформатика', title:'', grade:'', level:'adv', hours:'', field:'', concepts:'', tools:'', prior:'', next:''},
+    picks:{}, orients:{}, decomp:{}, results:[], draft:null};
+}
+let state = null;
+function save(){ try{ localStorage.setItem(KEY, JSON.stringify(state)); }catch(e){} }
+function load(){ try{ const s = localStorage.getItem(KEY); if (s) return JSON.parse(s); }catch(e){} return null; }
+const uid = () => Math.random().toString(36).slice(2, 9);
+
+/* ---------- example: «Бази даних» ---------- */
+function example(){
+  const s = blank();
+  s.exampleBanner = true;
+  s.topic = {subject:'Інформатика', title:'Бази даних. Реляційна модель даних', grade:'10–11', level:'adv', hours:'14',
+    field:'Інформатика; приклади з профілю класу (бібліотека, облік, волонтерський центр)',
+    concepts:'база даних, СУБД, модель даних, сутність, атрибут, зв’язок, таблиця, запис, поле, тип даних, первинний ключ, зовнішній ключ, цілісність, нормалізація, запит, SQL',
+    tools:'SQLite (DB Browser for SQLite), LibreOffice Base або MS Access, draw.io для ER-діаграм',
+    prior:'Електронні таблиці, типи даних, сортування і фільтрування', next:'Вебпрограмування, аналіз даних, кібербезпека'};
+  const lead = ['12 ІФО 1.3.1','12 ІФО 1.2.3','12 ІФО 2.1.3','12 ІФО 2.4.1','12 ІФО 2.4.2'];
+  const sup = ['12 ІФО 1.3.2','12 ІФО 2.4.4','12 ІФО 4.1.2'];
+  lead.forEach(c => s.picks[c] = 'lead'); sup.forEach(c => s.picks[c] = 'support');
+  const ors = ['12 ІФО 1.3.1-1 П','12 ІФО 1.3.1-2 П','12 ІФО 1.3.1-3 П','12 ІФО 1.2.3-1 П','12 ІФО 1.2.3-2 П','12 ІФО 2.1.3-1 П','12 ІФО 2.4.1-2 П','12 ІФО 2.4.2-1 П','12 ІФО 1.3.2-1 П','12 ІФО 2.4.4-1 П','12 ІФО 2.4.4-2 П','12 ІФО 4.1.2-2 П','12 ІФО 4.1.2-4 П'];
+  ors.forEach(c => { s.orients[c] = true; s.decomp[c] = autoDecomp(BY[c].t); });
+  const T = {
+    '12 ІФО 1.3.1-1 П':['порівнює','способи подання даних: електронна таблиця, ієрархічна та реляційна модель','для задачі обліку в шкільній бібліотеці','пояснює переваги обраної моделі'],
+    '12 ІФО 1.3.1-2 П':['будує ER-діаграму і перетворює її на реляційну схему','сутності, атрибути, зв’язки 1:1, 1:N, M:N; таблиці, первинні й зовнішні ключі','за текстовим описом предметної області (4–6 сутностей), у draw.io та СКБД','модель повна, без надлишковості, відповідає на поставлені питання'],
+    '12 ІФО 1.3.1-3 П':['виявляє та усуває','надлишковість і аномалії оновлення в таблицях','на прикладі ненормалізованої таблиці «Видачі книг»','нормалізує до 3НФ і обґрунтовує зміни'],
+    '12 ІФО 1.2.3-1 П':['досліджує та узагальнює','набір даних бібліотеки (видачі за місяць, класи, жанри)','за допомогою запитів з групуванням','формулює обґрунтовані висновки'],
+    '12 ІФО 1.2.3-2 П':['складає','SQL-запити на вибірку: умови, сортування, агрегатні функції, JOIN','для відповіді на практичні питання бібліотекаря','перевіряє коректність результату'],
+    '12 ІФО 2.1.3-1 П':['аргументовано визначає','структуру таблиць і ключі, проміжну таблицю для M:N','під час проєктування схеми БД','пояснює, чому обрано саме таку структуру'],
+    '12 ІФО 2.4.1-2 П':['створює','БД у СКБД із зв’язками та цілісністю посилань, імпорт з CSV','за власною схемою','БД працює без помилок цілісності'],
+    '12 ІФО 2.4.2-1 П':['обґрунтовано добирає','типи даних полів та обмеження (NOT NULL, UNIQUE, CHECK)','для кожного поля своєї схеми','пояснює вибір'],
+    '12 ІФО 1.3.2-1 П':['наводить приклади та класифікує','інформаційні системи, що працюють на базах даних','у різних галузях і в обраному профілі','пояснює роль БД у системі'],
+    '12 ІФО 2.4.4-1 П':['пропонує','критерії якості БД: повнота, відсутність надлишковості, коректність запитів, зручність','для оцінювання власних і чужих проєктів',''],
+    '12 ІФО 2.4.4-2 П':['оцінює','власну БД і БД однокласника','за виробленими критеріями','дає конкретну пораду щодо вдосконалення'],
+    '12 ІФО 4.1.2-2 П':['пояснює','конфіденційність, цілісність і доступність даних','на прикладі власної БД',''],
+    '12 ІФО 4.1.2-4 П':['застосовує','заходи захисту: резервне копіювання, обмеження доступу, знеособлення','до власної БД','обирає заходи відповідно до ризиків']
+  };
+  Object.entries(T).forEach(([c, v]) => Object.assign(s.decomp[c], {tAction:v[0], tObject:v[1], tContext:v[2], tQuality:v[3]}));
+  const R = (bloom, text, basic, codes, ev, ind, task, assess, rub, can) => ({id:uid(), bloom, text, basic, codes, evidence:ev, indicators:ind, task, assess, rubric:rub||['','','',''], can});
+  s.results = [
+    R(2,'пояснює призначення БД і СКБД, наводить 2–3 приклади інформаційних систем обраної галузі, що працюють на базах даних','те саме',['12 ІФО 1.3.2-1 П'],'усна відповідь, схема «ІС — БД — користувачі»',['називає компоненти ІС, пов’язані з БД','наводить релевантні приклади з профілю'],'Опишіть, які дані зберігає електронний щоденник і хто ними користується.','formative',null,'Я можу пояснити, навіщо потрібні бази даних, і навести приклади.'),
+    R(2,'порівнює способи подання даних (електронна таблиця, ієрархічна та реляційна моделі) і пояснює переваги реляційної моделі для заданої задачі','розрізняє електронну таблицю та реляційну БД, називає їх обмеження',['12 ІФО 1.3.1-1 П'],'таблиця порівняння',['визначає щонайменше 3 критерії порівняння','пов’язує переваги моделі з умовою задачі'],'Чому облік видач у шкільній бібліотеці краще вести в БД, а не в одній таблиці?','formative',null,'Я можу пояснити, чим реляційна БД краща за таблицю для конкретної задачі.'),
+    R(3,'будує ER-діаграму за текстовим описом предметної області (4–6 сутностей): виокремлює сутності й атрибути, визначає та обґрунтовує типи зв’язків','будує ER-діаграму для простої області (2–3 сутності) за зразком',['12 ІФО 1.3.1-2 П'],'ER-діаграма в draw.io',['виокремлює всі сутності з опису','для кожної сутності задає ключові атрибути','правильно визначає тип зв’язку для кожної пари сутностей','обґрунтовує тип зв’язку'],'Побудуйте ER-діаграму для волонтерського центру: волонтери, заходи, участь, координатори.','summative',null,'Я можу за описом ситуації виділити сутності, їхні атрибути та зв’язки і намалювати ER-діаграму.'),
+    R(3,'перетворює ER-діаграму на реляційну схему: таблиці, поля, первинні та зовнішні ключі, проміжна таблиця для зв’язку M:N','визначає первинний ключ і зв’язує дві таблиці зв’язком 1:N',['12 ІФО 1.3.1-2 П','12 ІФО 2.1.3-1 П'],'реляційна схема',['кожна сутність стає таблицею з первинним ключем','зв’язки 1:N реалізовано зовнішніми ключами','для M:N створено проміжну таблицю'],'Перетворіть свою ER-діаграму на схему БД.','summative',null,'Я можу пояснити, навіщо потрібна проміжна таблиця для зв’язку «багато до багатьох».'),
+    R(3,'обґрунтовано добирає типи даних полів і обмеження (обов’язковість, унікальність, допустимий діапазон)','добирає тип даних для кожного поля за наданим переліком',['12 ІФО 2.4.2-1 П'],'опис полів у схемі',['тип даних відповідає змісту поля','обмеження запобігають помилкам введення','пояснює вибір для 2–3 полів'],'Задайте типи даних та обмеження для таблиць своєї схеми.','formative',null,'Я можу обрати тип даних і обмеження для поля та пояснити свій вибір.'),
+    R(3,'створює БД у СКБД за власною схемою, налаштовує зв’язки з цілісністю посилань та імпортує дані з CSV','створює БД з 2–3 таблиць за наданою схемою і заповнює її',['12 ІФО 2.4.1-2 П'],'файл БД',['структура відповідає схемі','зв’язки та цілісність посилань налаштовано','дані імпортовано без помилок'],'Створіть БД «Шкільна бібліотека» та імпортуйте дані з наданих CSV-файлів.','summative',null,'Я можу створити базу даних у СКБД і налаштувати зв’язки між таблицями.'),
+    R(4,'складає SQL-запити на вибірку (умови, сортування, агрегатні функції, з’єднання таблиць) для відповіді на практичні питання та перевіряє коректність результату','створює запит з умовою та сортуванням до однієї таблиці (у конструкторі або SQL)',['12 ІФО 1.2.3-2 П'],'файл із запитами та коротким поясненням до кожного',['визначає потрібні таблиці й поля','коректно записує умови відбору та сортування','з’єднує таблиці за ключами й використовує агрегатні функції з групуванням','перевіряє результат на малому наборі даних і пояснює свій запит'],'БД «Шкільна бібліотека» (Книги, Читачі, Видачі): 1) книги автора X, відсортовані за роком; 2) хто тримає книгу понад 14 днів (прізвище, клас, назва); 3) скільки книг узяли учні кожного класу за місяць.','summative',['з допомогою складає запит до однієї таблиці; умова частково некоректна','самостійно складає запит з умовою й сортуванням до однієї таблиці','коректно з’єднує таблиці й отримує правильні відповіді на питання 1–2','розв’язує всі три питання, перевіряє результат, пояснює запит і формулює висновок'],'Я можу скласти запит, який бере дані з двох таблиць, і перевірити, що він працює правильно.'),
+    R(4,'досліджує набір даних за допомогою запитів з групуванням, виявляє залежності, формулює висновки та візуалізує результат','за результатами готових запитів формулює 1–2 висновки',['12 ІФО 1.2.3-1 П','12 ІФО 1.2.3-2 П'],'короткий звіт з діаграмою',['ставить дослідницьке питання до даних','обирає доречний спосіб візуалізації','висновок спирається на дані'],'Які жанри найпопулярніші в різних класах? Підготуйте звіт для бібліотекаря.','formative',null,'Я можу дослідити дані за допомогою запитів і зробити висновок.'),
+    R(5,'виявляє надлишковість та аномалії оновлення в таблиці, нормалізує схему до 3НФ і обґрунтовує зміни','виявляє повторення даних і пропонує винести їх в окрему таблицю',['12 ІФО 1.3.1-3 П'],'нормалізована схема з поясненнями',['знаходить повторювані групи та залежності','показує аномалію на прикладі','нормалізована схема зберігає всі дані'],'Нормалізуйте таблицю «Видачі книг», у якій зберігаються дані про читача й книгу.','summative',null,'Я можу знайти в таблиці повторення даних і запропонувати, як їх усунути.'),
+    R(5,'пояснює конфіденційність, цілісність і доступність даних на прикладі власної БД та застосовує заходи захисту (резервне копіювання, обмеження доступу, знеособлення)','застосовує надані правила захисту БД (резервна копія, пароль)',['12 ІФО 4.1.2-2 П','12 ІФО 4.1.2-4 П'],'пам’ятка із заходами захисту для своєї БД',['пов’язує кожен захід із конкретним ризиком','знеособлює персональні дані в навчальній БД'],'Складіть пам’ятку «Як захистити дані бібліотеки».','formative',null,'Я можу пояснити, як захистити дані у своїй базі.'),
+    R(6,'пропонує критерії якості БД (повнота, відсутність надлишковості, коректність запитів, зручність) і за ними оцінює власний проєкт та проєкт однокласника','оцінює БД за наданим чек-листом',['12 ІФО 2.4.4-1 П','12 ІФО 2.4.4-2 П'],'взаємооцінювання за чек-листом',['критерії вимірювані та стосуються задачі','оцінка спирається на факти з БД','порада щодо вдосконалення конкретна'],'Оцініть БД однокласника за критеріями, які виробив клас, і дайте одну пораду.','formative',null,'Я можу оцінити базу даних однокласника за нашими критеріями і дати конкретну пораду.')
+  ];
+  return s;
+}
+
+/* ---------- decomposition heuristic ---------- */
+const ADV = /^(обґрунтовано|доцільно|аргументовано|самостійно|свідомо|критично|активно|гнучко|усвідомлено|ефективно|відповідально|безпечно)$/i;
+const CONN = /^(та|і|й|або|чи|та\/або|а|також)$/i;
+const CTX = [' для ',' під час ',' з використанням',' із застосуванням',' з урахуванням',' ураховуючи',' враховуючи',' використовуючи',' застосовуючи',' за допомогою',' в обраній',' у обраній',' з обраної',' в різних',' у різних',' з різних',' індивідуально',' у співпраці',' в команді',' спілкуючись'];
+const QUAL = ['за наданими критеріями','за власними критеріями','на основі вироблених критеріїв','за наданими','індивідуально чи в проектній групі','самостійно або в співпраці','ефективн'];
+function autoDecomp(t){
+  const words = t.split(/\s+/);
+  const act = [], qual = [];
+  let i = 0;
+  for (; i < words.length; i++){
+    const w = words[i].replace(/[,;]$/,'');
+    if (ADV.test(w)) { qual.push(w); act.push(w); continue; }
+    if (CONN.test(w) && i+1 < words.length && (verbLevel(words[i+1]) || ADV.test(words[i+1]))) { act.push(w); continue; }
+    if (verbLevel(w)) { act.push(w); continue; }
+    break;
+  }
+  let rest = words.slice(i).join(' ');
+  let idx = -1;
+  CTX.forEach(m => { const k = (' ' + rest).indexOf(m); if (k > 0 && (idx < 0 || k < idx)) idx = k; });
+  let obj = rest, ctx = '';
+  if (idx > 0){ obj = (' ' + rest).slice(0, idx).trim(); ctx = (' ' + rest).slice(idx).trim(); }
+  QUAL.forEach(q => { if (t.includes(q) && !qual.some(x => q.includes(x))) qual.push(q === 'ефективн' ? 'ефективність' : q); });
+  return {action: act.join(' '), object: obj.replace(/[,;]\s*$/,''), context: ctx, quality: qual.join(', '), tAction:'', tObject:'', tContext:'', tQuality:''};
+}
+
+/* ---------- lint for result wording ---------- */
+function lint(r){
+  const out = []; const t = (r.text || '').trim(); const tl = t.toLowerCase();
+  if (!t) return [{w:true, m:'Сформулюйте результат.'}];
+  if (/^(знає|розуміє|усвідомлює|ознайомл|ознайомити|сформувати|навчити|розвивати|формувати|вміти|уміти)/.test(tl)) out.push({w:true, m:'Починається з неспостережуваного дієслова або мети вчителя. Почніть з дії учня: «пояснює», «будує», «оцінює».'});
+  else if (/\b(знає|розуміє)\b/.test(tl)) out.push({w:true, m:'«Знає/розуміє» не можна побачити. Замініть дією, що це показує.'});
+  const verbs = t.split(/\s+/).filter(w => verbLevel(w) >= 3).length;
+  if (verbs > 3) out.push({w:true, m:`Схоже, тут ${verbs} дій. Перевірте, чи не варто розділити на окремі результати.`});
+  if (/з обраної галузі|в обраній галузі|інформаційні моделі|інформаційні продукти|інформаційних продуктів|різних галузей/.test(tl)) out.push({w:true, m:'Є узагальнене формулювання зі стандарту. Назвіть конкретний об’єкт або галузь теми.'});
+  if (t.length < 35) out.push({w:true, m:'Занадто коротко: додайте умови або критерій якості.'});
+  if (!r.codes || !r.codes.length) out.push({w:true, m:'Не вказано код орієнтира стандарту.'});
+  if (r.bloom && r.codes && r.codes.length){
+    const need = Math.max(...r.codes.map(c => BY[c] ? textLevel(BY[c].t) : 0));
+    if (need && r.bloom < need - 1) out.push({w:true, m:`Рівень результату (${BLOOM[r.bloom].n}) помітно нижчий за рівень дієслів орієнтира (${BLOOM[need].n}).`});
+  }
+  if (!out.length) out.push({w:false, m:'Формулювання спостережуване, конкретне й прив’язане до стандарту.'});
+  return out;
+}
+
+/* ---------- helpers ---------- */
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const pickedConcretes = () => CONCRETES.filter(c => state.picks[c.c]);
+const pickedOrients = () => ITEMS.filter(i => (i.k === 'basic' || i.k === 'adv') && state.orients[i.c]);
+const roleOfOrient = c => state.picks['12 ІФО ' + BY[c].n] || 'support';
+function tokens(){
+  const raw = (state.topic.concepts + ' ' + state.topic.title + ' ' + state.topic.tools).toLowerCase();
+  const ws = raw.split(/[^а-яіїєґa-z’'-]+/).filter(w => w.length >= 5);
+  return [...new Set(ws.map(w => w.slice(0, Math.max(5, Math.ceil(w.length * .7)))))];
+}
+function relevance(cr){
+  const tk = tokens(); if (!tk.length) return [];
+  const text = (cr.t + ' ' + ITEMS.filter(i => i.n === cr.n && i.k !== 'concrete').map(i => i.t).join(' ')).toLowerCase();
+  return tk.filter(s => text.includes(s));
+}
+function toast(m){ const t = document.getElementById('toast'); t.textContent = m; t.classList.add('show'); clearTimeout(toast.h); toast.h = setTimeout(() => t.classList.remove('show'), 2200); }
+function getPath(o, p){ return p.split('.').reduce((a, k) => a == null ? a : a[k], o); }
+function setPath(o, p, v){ const ks = p.split('.'); let a = o; ks.slice(0,-1).forEach(k => { if (a[k] == null) a[k] = {}; a = a[k]; }); a[ks[ks.length-1]] = v; }
+
+/* ---------- steps meta ---------- */
+const STEPS = [
+  {n:1, st:'А', t:'Аналіз теми'},
+  {n:2, st:'А', t:'Добір конкретних результатів'},
+  {n:3, st:'А', t:'Орієнтири та рівень'},
+  {n:4, st:'Б', t:'Деконструкція орієнтира'},
+  {n:5, st:'Б', t:'Наповнення змістом теми'},
+  {n:6, st:'Б', t:'Формулювання результатів'},
+  {n:7, st:'Б', t:'Прогресія'},
+  {n:8, st:'В', t:'Матриця відповідності'},
+  {n:9, st:'В', t:'Індикатори й критерії'},
+  {n:10, st:'В', t:'План і критерії успіху'}
+];
+const STAGE = {'А':'Етап А · Аналіз','Б':'Етап Б · Конкретизація','В':'Етап В · Перевірка і застосування'};
+function done(n){
+  const po = pickedOrients();
+  switch(n){
+    case 1: return !!(state.topic.title && state.topic.hours);
+    case 2: return Object.values(state.picks).includes('lead');
+    case 3: return po.length > 0 && pickedConcretes().every(c => po.some(o => o.n === c.n));
+    case 4: return po.length > 0 && po.every(o => state.decomp[o.c] && state.decomp[o.c].action && state.decomp[o.c].object);
+    case 5: return po.length > 0 && po.every(o => state.decomp[o.c] && state.decomp[o.c].tObject);
+    case 6: return state.results.length > 0;
+    case 7: return state.results.length > 0 && state.results.every(r => r.bloom);
+    case 8: return state.results.length > 0 && coverage().uncoveredLead.length === 0 && state.results.every(r => r.codes.length);
+    case 9: return state.results.length > 0 && state.results.every(r => r.indicators.filter(Boolean).length && r.task);
+    case 10: return false;
+  }
+}
+function coverage(){
+  const po = pickedOrients();
+  const map = po.map(o => ({o, rs: state.results.map((r, i) => r.codes.includes(o.c) ? i : -1).filter(i => i >= 0)}));
+  return {map, uncoveredLead: map.filter(m => !m.rs.length && roleOfOrient(m.o.c) === 'lead'), uncovered: map.filter(m => !m.rs.length)};
+}
+
+/* ---------- hints ---------- */
+const HINTS = {
+ 1:{tip:['Зафіксуйте рівень вивчення: від нього залежить, з якої колонки стандарту брати орієнтири (основний чи поглиблений «П»).','Ключові поняття через кому допоможуть на кроці 2: конструктор підсвітить результати стандарту з подібними словами.','«Обрана галузь» у стандарті означає галузь профілю. Запишіть, з яких сфер братимете приклади.'],
+    ex:'«Бази даних», 10–11 клас, поглиблений рівень, 14 год. Поняття: сутність, зв’язок, ключ, нормалізація, SQL. Опора: електронні таблиці. Перспектива: вебпрограмування, аналіз даних.',
+    err:['Не вказано кількість годин, тому потім важко оцінити реалістичність плану.','Тема сформульована як розділ підручника, без змісту та засобів.']},
+ 2:{tip:['Провідні (2–4): тема є основним місцем формування й підсумкового оцінювання.','Супутні (1–3): тема лише долучається до формування (безпека, співпраця, якість), їх оцінюють формувально.','Зелена позначка «збіг» означає лише збіг слів. Вирішуєте ви, чи дає тема ситуацію для формування результату.'],
+    ex:'Провідні: 1.3.1 (моделі), 1.2.3 (аналіз даних), 2.1.3 (структури даних), 2.4.1–2.4.2 (продукт і типи даних). Супутні: 1.3.2, 2.4.4, 4.1.2.',
+    err:['Обрано 10+ провідних результатів «про всяк випадок».','Пропущено результати безпеки й етики, хоча тема дає для них природну ситуацію.']},
+ 3:{tip:['Основний рівень: орієнтири без «П», поглиблений: з «П».','На поглибленому рівні одному конкретному результату відповідають 2–4 орієнтири. Оберіть ті, що реалізуються саме в цій темі.','Решта орієнтирів того самого результату припаде на інші теми курсу.'],
+    ex:'Для 12 ІФО 1.3.1 обрано 1.3.1-1 П (способи подання), 1.3.1-2 П (модель «сутність — зв’язок»), 1.3.1-3 П (оцінювання моделі). 1.3.1-4 П (межі моделювання) залишено для теми «Комп’ютерне моделювання».',
+    err:['Змішано орієнтири різних рівнів без потреби.','Обрано орієнтир, для якого в темі немає ні змісту, ні завдання.']},
+ 4:{tip:['Дія — дієслово. Об’єкт — на що спрямована дія. Контекст — для яких задач і якими засобами. Якість — «обґрунтовано», «за критеріями», «самостійно».','Кнопка «Розкласти автоматично» робить чернетку. Обов’язково перевірте її.','Якісна характеристика згодом стане критерієм оцінювання.'],
+    ex:'12 ІФО 1.3.1-2 П → Дія: будує і використовує · Об’єкт: інформаційні моделі, зокрема «сутність — зв’язок» · Контекст: для розв’язання проблем реального та віртуального світу, із застосуванням ІТ · Якість: (неявно) придатність для розв’язання.',
+    err:['Під час деконструкції змінено дію (наприклад, «оцінює» стало «називає»).','Контекст залишено порожнім, тоді результат не прив’язаний до задачі.']},
+ 5:{tip:['Залишайте дію тією самою або вищою: деталізуються об’єкт, умови та якість.','Клацніть поле, потім чип з поняттям теми, щоб вставити його.','Узагальнення замінюйте конкретикою: «інформаційні моделі» стають «ER-діаграмою», «ІТ» стають «SQLite, draw.io».'],
+    ex:'Об’єкт «інформаційні моделі» → «сутності, атрибути, зв’язки 1:1, 1:N, M:N; таблиці й ключі». Контекст → «за описом предметної області з 4–6 сутностей, у draw.io».',
+    err:['Переписано формулювання стандарту дослівно.','Додано зміст, якого немає в програмі теми.']},
+ 6:{tip:['Формула: дієслово + конкретний об’єкт + умови/засоби + якість + [код].','Одна спостережувана дія в одному результаті. Кілька дій розділіть.','Для теми на 10–15 год зазвичай достатньо 8–12 результатів.','Варіант для основного рівня є готовою «сходинкою» для учнів, яким потрібна підтримка.'],
+    ex:'«складає SQL-запити на вибірку (умови, сортування, агрегатні функції, JOIN) для відповіді на практичні питання та перевіряє коректність результату» [12 ІФО 1.2.3-2 П]',
+    err:['«Знає типи зв’язків» неможливо побачити: замініть на «визначає та обґрунтовує тип зв’язку».','«Ознайомити учнів з…» — це мета вчителя, а не результат учня.']},
+ 7:{tip:['Порядок: розуміння → застосування за зразком → застосування в новій ситуації → аналіз, оцінювання, створення.','Цей порядок задає розподіл результатів за уроками.','Перевірте, що в темі є хоча б один результат високого рівня (аналіз і вище).'],
+    ex:'У прикладі 2 результати на розуміння, 4 на застосування, 2 на аналіз, 2 на оцінювання, 1 на створення.',
+    err:['Усі результати на рівні «пояснює/називає».','Складний результат стоїть першим, без підготовчих кроків.']},
+ 8:{tip:['Кожен провідний орієнтир має бути покритий хоча б одним результатом.','Кожен результат повинен мати код.','Рівень дієслова: хоча б один результат досягає рівня орієнтира.'],
+    ex:'У прикладі всі 13 орієнтирів покрито; супутні (1.3.2-1 П, 4.1.2-х П) оцінюються формувально.',
+    err:['Орієнтир обрано на кроці 3, але жоден результат його не реалізує.','Результат цікавий, але не пов’язаний зі стандартом.']},
+ 9:{tip:['Доказ: що учень покаже чи здасть (файл, схема, відповідь).','2–4 індикатори, які можна перевірити: їх можна скласти з якісної характеристики та умов.','Рівні досягнень будуйте з індикаторів: кожен вищий рівень додає індикатор або самостійність.','Шкалу (бали) узгодьте з чинними вимогами до оцінювання.'],
+    ex:'Результат 7 (SQL): індикатори «обирає таблиці → умови й сортування → JOIN і групування → перевіряє та пояснює». Рівні від «з допомогою, одна таблиця» до «усі три питання + висновок».',
+    err:['Рівні відрізняються лише словами «частково/повністю».','Завдання не дає змоги перевірити заявлений індикатор.']},
+ 10:{tip:['Скопіюйте план у Word або Google Docs кнопкою «Копіювати план».','Критерії «Я можу…» покажіть учням на початку теми й повертайтеся до них щотижня.','Збережіть JSON-копію: її можна імпортувати, щоб продовжити роботу на іншому пристрої.'],
+    ex:'Критерій успіху: «Я можу скласти запит, який бере дані з двох таблиць, і перевірити, що він працює правильно».',
+    err:['Критерії успіху написано мовою вчителя.','Після теми план не переглянуто за реальними результатами учнів.']}
+};
+
+/* ---------- render ---------- */
+function renderSummary(){
+  const po = pickedOrients(), pc = pickedConcretes(), cov = coverage();
+  const lead = pc.filter(c => state.picks[c.c] === 'lead').length;
+  const h = +state.topic.hours || 0, rn = state.results.length;
+  const tooMany = h && rn > h;
+  document.getElementById('summary').innerHTML = [
+    `<span class="chip">Тема: <b>${esc(state.topic.title || 'не вказано')}</b></span>`,
+    `<span class="chip">Рівень: <b>${state.topic.level === 'adv' ? 'поглиблений (П)' : 'основний'}</b></span>`,
+    `<span class="chip">Годин: <b>${esc(state.topic.hours || '—')}</b></span>`,
+    `<span class="chip">Конкретних результатів: <b>${pc.length}</b> (провідних ${lead})</span>`,
+    `<span class="chip">Орієнтирів: <b>${po.length}</b></span>`,
+    `<span class="chip ${tooMany ? 'warn' : ''}">Результатів з теми: <b>${rn}</b>${tooMany ? ' — забагато для годин' : ''}</span>`,
+    po.length ? (cov.uncovered.length ? `<span class="chip warn">Не покрито орієнтирів: <b>${cov.uncovered.length}</b></span>` : (rn ? `<span class="chip ok">Усі орієнтири покрито</span>` : '')) : ''
+  ].join('');
+  document.getElementById('bannerSlot').innerHTML = state.exampleBanner ?
+    `<div class="banner"><span>Відкрито приклад «Бази даних. Реляційна модель даних». Перегляньте всі кроки, а щоб почати свою тему, натисніть «Новий план».</span><button class="btn sm" data-act="hideBanner" type="button">Зрозуміло</button></div>` : '';
+}
+function renderSteps(){
+  let html = '', st = '';
+  STEPS.forEach(s => {
+    if (s.st !== st){ st = s.st; html += `<div class="stage">${STAGE[st]}</div>`; }
+    html += `<button type="button" class="stepbtn ${state.step === s.n ? 'active' : ''} ${done(s.n) ? 'done' : ''}" data-go="${s.n}"><span class="num">${done(s.n) && state.step !== s.n ? '✓' : s.n}</span><span>${s.t}</span></button>`;
+  });
+  document.getElementById('steps').innerHTML = html;
+}
+function renderHints(){
+  const h = HINTS[state.step];
+  document.getElementById('hints').innerHTML = `
+    <div class="hintcard"><h3>Підказка</h3><ul>${h.tip.map(x => `<li>${x}</li>`).join('')}</ul></div>
+    <div class="hintcard ex"><h3>Приклад: «Бази даних»</h3><p style="font-size:14px">${h.ex}</p></div>
+    <div class="hintcard err"><h3>Типові помилки</h3><ul>${h.err.map(x => `<li>${x}</li>`).join('')}</ul></div>`;
+}
+function head(n, lead){
+  const s = STEPS[n-1];
+  return `<div class="stephead"><span class="eyebrow">${STAGE[s.st]} · Крок ${n} з 10</span><h2>${s.t}</h2><p class="lead">${lead}</p></div>`;
+}
+function nav(n){
+  return `<div class="stepnav">${n > 1 ? `<button class="btn" type="button" data-go="${n-1}">← ${STEPS[n-2].t}</button>` : '<span></span>'}${n < 10 ? `<button class="btn primary" type="button" data-go="${n+1}">${STEPS[n].t} →</button>` : ''}</div>`;
+}
+function inp(path, label, help, type){
+  const v = getPath(state, path) ?? '';
+  const ctl = type === 'area' ? `<textarea id="f-${path}" data-bind="${path}">${esc(v)}</textarea>` : `<input id="f-${path}" type="${type || 'text'}" data-bind="${path}" value="${esc(v)}">`;
+  return `<div class="field"><label class="lbl" for="f-${path}">${label}</label>${ctl}${help ? `<span class="help">${help}</span>` : ''}</div>`;
+}
+
+const VIEWS = {};
+VIEWS[1] = () => head(1, 'Зафіксуйте параметри теми з навчальної програми. Вони визначають рівень орієнтирів, реалістичну кількість результатів і предметний зміст, яким наповнюватимете формулювання стандарту.') + `
+  <div class="grid2">
+    ${inp('topic.title','Тема навчальної програми','Як у програмі, наприклад: «Бази даних. Реляційна модель даних»')}
+    ${inp('topic.subject','Предмет','')}
+    ${inp('topic.grade','Клас','Наприклад: 10 або 10–11')}
+    ${inp('topic.hours','Кількість годин на тему','Від неї залежить кількість результатів (≈ 0,6–0,9 від годин)','number')}
+    <div class="field full"><span class="lbl">Рівень вивчення</span>
+      <div class="seg" role="group" aria-label="Рівень вивчення">
+        <button type="button" class="${state.topic.level === 'basic' ? 'on' : ''}" data-act="level" data-v="basic">Основний</button>
+        <button type="button" class="${state.topic.level === 'adv' ? 'on' : ''}" data-act="level" data-v="adv">Поглиблений (П)</button>
+      </div>
+      <span class="help">Основний рівень: орієнтири без позначки «П»; поглиблений: з позначкою «П».</span></div>
+    <div class="field full">${inp('topic.concepts','Ключові поняття теми (через кому)','Використовуються для підсвічування результатів стандарту на кроці 2 і як чипи на кроці 5','area')}</div>
+    ${inp('topic.tools','Цифрові засоби','Програми, сервіси, середовища')}
+    ${inp('topic.field','«Обрана галузь» / профіль класу','З яких сфер брати приклади й задачі')}
+    ${inp('topic.prior','На що спирається тема','Попередні теми, уміння')}
+    ${inp('topic.next','Для чого є опорою','Наступні теми')}
+  </div>` + nav(1);
+
+VIEWS[2] = () => {
+  const q = (state.ui_q || '').toLowerCase();
+  let html = head(2, 'Перегляньте конкретні результати Державного стандарту (12 ІФО x.x.x) і позначте ті, для яких зміст теми дає ситуацію формування та перевірки. Для кожного оберіть роль: провідний або супутній.');
+  html += `<div class="row" style="margin-bottom:12px"><input type="search" id="q" placeholder="Пошук за словами в результатах та орієнтирах…" value="${esc(state.ui_q || '')}" aria-label="Пошук" style="max-width:420px"><label class="row small"><input type="checkbox" id="onlyMatch" ${state.ui_only ? 'checked' : ''}> лише зі збігом понять теми</label></div><div class="stack">`;
+  STD.groups.forEach(g => {
+    const gens = GENERALS.filter(x => x.n.startsWith(g.n + '.'));
+    let body = '', cnt = 0, sel = 0;
+    gens.forEach(gen => {
+      const crs = CONCRETES.filter(c => genNum(c.n) === gen.n).filter(c => {
+        const all = (c.t + ' ' + ITEMS.filter(i => i.n === c.n).map(i => i.t).join(' ')).toLowerCase();
+        if (q && !all.includes(q)) return false;
+        if (state.ui_only && !relevance(c).length && !state.picks[c.c]) return false;
+        return true;
+      });
+      if (!crs.length) return;
+      body += `<div class="small muted" style="margin-top:6px"><span class="pill">${gen.c}</span> ${esc(gen.t)}</div>`;
+      crs.forEach(c => {
+        cnt++; const role = state.picks[c.c]; if (role) sel++;
+        const rel = relevance(c);
+        body += `<div class="cr ${role ? 'on' : ''} ${role === 'support' ? 'sup' : ''}">
+          <input type="checkbox" data-act="pick" data-c="${c.c}" ${role ? 'checked' : ''} aria-label="Обрати ${c.c}">
+          <div><div>${esc(c.t)}</div><div class="row small" style="margin-top:4px"><span class="pill">${c.c}</span>${rel.length ? `<span class="tag match" title="${esc(rel.join(', '))}">збіг: ${esc(rel.slice(0,3).join(', '))}${rel.length > 3 ? '…' : ''}</span>` : ''}</div></div>
+          <div>${role ? `<div class="seg" role="group" aria-label="Роль"><button type="button" class="${role === 'lead' ? 'on' : ''}" data-act="role" data-c="${c.c}" data-v="lead">Провідний</button><button type="button" class="${role === 'support' ? 'on' : ''}" data-act="role" data-c="${c.c}" data-v="support">Супутній</button></div>` : ''}</div>
+        </div>`;
+      });
+    });
+    if (!cnt) return;
+    const open = q || state.ui_only || sel || g.n === '1';
+    html += `<details class="grp" ${open ? 'open' : ''}><summary><span>${g.n}. ${esc(g.t)}</span><span class="chip">${sel ? `обрано <b>${sel}</b>` : `${cnt}`}</span></summary><div class="grpbody">${body}</div></details>`;
+  });
+  html += `</div>`;
+  const lead = Object.values(state.picks).filter(v => v === 'lead').length;
+  if (lead > 4) html += `<p class="small" style="color:var(--warn);margin-top:10px">Провідних результатів: ${lead}. Для однієї теми зазвичай досить 2–4. Перевірте, чи всі вони справді формуються саме тут.</p>`;
+  return html + nav(2);
+};
+
+VIEWS[3] = () => {
+  const pc = pickedConcretes(), k = lvlKind(), other = k === 'adv' ? 'basic' : 'adv';
+  let html = head(3, `Для кожного обраного конкретного результату позначте орієнтири для оцінювання рівня «${k === 'adv' ? 'поглиблений (П)' : 'основний'}», які реалізуються саме в цій темі.`);
+  if (!pc.length) return html + `<div class="empty">Спершу оберіть конкретні результати на кроці 2.</div>` + nav(3);
+  html += `<div class="stack">`;
+  pc.forEach(c => {
+    const role = state.picks[c.c];
+    const list = orientsOf(c.n, k), alt = orientsOf(c.n, other);
+    const showAlt = state.ui_alt && state.ui_alt[c.c];
+    html += `<div class="card ${role === 'lead' ? 'sel' : 'support'}">
+      <div class="spread"><div><span class="pill">${c.c}</span> <span class="tag ${role}">${role === 'lead' ? 'провідний' : 'супутній'}</span><p style="margin-top:4px">${esc(c.t)}</p></div></div>
+      <div class="stack" style="gap:4px">${list.map(o => `<label class="or ${state.orients[o.c] ? 'on' : ''}"><input type="checkbox" data-act="orient" data-c="${o.c}" ${state.orients[o.c] ? 'checked' : ''}><span>${esc(o.t)} <span class="pill ${o.k === 'adv' ? 'adv' : ''}">${o.c}</span></span></label>`).join('')}</div>
+      ${alt.length ? `<button type="button" class="btn ghost sm" data-act="alt" data-c="${c.c}" style="align-self:flex-start">${showAlt ? 'Сховати' : 'Показати'} орієнтири рівня «${other === 'adv' ? 'поглиблений' : 'основний'}» (${alt.length})</button>` : ''}
+      ${showAlt ? `<div class="stack" style="gap:4px">${alt.map(o => `<label class="or ${state.orients[o.c] ? 'on' : ''}"><input type="checkbox" data-act="orient" data-c="${o.c}" ${state.orients[o.c] ? 'checked' : ''}><span class="muted">${esc(o.t)} <span class="pill">${o.c}</span></span></label>`).join('')}</div>` : ''}
+    </div>`;
+  });
+  return html + `</div>` + nav(3);
+};
+
+function orientHead(o){
+  return `<div><span class="pill ${o.k === 'adv' ? 'adv' : ''}">${o.c}</span> <span class="tag ${roleOfOrient(o.c)}">${roleOfOrient(o.c) === 'lead' ? 'провідний' : 'супутній'}</span><p style="margin-top:4px">${esc(o.t)}</p></div>`;
+}
+const PARTS = [['action','Дія','дієслово'],['object','Об’єкт','на що спрямована дія'],['context','Контекст / засоби','для яких задач, чим'],['quality','Якість / критерій','як добре, за якими критеріями']];
+
+VIEWS[4] = () => {
+  const po = pickedOrients();
+  let html = head(4, 'Розкладіть кожен орієнтир на чотири складники. Дію не змінюйте: на наступному кроці деталізуватимуться об’єкт, умови та якість.');
+  if (!po.length) return html + `<div class="empty">Спершу оберіть орієнтири на кроці 3.</div>` + nav(4);
+  html += `<div class="row" style="margin-bottom:12px"><button class="btn sm" type="button" data-act="autoAll">Розкласти всі автоматично (порожні поля)</button></div><div class="stack">`;
+  po.forEach(o => {
+    const d = state.decomp[o.c] || (state.decomp[o.c] = {action:'',object:'',context:'',quality:'',tAction:'',tObject:'',tContext:'',tQuality:''});
+    html += `<div class="card"><div class="spread">${orientHead(o)}<button class="btn sm" type="button" data-act="auto" data-c="${o.c}">Розкласти автоматично</button></div>
+      <div class="grid2">${PARTS.map(([k, l, h]) => `<div class="field"><label class="lbl" for="d-${o.c}-${k}">${l} <span class="muted" style="font-weight:400">· ${h}</span></label><input type="text" id="d-${o.c}-${k}" data-bind="decomp.${o.c}.${k}" value="${esc(d[k])}"></div>`).join('')}</div></div>`;
+  });
+  return html + `</div>` + nav(4);
+};
+
+VIEWS[5] = () => {
+  const po = pickedOrients();
+  let html = head(5, 'Замініть узагальнені складники орієнтира конкретними поняттями, типами задач і засобами теми. Зліва формулювання стандарту, справа те, чим воно стає у вашій темі.');
+  if (!po.length) return html + `<div class="empty">Спершу оберіть орієнтири на кроці 3.</div>` + nav(5);
+  const concepts = (state.topic.concepts + ',' + state.topic.tools).split(/[,;]/).map(s => s.trim()).filter(Boolean);
+  html += concepts.length ? `<div class="card" style="margin-bottom:12px;background:var(--surface-2)"><span class="small"><b>Поняття та засоби теми.</b> Клацніть поле праворуч, потім чип, щоб вставити.</span><div class="chips">${concepts.map(c => `<button type="button" class="chipbtn" data-act="ins" data-v="${esc(c)}">${esc(c)}</button>`).join('')}</div></div>` : '';
+  html += `<div class="stack">`;
+  po.forEach(o => {
+    const d = state.decomp[o.c] || autoDecomp(o.t);
+    state.decomp[o.c] = d;
+    html += `<div class="card">${orientHead(o)}<div class="cmp"><span class="h"></span><span class="h">У стандарті</span><span class="h">У темі стає</span>
+      ${PARTS.map(([k, l]) => { const tk = 't' + k[0].toUpperCase() + k.slice(1); return `<span class="k">${l}</span><div class="std">${esc(d[k]) || '<span class="muted">—</span>'}</div><input type="text" aria-label="${l} у темі" data-bind="decomp.${o.c}.${tk}" value="${esc(d[tk])}" placeholder="${k === 'action' ? esc(d.action) : ''}">`; }).join('')}
+    </div><div class="row"><button class="btn sm" type="button" data-act="toBuilder" data-c="${o.c}">Сформулювати результат з цього орієнтира →</button></div></div>`;
+  });
+  return html + `</div>` + nav(5);
+};
+
+function draft(){ if (!state.draft) state.draft = {id:null, bloom:3, action:'', object:'', cond:'', crit:'', text:'', manual:false, basic:'', codes:[]}; return state.draft; }
+function composeDraft(d){ return [d.action, d.object, d.cond, d.crit].map(s => (s || '').trim()).filter(Boolean).join(' '); }
+
+VIEWS[6] = () => {
+  const po = pickedOrients(), d = draft();
+  if (!d.manual) d.text = composeDraft(d);
+  let html = head(6, 'Зберіть тематичний результат за формулою: дієслово + конкретний об’єкт + умови/засоби + якість + [код орієнтира]. Перевірка під прикладом підкаже, що виправити.');
+  html += `<div class="card sel"><h3>${d.id ? 'Редагування результату' : 'Новий тематичний результат'}</h3>
+    <div class="field"><span class="lbl">Орієнтири стандарту, які реалізує результат</span>
+      <div class="chips">${po.length ? po.map(o => `<button type="button" class="chipbtn ${d.codes.includes(o.c) ? 'on' : ''}" data-act="dcode" data-c="${o.c}" title="${esc(o.t)}">${o.c}</button>`).join('') : '<span class="muted small">Оберіть орієнтири на кроці 3.</span>'}</div></div>
+    <div class="grid2">
+      <div class="field"><label class="lbl" for="dbloom">Рівень пізнавальної діяльності</label><select id="dbloom" data-bind="draft.bloom" data-num="1">${BLOOM.slice(1).map((b, i) => `<option value="${i+1}" ${d.bloom == i+1 ? 'selected' : ''}>${i+1}. ${b.n}</option>`).join('')}</select></div>
+      <div class="field"><span class="lbl">Дієслова рівня</span><div class="chips">${BLOOM[d.bloom].v.map(v => `<button type="button" class="chipbtn" data-act="verb" data-v="${v}">${v}</button>`).join('')}</div></div>
+      <div class="field"><label class="lbl" for="da">1 · Дія (дієслово)</label><input type="text" id="da" data-bind="draft.action" data-live="1" value="${esc(d.action)}"></div>
+      <div class="field"><label class="lbl" for="do">2 · Конкретний об’єкт теми</label><input type="text" id="do" data-bind="draft.object" data-live="1" value="${esc(d.object)}"></div>
+      <div class="field"><label class="lbl" for="dc">3 · Умови / засоби</label><input type="text" id="dc" data-bind="draft.cond" data-live="1" value="${esc(d.cond)}"></div>
+      <div class="field"><label class="lbl" for="dk">4 · Якість / критерій</label><input type="text" id="dk" data-bind="draft.crit" data-live="1" value="${esc(d.crit)}"></div>
+    </div>
+    <div class="preview"><div class="small muted" style="margin-bottom:4px">Учень / учениця…</div><textarea id="dtext" aria-label="Формулювання результату" data-bind="draft.text" data-manual="1" style="background:transparent;border-color:transparent;font-size:16px;font-weight:500;padding:0">${esc(d.text)}</textarea>
+      <div class="row small">${d.codes.map(c => `<span class="pill">${c}</span>`).join('')}${d.manual ? `<button class="btn ghost sm" type="button" data-act="unmanual">Зібрати знову з полів 1–4</button>` : ''}</div></div>
+    <div class="lint" id="lintBox">${lint(d).map(x => `<span class="${x.w ? 'w' : 'g'}">${x.w ? '⚠' : '✓'} ${x.m}</span>`).join('')}</div>
+    <div class="field"><label class="lbl" for="db">Варіант для основного рівня / сходинка підтримки (необов’язково)</label><input type="text" id="db" data-bind="draft.basic" value="${esc(d.basic)}"></div>
+    <div class="row"><button class="btn primary" type="button" data-act="saveDraft">${d.id ? 'Зберегти зміни' : 'Додати результат'}</button><button class="btn" type="button" data-act="clearDraft">Очистити</button></div>
+  </div>`;
+  html += `<h3 style="margin:20px 0 10px">Результати з теми (${state.results.length})</h3><div class="stack">`;
+  html += state.results.length ? state.results.map((r, i) => {
+    const l = lint(r).filter(x => x.w);
+    return `<div class="res"><span class="no">${i+1}</span><div><div>${esc(r.text)}</div>${r.basic ? `<div class="small muted" style="margin-top:2px">Основний рівень: ${esc(r.basic)}</div>` : ''}
+      <div class="meta"><span class="tag ${BCOL[r.bloom]}">${BLOOM[r.bloom].n}</span>${r.codes.map(c => `<span class="pill">${c}</span>`).join('')}</div>
+      ${l.length ? `<div class="lint" style="margin-top:6px">${l.map(x => `<span class="w">⚠ ${x.m}</span>`).join('')}</div>` : ''}</div>
+      <div class="acts"><button class="btn sm" type="button" data-act="editRes" data-i="${i}">Редагувати</button><button class="btn sm danger" type="button" data-act="delRes" data-i="${i}">Видалити</button></div></div>`;
+  }).join('') : `<div class="empty">Ще немає результатів. Сформулюйте перший вище або натисніть «Сформулювати результат…» на кроці 5.</div>`;
+  return html + `</div>` + nav(6);
+};
+
+VIEWS[7] = () => {
+  let html = head(7, 'Упорядкуйте результати від простіших до складніших. Цей порядок стане логікою розподілу результатів за уроками.');
+  if (!state.results.length) return html + `<div class="empty">Спершу додайте результати на кроці 6.</div>` + nav(7);
+  const cnt = [0,0,0,0,0,0,0]; state.results.forEach(r => cnt[r.bloom]++);
+  const total = state.results.length;
+  html += `<div class="stack" style="margin-bottom:16px"><div class="dist" role="img" aria-label="Розподіл результатів за рівнями">${cnt.map((c, i) => i && c ? `<div class="${BCOL[i]}" style="flex:${c}" title="${BLOOM[i].n}: ${c}">${c}</div>` : '').join('')}</div>
+    <div class="legend">${BLOOM.slice(1).map((b, i) => `<span><span class="tag ${BCOL[i+1]}">${i+1}</span> ${b.n}: ${cnt[i+1]}</span>`).join('')}</div>
+    ${cnt[4] + cnt[5] + cnt[6] === 0 ? `<p class="small" style="color:var(--warn)">Немає жодного результату рівня аналізу або вище. Додайте хоча б один.</p>` : ''}
+    ${(() => { let bad = 0; state.results.forEach((r, i) => { if (i && r.bloom < state.results[i-1].bloom - 1) bad++; }); return bad ? `<p class="small" style="color:var(--hint)">Є різкі спади рівня в послідовності (${bad}). Це можливо, але перевірте логіку.</p>` : ''; })()}
+    <button class="btn sm" type="button" data-act="sortBloom" style="align-self:flex-start">Упорядкувати автоматично за рівнем</button></div><div class="stack">`;
+  html += state.results.map((r, i) => `<div class="res"><span class="no">${i+1}</span><div><div>${esc(r.text)}</div><div class="meta">${r.codes.map(c => `<span class="pill">${c}</span>`).join('')}</div></div>
+    <div class="acts"><select aria-label="Рівень результату ${i+1}" data-act="bloomSel" data-i="${i}" style="width:auto">${BLOOM.slice(1).map((b, k) => `<option value="${k+1}" ${r.bloom == k+1 ? 'selected' : ''}>${k+1}. ${b.n}</option>`).join('')}</select>
+    <button class="btn sm" type="button" data-act="up" data-i="${i}" ${i ? '' : 'disabled'} aria-label="Вгору">↑</button><button class="btn sm" type="button" data-act="down" data-i="${i}" ${i < total-1 ? '' : 'disabled'} aria-label="Вниз">↓</button></div></div>`).join('');
+  return html + `</div>` + nav(7);
+};
+
+VIEWS[8] = () => {
+  const cov = coverage(), rs = state.results;
+  let html = head(8, 'Перевірте, що кожен обраний орієнтир покрито, кожен результат має код, а рівень дій не знижено.');
+  if (!cov.map.length) return html + `<div class="empty">Немає обраних орієнтирів (крок 3).</div>` + nav(8);
+  html += `<div class="tablewrap"><table class="mx"><thead><tr><th>Орієнтир</th><th>Роль</th>${rs.map((r, i) => `<th class="c" title="${esc(r.text)}">${i+1}</th>`).join('')}<th>Статус</th></tr></thead><tbody>`;
+  cov.map.forEach(m => {
+    const need = textLevel(m.o.t), max = Math.max(0, ...m.rs.map(i => rs[i].bloom));
+    const lvlBad = m.rs.length && need && max < need - 1;
+    const role = roleOfOrient(m.o.c);
+    html += `<tr><td><span class="pill ${m.o.k === 'adv' ? 'adv' : ''}">${m.o.c}</span><div class="small muted" style="margin-top:3px;max-width:60ch">${esc(m.o.t)}</div></td><td><span class="tag ${role}">${role === 'lead' ? 'провідний' : 'супутній'}</span></td>
+      ${rs.map((r, i) => m.rs.includes(i) ? `<td class="hit">✓</td>` : `<td class="miss">·</td>`).join('')}
+      <td>${!m.rs.length ? `<span class="status bad">не покрито</span>` : lvlBad ? `<span class="status bad">рівень знижено</span>` : `<span class="status ok">покрито</span>`}</td></tr>`;
+  });
+  html += `</tbody></table></div>`;
+  const noCode = rs.filter(r => !r.codes.length).length;
+  const h = +state.topic.hours || 0;
+  const lead = cov.map.filter(m => roleOfOrient(m.o.c) === 'lead');
+  const checks = [
+    [cov.uncoveredLead.length === 0, cov.uncoveredLead.length ? `Не покрито провідних орієнтирів: ${cov.uncoveredLead.map(m => m.o.c).join(', ')}.` : `Усі провідні орієнтири (${lead.length}) покрито.`],
+    [cov.uncovered.length - cov.uncoveredLead.length === 0, cov.uncovered.length - cov.uncoveredLead.length ? `Не покрито супутніх орієнтирів: ${cov.uncovered.filter(m => roleOfOrient(m.o.c) !== 'lead').map(m => m.o.c).join(', ')}. Додайте результат або зніміть орієнтир на кроці 3.` : 'Усі супутні орієнтири покрито.'],
+    [noCode === 0, noCode ? `Результатів без коду стандарту: ${noCode}.` : 'Кожен результат має код орієнтира.'],
+    [!h || (rs.length <= h && rs.length >= Math.ceil(h / 3)), h ? `Результатів ${rs.length} на ${h} год. Орієнтовно варто мати ${Math.ceil(h * .5)}–${Math.round(h * .9)}.` : 'Вкажіть кількість годин на кроці 1, щоб перевірити реалістичність.'],
+    [cov.map.every(m => { const need = textLevel(m.o.t), max = Math.max(0, ...m.rs.map(i => rs[i].bloom)); return !m.rs.length || !need || max >= need - 1; }), 'Рівень дій: для кожного покритого орієнтира хоча б один результат близький до рівня його дієслів.']
+  ];
+  html += `<ul class="checks" style="margin-top:14px">${checks.map(([ok, m]) => `<li class="${ok ? 'ok' : 'bad'}"><span class="i">${ok ? '✓' : '!'}</span><span>${m}</span></li>`).join('')}</ul>`;
+  return html + nav(8);
+};
+
+VIEWS[9] = () => {
+  let html = head(9, 'Для кожного результату визначте доказ досягнення, 2–4 індикатори, оцінювальне завдання, вид оцінювання й опис рівнів. Провідні результати оцінюйте підсумково, супутні формувально.');
+  if (!state.results.length) return html + `<div class="empty">Спершу додайте результати на кроці 6.</div>` + nav(9);
+  const open = state.ui_open9 ?? 0;
+  html += `<div class="stack">`;
+  state.results.forEach((r, i) => {
+    const ok = r.indicators.filter(Boolean).length && r.task;
+    html += `<details class="grp" ${open === i ? 'open' : ''} data-det="${i}"><summary><span><span style="color:var(--accent)">${i+1}.</span> ${esc(r.text.length > 110 ? r.text.slice(0, 110) + '…' : r.text)}</span><span class="status ${ok ? 'ok' : 'bad'}">${ok ? 'готово' : 'заповнити'}</span></summary><div class="grpbody">
+      <div class="grid2">
+        <div class="field"><label class="lbl" for="ev${i}">Доказ досягнення</label><input type="text" id="ev${i}" data-bind="results.${i}.evidence" value="${esc(r.evidence)}" placeholder="файл, схема, усна відповідь, звіт…"></div>
+        <div class="field"><label class="lbl" for="as${i}">Вид оцінювання</label><select id="as${i}" data-bind="results.${i}.assess"><option value="formative" ${r.assess === 'formative' ? 'selected' : ''}>Формувальне</option><option value="summative" ${r.assess === 'summative' ? 'selected' : ''}>Підсумкове (тематичне)</option></select></div>
+        <div class="field full"><label class="lbl" for="in${i}">Індикатори (по одному в рядку)</label><textarea id="in${i}" data-bind="results.${i}.indicators" data-lines="1">${esc(r.indicators.join('\n'))}</textarea><span class="help">Підказка: візьміть якісну характеристику та умови з кроку 5${r.codes[0] && state.decomp[r.codes[0]] && state.decomp[r.codes[0]].tQuality ? `: «${esc(state.decomp[r.codes[0]].tQuality)}»` : ''}.</span></div>
+        <div class="field full"><label class="lbl" for="tk${i}">Оцінювальне завдання</label><textarea id="tk${i}" data-bind="results.${i}.task">${esc(r.task)}</textarea></div>
+      </div>
+      <div class="spread"><span class="lbl">Опис рівнів досягнень</span><button class="btn sm" type="button" data-act="rubric" data-i="${i}">Скласти шаблон з індикаторів</button></div>
+      <div class="rub">${['Початковий','Середній','Достатній','Високий'].map((n, k) => `<div class="field"><label class="lbl" for="rb${i}-${k}">${n}</label><textarea id="rb${i}-${k}" data-bind="results.${i}.rubric.${k}">${esc(r.rubric[k])}</textarea></div>`).join('')}</div>
+      <div class="field"><label class="lbl" for="cn${i}">Критерій успіху для учнів «Я можу…»</label><div class="row" style="flex-wrap:nowrap"><input type="text" id="cn${i}" data-bind="results.${i}.can" value="${esc(r.can)}"><button class="btn sm" type="button" data-act="can" data-i="${i}">Чернетка</button></div></div>
+    </div></details>`;
+  });
+  return html + `</div>` + nav(9);
+};
+
+function planHTML(){
+  const t = state.topic, rs = state.results, cov = coverage();
+  const cell = s => esc(s || '');
+  let h = `<h2>${cell(t.title || 'Тема')}</h2><p>${cell(t.subject)}, ${cell(t.grade)} клас, ${t.level === 'adv' ? 'поглиблений рівень' : 'основний рівень'}, ${cell(t.hours)} год.</p>`;
+  h += `<table border="1" cellpadding="5" style="border-collapse:collapse"><tbody>
+    <tr><th align="left">Ключові поняття</th><td>${cell(t.concepts)}</td></tr><tr><th align="left">Цифрові засоби</th><td>${cell(t.tools)}</td></tr>
+    <tr><th align="left">Обрана галузь / профіль</th><td>${cell(t.field)}</td></tr><tr><th align="left">Опора / перспектива</th><td>${cell(t.prior)} → ${cell(t.next)}</td></tr></tbody></table>`;
+  h += `<h3>Орієнтири Державного стандарту, що реалізуються в темі</h3><table border="1" cellpadding="5" style="border-collapse:collapse"><thead><tr><th>Код</th><th>Орієнтир</th><th>Роль</th><th>Результати з теми</th></tr></thead><tbody>${cov.map.map(m => `<tr><td>${m.o.c}</td><td>${cell(m.o.t)}</td><td>${roleOfOrient(m.o.c) === 'lead' ? 'провідний' : 'супутній'}</td><td>${m.rs.map(i => i+1).join(', ') || '—'}</td></tr>`).join('')}</tbody></table>`;
+  h += `<h3>Результати навчання (орієнтири оцінювання) з теми</h3><table border="1" cellpadding="5" style="border-collapse:collapse"><thead><tr><th>№</th><th>Рівень</th><th>Результат</th><th>Варіант для основного рівня</th><th>Код</th></tr></thead><tbody>${rs.map((r, i) => `<tr><td>${i+1}</td><td>${BLOOM[r.bloom].n}</td><td>${cell(r.text)}</td><td>${cell(r.basic)}</td><td>${r.codes.join('; ')}</td></tr>`).join('')}</tbody></table>`;
+  h += `<h3>Індикатори, завдання та оцінювання</h3><table border="1" cellpadding="5" style="border-collapse:collapse"><thead><tr><th>№</th><th>Доказ</th><th>Індикатори</th><th>Завдання</th><th>Вид</th></tr></thead><tbody>${rs.map((r, i) => `<tr><td>${i+1}</td><td>${cell(r.evidence)}</td><td>${r.indicators.filter(Boolean).map(cell).join('<br>')}</td><td>${cell(r.task)}</td><td>${r.assess === 'summative' ? 'підсумкове' : 'формувальне'}</td></tr>`).join('')}</tbody></table>`;
+  const withRub = rs.map((r, i) => [r, i]).filter(([r]) => r.rubric.some(Boolean));
+  if (withRub.length) h += `<h3>Опис рівнів досягнень</h3><table border="1" cellpadding="5" style="border-collapse:collapse"><thead><tr><th>№</th><th>Початковий</th><th>Середній</th><th>Достатній</th><th>Високий</th></tr></thead><tbody>${withRub.map(([r, i]) => `<tr><td>${i+1}</td>${r.rubric.map(x => `<td>${cell(x)}</td>`).join('')}</tr>`).join('')}</tbody></table>`;
+  h += `<h3>Критерії успіху для учнів</h3><ul>${rs.filter(r => r.can).map(r => `<li>☐ ${cell(r.can)}</li>`).join('')}</ul>`;
+  h += `<p style="font-size:12px;color:#666">Джерело орієнтирів: Додаток 14 до Державного стандарту, інформатична освітня галузь.</p>`;
+  return h;
+}
+function planText(){
+  const t = state.topic, rs = state.results;
+  let s = `${t.title}\n${t.subject}, ${t.grade} клас, ${t.level === 'adv' ? 'поглиблений' : 'основний'} рівень, ${t.hours} год.\n\nРЕЗУЛЬТАТИ З ТЕМИ\n`;
+  rs.forEach((r, i) => { s += `${i+1}. ${r.text} [${r.codes.join('; ')}] (${BLOOM[r.bloom].n})\n`; if (r.indicators.length) s += `   Індикатори: ${r.indicators.filter(Boolean).join('; ')}\n`; if (r.task) s += `   Завдання: ${r.task}\n`; });
+  s += `\nКРИТЕРІЇ УСПІХУ\n` + rs.filter(r => r.can).map(r => `☐ ${r.can}`).join('\n');
+  return s;
+}
+VIEWS[10] = () => {
+  let html = head(10, 'Готовий план теми: орієнтири стандарту, результати з кодами, індикатори, завдання та критерії успіху для учнів. Скопіюйте його в Word або Google Docs чи збережіть JSON-копію, щоб продовжити пізніше.');
+  html += `<div class="row" style="margin-bottom:14px"><button class="btn primary" type="button" data-act="copyHTML">Копіювати план (для Word / Google Docs)</button><button class="btn" type="button" data-act="copyText">Копіювати як текст</button><button class="btn" type="button" data-act="copyJSON">Копіювати JSON-копію</button></div>`;
+  html += `<div class="plan" id="planBox">${state.results.length ? planHTML() : '<div class="empty">План з’явиться, щойно ви додасте результати на кроці 6.</div>'}</div>`;
+  html += `<details class="grp" style="margin-top:16px"><summary><span>Імпорт збереженої JSON-копії</span></summary><div class="grpbody"><textarea id="importBox" placeholder="Вставте сюди JSON-копію плану…" style="min-height:90px"></textarea><div class="row"><input type="file" id="importFile" accept=".json,application/json" aria-label="Файл JSON"><button class="btn" type="button" data-act="import">Імпортувати</button></div></div></details>`;
+  html += `<div id="fallback"></div>`;
+  return html + nav(10);
+};
+
+function render(){
+  renderSummary(); renderSteps(); renderHints();
+  document.getElementById('work').innerHTML = VIEWS[state.step]();
+  save();
+}
+function soft(){ renderSummary(); renderSteps(); save(); }
+
+/* ---------- events ---------- */
+let lastField = null;
+document.addEventListener('focusin', e => { if (e.target.matches('#work input[type=text], #work textarea')) lastField = e.target; });
+document.addEventListener('input', e => {
+  const el = e.target;
+  if (el.id === 'q'){ state.ui_q = el.value; const pos = el.selectionStart; render(); const q = document.getElementById('q'); q.focus(); q.setSelectionRange(pos, pos); return; }
+  const p = el.dataset.bind; if (!p) return;
+  let v = el.value;
+  if (el.dataset.num) v = +v;
+  if (el.dataset.lines) v = v.split('\n');
+  setPath(state, p, v);
+  if (p.startsWith('draft.')){
+    const d = state.draft;
+    if (el.dataset.manual) d.manual = true;
+    if (el.dataset.live && !d.manual){ d.text = composeDraft(d); const t = document.getElementById('dtext'); if (t) t.value = d.text; }
+    const lb = document.getElementById('lintBox'); if (lb) lb.innerHTML = lint(d).map(x => `<span class="${x.w ? 'w' : 'g'}">${x.w ? '⚠' : '✓'} ${x.m}</span>`).join('');
+  }
+  soft();
+});
+document.addEventListener('change', e => {
+  const el = e.target;
+  if (el.id === 'onlyMatch'){ state.ui_only = el.checked; render(); return; }
+  if (el.dataset.bind === 'draft.bloom'){ render(); return; }
+  if (el.dataset.act === 'bloomSel'){ state.results[+el.dataset.i].bloom = +el.value; render(); return; }
+  if (el.dataset.act === 'pick'){ const c = el.dataset.c; if (el.checked) state.picks[c] = 'lead'; else { delete state.picks[c]; ITEMS.filter(i => i.n === BY[c].n && i.k !== 'concrete').forEach(o => delete state.orients[o.c]); } state.exampleBanner = false; render(); return; }
+  if (el.dataset.act === 'orient'){ const c = el.dataset.c; if (el.checked){ state.orients[c] = true; if (!state.decomp[c]) state.decomp[c] = autoDecomp(BY[c].t); } else delete state.orients[c]; render(); return; }
+  if (el.dataset.bind && el.tagName === 'SELECT'){ render(); return; }
+  if (el.id === 'importFile' && el.files[0]){ const fr = new FileReader(); fr.onload = () => { document.getElementById('importBox').value = fr.result; }; fr.readAsText(el.files[0]); }
+});
+document.addEventListener('toggle', e => { const d = e.target; if (d.dataset && d.dataset.det !== undefined && d.open) state.ui_open9 = +d.dataset.det; }, true);
+
+let newArmed = 0;
+document.addEventListener('click', async e => {
+  const g = e.target.closest('[data-go]');
+  if (g){ state.step = +g.dataset.go; render(); window.scrollTo({top:0, behavior:'auto'}); return; }
+  const b = e.target.closest('[data-act]'); if (!b || b.tagName === 'INPUT' || b.tagName === 'SELECT') return;
+  const a = b.dataset.act, c = b.dataset.c, i = +b.dataset.i;
+  const d = () => draft();
+  switch(a){
+    case 'hideBanner': state.exampleBanner = false; render(); break;
+    case 'level': state.topic.level = b.dataset.v; render(); break;
+    case 'role': state.picks[c] = b.dataset.v; render(); break;
+    case 'alt': state.ui_alt = state.ui_alt || {}; state.ui_alt[c] = !state.ui_alt[c]; render(); break;
+    case 'auto': { const old = state.decomp[c] || {}; state.decomp[c] = Object.assign(autoDecomp(BY[c].t), {tAction:old.tAction||'', tObject:old.tObject||'', tContext:old.tContext||'', tQuality:old.tQuality||''}); render(); toast('Чернетку розкладання створено. Перевірте її.'); break; }
+    case 'autoAll': pickedOrients().forEach(o => { const cur = state.decomp[o.c] || {}; const a2 = autoDecomp(o.t); ['action','object','context','quality'].forEach(k => { if (!cur[k]) cur[k] = a2[k]; }); state.decomp[o.c] = Object.assign({tAction:'',tObject:'',tContext:'',tQuality:''}, cur); }); render(); toast('Порожні поля заповнено.'); break;
+    case 'ins': if (lastField && document.body.contains(lastField)){ const f = lastField; const s = f.selectionStart ?? f.value.length; const v = b.dataset.v; const pre = f.value.slice(0, s), post = f.value.slice(f.selectionEnd ?? s); const sep = pre && !/[\s,(]$/.test(pre) ? ', ' : ''; f.value = pre + sep + v + post; f.dispatchEvent(new Event('input', {bubbles:true})); f.focus(); } else toast('Спершу клацніть поле «У темі стає».'); break;
+    case 'toBuilder': { const x = state.decomp[c] || {}; state.draft = {id:null, bloom: Math.max(2, Math.min(6, textLevel(BY[c].t) || 3)), action: x.tAction || x.action || '', object: x.tObject || '', cond: x.tContext || '', crit: x.tQuality || '', text:'', manual:false, basic:'', codes:[c]}; state.step = 6; render(); window.scrollTo({top:0}); break; }
+    case 'dcode': { const dd = d(); dd.codes = dd.codes.includes(c) ? dd.codes.filter(x => x !== c) : [...dd.codes, c]; render(); break; }
+    case 'verb': { const dd = d(); dd.action = b.dataset.v; dd.manual = false; render(); break; }
+    case 'unmanual': d().manual = false; render(); break;
+    case 'saveDraft': { const dd = d(); const text = (dd.text || composeDraft(dd)).trim(); if (!text){ toast('Сформулюйте результат.'); break; }
+      if (dd.id){ const r = state.results.find(x => x.id === dd.id); Object.assign(r, {bloom:+dd.bloom, text, basic:dd.basic, codes:[...dd.codes], parts:{action:dd.action, object:dd.object, cond:dd.cond, crit:dd.crit}}); toast('Зміни збережено.'); }
+      else { state.results.push({id:uid(), bloom:+dd.bloom, text, basic:dd.basic, codes:[...dd.codes], parts:{action:dd.action, object:dd.object, cond:dd.cond, crit:dd.crit}, evidence:'', indicators:[], task:'', assess: dd.codes.some(x => roleOfOrient(x) === 'lead') ? 'summative' : 'formative', rubric:['','','',''], can:''}); toast('Результат додано.'); }
+      state.draft = null; render(); break; }
+    case 'clearDraft': state.draft = null; render(); break;
+    case 'editRes': { const r = state.results[i]; const p = r.parts || {}; state.draft = {id:r.id, bloom:r.bloom, action:p.action||'', object:p.object||'', cond:p.cond||'', crit:p.crit||'', text:r.text, manual:true, basic:r.basic||'', codes:[...r.codes]}; render(); window.scrollTo({top:0}); break; }
+    case 'delRes': if (b.dataset.armed){ state.results.splice(i, 1); render(); toast('Результат видалено.'); } else { b.dataset.armed = '1'; b.textContent = 'Точно видалити?'; setTimeout(() => { if (document.body.contains(b)){ delete b.dataset.armed; b.textContent = 'Видалити'; } }, 3000); } break;
+    case 'up': if (i > 0){ [state.results[i-1], state.results[i]] = [state.results[i], state.results[i-1]]; render(); } break;
+    case 'down': if (i < state.results.length - 1){ [state.results[i+1], state.results[i]] = [state.results[i], state.results[i+1]]; render(); } break;
+    case 'sortBloom': state.results = state.results.map((r, k) => [r, k]).sort((x, y) => x[0].bloom - y[0].bloom || x[1] - y[1]).map(x => x[0]); render(); break;
+    case 'rubric': { const r = state.results[i]; const ind = r.indicators.map(s => s.trim()).filter(Boolean); if (!ind.length){ toast('Спершу запишіть індикатори.'); break; }
+      const n = ind.length, half = Math.max(1, Math.ceil(n / 2));
+      r.rubric = [
+        `з допомогою вчителя частково виконує: ${ind[0]}`,
+        `самостійно виконує: ${ind.slice(0, half).join('; ')}`,
+        `самостійно виконує: ${ind.slice(0, Math.max(half, n - 1)).join('; ')}${n > 1 ? '; допускає неточності в останньому' : ''}`,
+        `виконує всі індикатори (${ind.join('; ')}), пояснює та обґрунтовує свої рішення`];
+      render(); toast('Шаблон рівнів складено. Відредагуйте за потреби.'); break; }
+    case 'can': { const r = state.results[i]; let t = r.text.replace(/^(\S+)/, w => w); const map = [['пояснює','пояснити'],['порівнює','порівняти'],['будує','побудувати'],['перетворює','перетворити'],['обґрунтовано добирає','обґрунтовано добрати'],['добирає','добрати'],['створює','створити'],['складає','скласти'],['досліджує','дослідити'],['виявляє','виявити'],['оцінює','оцінити'],['пропонує','запропонувати'],['аналізує','проаналізувати'],['використовує','використати'],['застосовує','застосувати'],['наводить','навести'],['описує','описати'],['розробляє','розробити'],['визначає','визначити'],['перевіряє','перевірити'],['нормалізує','нормалізувати'],['класифікує','класифікувати'],['розрізняє','розрізнити'],['налаштовує','налаштувати'],['формулює','сформулювати'],['візуалізує','візуалізувати'],['імпортує','імпортувати'],['обґрунтовує','обґрунтувати'],['моделює','змоделювати'],['проєктує','спроєктувати']];
+      map.forEach(([f, to]) => { t = t.replace(new RegExp('(^|\\s)' + f + '(?=[\\s,]|$)', 'g'), '$1' + to); });
+      r.can = 'Я можу ' + t.replace(/\s*\[.*?\]/g, '') + '.'; render(); break; }
+    case 'copyHTML': await copy(planHTML(), planText()); break;
+    case 'copyText': await copy(null, planText()); break;
+    case 'copyJSON': { const s = JSON.parse(JSON.stringify(state)); delete s.draft; await copy(null, JSON.stringify(s)); break; }
+    case 'import': { try { const s = JSON.parse(document.getElementById('importBox').value); if (!s.topic || !s.results) throw 0; state = Object.assign(blank(), s, {step:1, exampleBanner:false}); render(); toast('План імпортовано.'); } catch(err){ toast('Не вдалося прочитати JSON. Перевірте, що вставлено повну копію.'); } break; }
+  }
+});
+async function copy(html, text){
+  try {
+    if (html && window.ClipboardItem){ await navigator.clipboard.write([new ClipboardItem({'text/html': new Blob([html], {type:'text/html'}), 'text/plain': new Blob([text], {type:'text/plain'})})]); toast('Скопійовано. Вставте в Word або Google Docs.'); return; }
+    await navigator.clipboard.writeText(text); toast('Скопійовано в буфер обміну.');
+  } catch(e){
+    const f = document.getElementById('fallback');
+    if (f){ f.innerHTML = `<div class="field" style="margin-top:14px"><label class="lbl" for="fb">Автоматичне копіювання заблоковано. Виділіть текст і скопіюйте вручну (Ctrl+C)</label><textarea id="fb" style="min-height:160px">${esc(text)}</textarea></div>`; const t = document.getElementById('fb'); t.focus(); t.select(); }
+  }
+}
+document.getElementById('btnExample').onclick = () => { state = example(); render(); toast('Відкрито приклад «Бази даних».'); };
+document.getElementById('btnToPlan').onclick = () => { state.step = 10; render(); };
+document.getElementById('btnNew').onclick = e => {
+  const b = e.currentTarget;
+  if (newArmed){ clearTimeout(newArmed); newArmed = 0; b.textContent = 'Новий план'; state = blank(); render(); toast('Створено порожній план.'); return; }
+  b.textContent = 'Натисніть ще раз: поточний план буде очищено';
+  newArmed = setTimeout(() => { newArmed = 0; b.textContent = 'Новий план'; }, 3500);
+};
+
+state = load() || example();
+render();
+</script>
+</body>
+</html>
