@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Планування теми за зворотним дизайном · Інформатика · Профільна школа</title>
+<style>
+:root{--bg:#f5f3ef;--card:#fff;--ink:#1d2329;--muted:#5f6871;--line:#e1dcd3;--accent:#1f5f8b;--accent-soft:#e4eef6;--ok:#2e7d4f;--ok-soft:#e5f3ea;--warn:#b5651d;--warn-soft:#fbefe2;--bad:#b23a3a;--r:12px}
+*{box-sizing:border-box}
+body{margin:0;font-family:"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;background:var(--bg);color:var(--ink);line-height:1.5;font-size:15px}
+header.top{background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:20}
+.top-in{max-width:1240px;margin:0 auto;padding:12px 20px;display:flex;flex-wrap:wrap;gap:12px 20px;align-items:center}
+.brand{font-weight:700;font-size:17px;margin-right:auto}
+.brand small{display:block;font-weight:400;color:var(--muted);font-size:12.5px}
+.seg{display:inline-flex;border:1.5px solid var(--accent);border-radius:9px;overflow:hidden}
+.seg button{border:0;background:#fff;color:var(--accent);padding:7px 12px;font:inherit;font-weight:600;cursor:pointer}
+.seg button.on{background:var(--accent);color:#fff}
+.btn{font:inherit;font-weight:600;border-radius:9px;padding:8px 14px;cursor:pointer;border:1.5px solid var(--accent);background:#fff;color:var(--accent)}
+.btn.primary{background:var(--accent);color:#fff}
+.btn.small{padding:4px 10px;font-size:13px}
+.btn.danger{border-color:var(--bad);color:var(--bad)}
+.btn.arm{background:var(--bad);border-color:var(--bad);color:#fff}
+nav.tabs{max-width:1240px;margin:0 auto;padding:0 20px;display:flex;gap:4px;overflow-x:auto}
+nav.tabs button{border:0;background:transparent;padding:10px 14px;font:inherit;font-weight:600;color:var(--muted);border-bottom:3px solid transparent;cursor:pointer;white-space:nowrap}
+nav.tabs button.on{color:var(--accent);border-bottom-color:var(--accent)}
+.layout{max-width:1240px;margin:0 auto;padding:20px;display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:20px}
+@media (max-width:960px){.layout{grid-template-columns:1fr}.side{order:-1}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:22px;margin-bottom:16px}
+h1{font-size:24px;margin:0 0 6px}
+h2{font-size:20px;margin:0 0 4px}
+h3{font-size:16px;margin:18px 0 6px}
+.lead{color:var(--muted);margin:0 0 14px}
+.muted{color:var(--muted)}
+label.f{display:block;font-weight:600;margin:14px 0 4px}
+label.f small{font-weight:400;color:var(--muted)}
+input[type=text],input[type=number],select,textarea{width:100%;font:inherit;border:1.5px solid var(--line);border-radius:8px;padding:8px 10px;background:#fff;color:inherit}
+textarea{min-height:76px;resize:vertical}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--accent)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.grid3{display:grid;grid-template-columns:2fr 1fr 1fr;gap:12px}
+@media (max-width:640px){.grid2,.grid3{grid-template-columns:1fr}}
+.hint{background:var(--accent-soft);border-left:4px solid var(--accent);border-radius:6px;padding:10px 12px;font-size:14px;margin:10px 0}
+.hint.warn{background:var(--warn-soft);border-left-color:var(--warn)}
+details.grp{border:1px solid var(--line);border-radius:10px;margin:8px 0;background:#fff}
+details.grp>summary{cursor:pointer;padding:10px 12px;font-weight:600}
+details.gen{margin:0 12px 8px;border-left:3px solid var(--line);padding-left:10px}
+details.gen>summary{cursor:pointer;padding:6px 0;font-weight:600;font-size:14px}
+.code{font-family:Consolas,"Courier New",monospace;font-size:12.5px;background:#f0ede7;border-radius:5px;padding:1px 6px;white-space:nowrap}
+.conc{border:1px solid var(--line);border-radius:8px;padding:10px;margin:8px 0;background:#fcfbf9}
+.conc.sel{border-color:var(--accent);background:var(--accent-soft)}
+.conc>label{display:flex;gap:8px;align-items:flex-start;cursor:pointer;font-weight:600}
+.orients{margin:8px 0 0 26px}
+.orients .lvl{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-top:6px}
+.orients label{display:flex;gap:8px;align-items:flex-start;font-size:14px;margin:4px 0;cursor:pointer}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{border:1.5px solid var(--line);background:#fff;border-radius:16px;padding:2px 10px;font-size:12.5px;cursor:pointer;font-family:Consolas,"Courier New",monospace}
+.chip.on{background:var(--accent);border-color:var(--accent);color:#fff}
+.chip.wl{font-family:inherit;font-weight:700;min-width:34px;text-align:center}
+table.t{width:100%;border-collapse:collapse;font-size:14px}
+table.t th,table.t td{border:1px solid var(--line);padding:6px 8px;vertical-align:top;text-align:left}
+table.t th{background:#f3f0ea}
+table.t input,table.t select,table.t textarea{padding:5px 7px}
+table.t textarea{min-height:52px}
+.sumline{margin-top:8px;font-weight:600}
+.ok{color:var(--ok)}.bad{color:var(--bad)}
+.lesson{border:1px solid var(--line);border-radius:10px;padding:12px;margin:10px 0;background:#fcfbf9}
+.lesson-head{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.lesson-head strong{min-width:70px}
+.side .card{position:sticky;top:120px}
+.score-big{font-size:44px;font-weight:700;line-height:1}
+.score-big small{font-size:18px;color:var(--muted);font-weight:600}
+.bar{height:8px;background:var(--line);border-radius:6px;overflow:hidden;margin:6px 0 2px}
+.bar span{display:block;height:100%;background:var(--accent)}
+.lvlbadge{display:inline-block;border-radius:14px;padding:2px 10px;font-size:13px;font-weight:600;margin-top:6px}
+.part{margin-top:10px;font-size:14px}
+.part .row{display:flex;justify-content:space-between}
+ul.crit{list-style:none;padding:0;margin:0}
+ul.crit li{display:grid;grid-template-columns:22px 1fr 64px;gap:6px;padding:7px 0;border-bottom:1px solid var(--line);font-size:14px}
+ul.crit li .pts{text-align:right;font-weight:600}
+ul.crit li .tip{grid-column:2/4;color:var(--warn);font-size:13px}
+.ico{font-weight:700}
+.summary-doc h2{margin-top:18px}
+.summary-doc p,.summary-doc li{font-size:14px}
+.empty{color:var(--muted);font-style:italic}
+.mnp-tip{background:#f1f6ee;border-left:4px solid var(--ok);border-radius:6px;padding:10px 12px;font-size:14px;margin:10px 0}
+.mnp-tip strong:first-child{color:var(--ok)}
+.recs{counter-reset:r;list-style:none;padding:0;margin:0}
+.recs>li{counter-increment:r;position:relative;padding:12px 0 12px 44px;border-bottom:1px solid var(--line)}
+.recs>li::before{content:counter(r);position:absolute;left:0;top:12px;width:30px;height:30px;border-radius:50%;background:var(--accent);color:#fff;font-weight:700;display:grid;place-items:center;font-size:14px}
+.recs>li strong{display:block;margin-bottom:2px}
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;padding:8px 16px;border-radius:8px;font-size:14px;opacity:0;transition:opacity .2s;pointer-events:none;z-index:50}
+.toast.show{opacity:1}
+@media print{
+  header.top,nav.tabs,.side,.noprint{display:none!important}
+  .layout{display:block;padding:0}
+  .card{border:0;padding:0}
+  .tabpane{display:none!important}
+  #pane-summary{display:block!important}
+}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="top-in">
+    <div class="brand">Планування теми за зворотним дизайном<small>Інформатика · профільна середня освіта · Додаток 14 до Державного стандарту</small></div>
+    <div>
+      <span class="muted" style="font-size:13px;margin-right:6px">Рівень:</span>
+      <span class="seg" id="levelSeg"><button data-l="basic">Основний</button><button data-l="advanced">Поглиблений</button></span>
+    </div>
+    <div class="noprint" style="display:flex;gap:6px;flex-wrap:wrap">
+      <button class="btn small" data-example="basic">Приклад 1 · основний</button>
+      <button class="btn small" data-example="advanced">Приклад 2 · поглиблений</button>
+      <button class="btn small danger" id="resetBtn">Очистити</button>
+      <button class="btn small primary" id="undoBtn" style="display:none">↶ Повернути</button>
+    </div>
+  </div>
+  <nav class="tabs" id="tabs">
+    <button data-tab="intro">Інструкція</button>
+    <button data-tab="mnp">Модельна програма</button>
+    <button data-tab="s1">Етап 1 · Результати</button>
+    <button data-tab="s2">Етап 2 · Докази</button>
+    <button data-tab="s3">Етап 3 · Уроки</button>
+    <button data-tab="score">Оцінювання · 100 балів</button>
+    <button data-tab="summary">План теми</button>
+  </nav>
+</header>
+
+<div class="layout">
+<main>
+
+<!-- INTRO -->
+<section class="tabpane" id="pane-intro">
+  <div class="card">
+    <h1>Вправа: сплануйте тему з інформатики «від результату»</h1>
+    <p class="lead">Ви послідовно пройдете три етапи зворотного дизайну. Результати навчання обираються безпосередньо з вимог Державного стандарту профільної середньої освіти (інформатична освітня галузь, Додаток 14) з кодами та орієнтирами для оцінювання основного й поглибленого рівнів.</p>
+    <h3>Як працювати</h3>
+    <ol>
+      <li>Оберіть рівень вивчення (основний чи поглиблений) у верхній панелі.</li>
+      <li>Заповніть «паспорт» теми нижче, зокрема оберіть модельну навчальну програму, і прочитайте рекомендації на вкладці «Модельна програма».</li>
+      <li><strong>Етап 1.</strong> Позначте конкретні результати та орієнтири Стандарту, сформулюйте ціль перенесення, великі ідеї, ключові питання, знання й уміння.</li>
+      <li><strong>Етап 2.</strong> Складіть компетентнісне завдання за моделлю GRASPS і рубрику для учнів (сума ваг критеріїв — 100 балів), додайте інші докази й самооцінювання.</li>
+      <li><strong>Етап 3.</strong> Розкладіть тему по уроках, позначте результати та ознаки WHERETO для кожного уроку.</li>
+      <li>Стежте за оцінкою вправи праворуч: максимум 100 балів (Етап 1 — 40, Етап 2 — 30, Етап 3 — 30). Детальні критерії й підказки — на вкладці «Оцінювання».</li>
+      <li>Готовий план відкрийте на вкладці «План теми» та роздрукуйте або збережіть у PDF.</li>
+    </ol>
+    <div class="hint">Застрягли? Натисніть «Приклад 1» (основний рівень, 10 клас) або «Приклад 2» (поглиблений рівень, 11 клас) — побачите повністю заповнений план. Якщо у формі вже є дані, кнопка попросить підтвердження, а після заміни ще 15 секунд можна натиснути «Повернути».</div>
+    <div class="hint warn">Автоматичне оцінювання перевіряє повноту й узгодженість плану (чи є коди, чи покрито результати уроками й доказами, чи сума ваг рубрики дорівнює 100). Змістову якість формулювань остаточно оцінює тренер.</div>
+    <p class="muted" style="font-size:13px">Робота автоматично зберігається в цьому браузері.</p>
+  </div>
+  <div class="card">
+    <h2>Паспорт теми</h2>
+    <div class="grid3">
+      <div><label class="f" for="m_title">Назва теми</label><input type="text" id="m_title" data-bind="meta.title"></div>
+      <div><label class="f" for="m_grade">Клас</label>
+        <select id="m_grade" data-bind="meta.grade"><option value="">—</option><option>10</option><option>11</option><option>12</option></select></div>
+      <div><label class="f" for="m_hours">Кількість годин</label><input type="number" min="1" max="40" id="m_hours" data-bind="meta.hours"></div>
+    </div>
+    <div class="grid2">
+      <div><label class="f" for="m_comp">Тип освітнього компонента</label>
+        <select id="m_comp" data-bind="meta.component"><option value="">—</option><option>Обов’язковий спільний компонент</option><option>Обов’язковий компонент за профілем</option><option>Вибірковий компонент</option></select></div>
+      <div><label class="f" for="m_profile">Профіль / спрямування <small>(необов’язково)</small></label><input type="text" id="m_profile" data-bind="meta.profile" placeholder="напр., STEM, академічне спрямування"></div>
+    </div>
+    <div class="grid2">
+      <div><label class="f" for="m_mnp">Модельна навчальна програма</label>
+        <select id="m_mnp" data-bind="meta.mnp"><option value="">—</option>
+          <option>«Інформатика. 10 клас. Основний рівень» (Ривкінд Й. Я., Лисенко Т. І. та ін.)</option>
+          <option>«Інформатика. 10 клас. Основний рівень» (Бондаренко О. О., Ластовецький В. В. та ін.)</option>
+          <option>«Інформатика. 10 клас. Основний рівень» (Завадський І. О., Твердохліб І. А.)</option>
+          <option>«Інформатика. 10–12 класи. Поглиблений рівень» (Арбузов М. О., Забазнова А. О.)</option>
+          <option>Інша (курс за вибором / власна навчальна програма закладу)</option></select></div>
+      <div><label class="f" for="m_mnpTopic">Тема / розділ модельної програми</label><input type="text" id="m_mnpTopic" data-bind="meta.mnpTopic" placeholder="як у змісті програми"></div>
+    </div>
+    <p class="muted" style="font-size:13px;margin-bottom:0">Як працювати з модельною програмою під час планування — на вкладці «Модельна програма».</p>
+  </div>
+</section>
+
+<!-- MODEL PROGRAM -->
+<section class="tabpane" id="pane-mnp">
+  <div class="card">
+    <h2>Як використовувати модельну навчальну програму під час планування</h2>
+    <p class="lead">Модельна навчальна програма (МНП) — міст між Державним стандартом і вашим планом теми. У МНП визначено орієнтовну послідовність досягнення очікуваних результатів навчання, зміст навчального предмета та види навчальної діяльності учнів. Спираючись на МНП, заклад розробляє власну навчальну програму, а вчитель — план теми.</p>
+    <h3>Чинні МНП інформатичної галузі для 10–12 класів</h3>
+    <table class="t"><thead><tr><th>Програма</th><th>Клас</th><th>Рівень</th><th>Автори</th></tr></thead><tbody>
+      <tr><td>«Інформатика. 10 клас. Основний рівень»</td><td>10</td><td>Основний</td><td>Ривкінд Й. Я., Лисенко Т. І. та ін.</td></tr>
+      <tr><td>«Інформатика. 10 клас. Основний рівень»</td><td>10</td><td>Основний</td><td>Бондаренко О. О., Ластовецький В. В. та ін.</td></tr>
+      <tr><td>«Інформатика. 10 клас. Основний рівень»</td><td>10</td><td>Основний</td><td>Завадський І. О., Твердохліб І. А.</td></tr>
+      <tr><td>«Інформатика. 10–12 класи. Поглиблений рівень»</td><td>10–12</td><td>Поглиблений</td><td>Арбузов М. О., Забазнова А. О.</td></tr>
+    </tbody></table>
+    <p class="muted" style="font-size:13px">За переліком на osvita.ua станом на листопад 2026 р. Перелік оновлюється: перевіряйте чинні програми на сайтах МОН та osvita.ua і використовуйте ту, яку обрав ваш заклад.</p>
+
+    <h3>Рекомендації</h3>
+    <ol class="recs">
+      <li><strong>Почніть з вибору програми й теми</strong>Оберіть МНП відповідно до класу та рівня (основний чи поглиблений) і тему з її змісту. Зазначте їх у паспорті теми. Звірте кількість годин на тему з навчальною програмою закладу та календарним плануванням.</li>
+      <li><strong>Етап 1: беріть очікувані результати з МНП, а не з підручника</strong>У МНП кожен очікуваний результат записано у формі «Учень / учениця…» з кодом Державного стандарту (наприклад, [12 ІФО 3.2.1-1]). Випишіть результати обраної теми й позначте ті самі коди у вправі. Так план автоматично узгоджується і з МНП, і з Додатком 14. Результати з інших тем додавайте лише тоді, коли тема справді на них працює.</li>
+      <li><strong>Етап 1: формулюйте великі ідеї й ціль перенесення самостійно</strong>МНП визначає, чого досягти, але не формулює великих ідей, ключових питань і цілі перенесення. Це внесок учителя: шукайте їх у меті предмета та вступній частині МНП, де описано логіку курсу.</li>
+      <li><strong>Етап 2: доказ — справа вчителя, групи результатів — з МНП</strong>Компетентнісне завдання та рубрику МНП не містить, тож складіть їх самі. Для оцінювання за групами результатів скористайтеся підказкою МНП: перша цифра коду результату відповідає групі результатів (ГР 1–4). Деякі МНП подають таблицю, скільки результатів кожної групи досягається в темі; вона допоможе розподілити критерії рубрики.</li>
+      <li><strong>Етап 3: «пропонований зміст» і «види діяльності» — це банк ідей</strong>Колонки МНП зі змістом і видами навчальної діяльності (наприклад, «досліджуємо», «оцінюємо», «створюємо») використовуйте як джерело для уроків. Добирайте лише те, що веде до результатів і компетентнісного завдання. Решту можна пропустити, якщо результат досягається іншим шляхом.</li>
+      <li><strong>Зберігайте логіку курсу, але будьте гнучкими в засобах</strong>Дотримуйтеся послідовності тем, яку задає МНП (наприклад, у МНП Завадського І. О., Твердохліба І. А. перші дві теми спільні для всіх і вивчаються в I семестрі, а дві наступні адаптуються до профілю після його вибору). Мову програмування, програми та сервіси МНП зазвичай не нав’язує: обирайте їх відповідно до профілю й обладнання.</li>
+      <li><strong>Адаптуйте до профілю та рівня</strong>Для основного рівня беріть орієнтири колонки «основний», для поглибленого — з літерою «П». Контексти компетентнісних завдань добирайте з обраної галузі учнів (наприклад, медичні дані для біохімічного профілю, фінансові — для економічного).</li>
+      <li><strong>Задокументуйте відхилення</strong>Якщо ви змінюєте порядок або кількість годин чи додаєте зміст, коротко обґрунтуйте це в навчальній програмі закладу. Обов’язкові результати Стандарту, передбачені МНП для року навчання, мають бути досягнуті.</li>
+    </ol>
+    <div class="hint warn"><strong>Про приклади у вправі.</strong> Приклади 1 і 2 демонструють техніку зворотного дизайну. Їхні теми та години обрано для ілюстрації, і вони не є фрагментами конкретної МНП. Наприклад, МНП «Інформатика. 10 клас. Основний рівень» (Завадський І. О., Твердохліб І. А.) розраховано на 35 годин на рік, тож тема на 8 годин має вписуватися в її розподіл. Перед використанням звірте приклад із МНП вашого закладу.</div>
+    <h3>Типові помилки</h3>
+    <ul>
+      <li>План складено за підручником, а коди Стандарту дописано наприкінці «для звіту».</li>
+      <li>До теми додано результати з усього курсу: план перевантажено, оцінювання розмивається.</li>
+      <li>Види діяльності МНП переписано повністю, без відбору під компетентнісне завдання.</li>
+      <li>Для основного рівня взято формулювання поглибленого (або навпаки).</li>
+    </ul>
+  </div>
+</section>
+
+<!-- STAGE 1 -->
+<section class="tabpane" id="pane-s1">
+  <div class="card">
+    <h2>Етап 1. Визначення бажаних результатів</h2>
+    <p class="lead">Почніть зі Стандарту: позначте 2–4 конкретні результати, на які працює тема. Для кожного автоматично відкриються орієнтири для оцінювання обраного рівня.</p>
+    <div class="hint" id="levelHint"></div>
+    <div class="mnp-tip"><strong>Модельна програма.</strong> Відкрийте обрану МНП на вашій темі та позначте тут ті самі коди очікуваних результатів, що й у першій колонці програми.</div>
+    <h3>А. Встановлені цілі: результати Державного стандарту</h3>
+    <div id="stdTree"></div>
+    <h3>Обрані орієнтири <span class="muted" style="font-weight:400" id="selCount"></span></h3>
+    <div id="selList" class="chips"></div>
+  </div>
+  <div class="card">
+    <label class="f" for="s1_transfer">Б. Ціль перенесення <small>«Учні зможуть самостійно…» + реальна ситуація поза уроком</small></label>
+    <textarea id="s1_transfer" data-bind="s1.transfer"></textarea>
+    <label class="f" for="s1_ideas">В. Великі ідеї <small>кожна з нового рядка; повне речення-узагальнення «Учні розумітимуть, що…»</small></label>
+    <textarea id="s1_ideas" data-bind="s1.ideas"></textarea>
+    <label class="f" for="s1_questions">Г. Ключові питання <small>кожне з нового рядка; відкриті, без однієї правильної відповіді</small></label>
+    <textarea id="s1_questions" data-bind="s1.questions"></textarea>
+    <div class="grid2">
+      <div><label class="f" for="s1_knowledge">Ґ. Знання <small>кожне з нового рядка</small></label><textarea id="s1_knowledge" data-bind="s1.knowledge"></textarea></div>
+      <div><label class="f" for="s1_skills">Д. Уміння <small>кожне з нового рядка, через дієслово дії</small></label><textarea id="s1_skills" data-bind="s1.skills"></textarea></div>
+    </div>
+  </div>
+</section>
+
+<!-- STAGE 2 -->
+<section class="tabpane" id="pane-s2">
+  <div class="card">
+    <h2>Етап 2. Визначення доказів</h2>
+    <p class="lead">Компетентнісне завдання перевіряє ціль перенесення. Рубрика прив’язує кожен критерій до орієнтира Стандарту, а ваги критеріїв у сумі дають 100 балів.</p>
+    <div class="mnp-tip"><strong>Модельна програма.</strong> МНП не містить компетентнісного завдання — складіть його самі. Ідеї для продукту шукайте у видах діяльності «створюємо» та «оцінюємо». Групу результатів визначайте за першою цифрою коду.</div>
+    <h3>Компетентнісне завдання (GRASPS)</h3>
+    <div class="grid2">
+      <div><label class="f" for="g_g">G — Мета <small>яку проблему розв’язує учень</small></label><textarea id="g_g" data-bind="s2.g"></textarea></div>
+      <div><label class="f" for="g_r">R — Роль <small>ким є учень у ситуації</small></label><textarea id="g_r" data-bind="s2.r"></textarea></div>
+      <div><label class="f" for="g_a">A — Аудиторія <small>для кого продукт</small></label><textarea id="g_a" data-bind="s2.a"></textarea></div>
+      <div><label class="f" for="g_s">S — Ситуація <small>контекст і обмеження</small></label><textarea id="g_s" data-bind="s2.s"></textarea></div>
+      <div><label class="f" for="g_p">P — Продукт <small>що створює учень</small></label><textarea id="g_p" data-bind="s2.p"></textarea></div>
+      <div><label class="f" for="g_st">S — Стандарти успіху <small>коротко, деталі — у рубриці</small></label><textarea id="g_st" data-bind="s2.st"></textarea></div>
+    </div>
+  </div>
+  <div class="card">
+    <h3 style="margin-top:0">Рубрика оцінювання завдання (100 балів)</h3>
+    <p class="muted" style="margin:0 0 8px">Для кожного критерію оберіть орієнтир Стандарту, задайте вагу в балах і опишіть, як виглядає робота на максимальний бал. Бали учня за критерієм = вага × частка досягнення (повністю 100 %, переважно 75 %, частково 50 %, на початковому рівні 25 %).</p>
+    <div style="overflow-x:auto"><table class="t" id="rubricTbl"><thead><tr><th style="width:26%">Критерій</th><th style="width:22%">Орієнтир Стандарту</th><th style="width:10%">Вага, бали</th><th>Ознаки максимального балу</th><th class="noprint"></th></tr></thead><tbody></tbody></table></div>
+    <div class="sumline" id="rubricSum"></div>
+    <button class="btn small" id="addCrit" style="margin-top:8px">+ Критерій</button>
+    <h3>Переведення балів учня</h3>
+    <div class="grid2" style="align-items:end">
+      <div><label class="f" for="conv">Бали учня за завдання (0–100)</label><input type="number" id="conv" min="0" max="100" placeholder="напр., 82"></div>
+      <div id="convOut" class="muted" style="padding-bottom:9px"></div>
+    </div>
+    <p class="muted" style="font-size:13px">Таблиця переведення 100-бальної шкали в 12-бальну наведена як орієнтир для вправи. Узгодьте її з правилами оцінювання вашого закладу.</p>
+  </div>
+  <div class="card">
+    <h3 style="margin-top:0">Інші докази</h3>
+    <div style="overflow-x:auto"><table class="t" id="otherTbl"><thead><tr><th style="width:22%">Вид</th><th>Опис</th><th style="width:24%">Орієнтир</th><th class="noprint"></th></tr></thead><tbody></tbody></table></div>
+    <button class="btn small" id="addOther" style="margin-top:8px">+ Доказ</button>
+    <label class="f" for="s2_self">Самооцінювання учнів <small>коли і за чим</small></label>
+    <textarea id="s2_self" data-bind="s2.self"></textarea>
+  </div>
+</section>
+
+<!-- STAGE 3 -->
+<section class="tabpane" id="pane-s3">
+  <div class="card">
+    <h2>Етап 3. Планування навчального досвіду</h2>
+    <p class="lead">Розкладіть тему по уроках. Для кожного уроку позначте фазу, діяльність, орієнтири Стандарту, з якими працюєте, і ознаки WHERETO.</p>
+    <div class="mnp-tip"><strong>Модельна програма.</strong> Беріть ідеї для уроків із колонок «пропонований зміст» і «види навчальної діяльності» МНП, але залишайте лише те, що веде до обраних результатів і компетентнісного завдання. Кількість уроків звірте з годинами на тему в навчальній програмі закладу.</div>
+    <div class="hint"><strong>WHERETO:</strong> W — куди й навіщо; H — зацікавити; E — оснастити, дати досвід; R — переосмислити, доопрацювати; E₂ — самооцінювання; T — адаптувати; O — упорядкувати.</div>
+    <div id="lessons"></div>
+    <button class="btn small" id="addLesson">+ Урок</button>
+    <div class="sumline" id="whereSum"></div>
+    <label class="f" for="s3_diff">Диференціація та адаптації</label>
+    <textarea id="s3_diff" data-bind="s3.diff"></textarea>
+  </div>
+</section>
+
+<!-- SCORE -->
+<section class="tabpane" id="pane-score">
+  <div class="card">
+    <h2>Оцінювання вправи · 100-бальна шкала</h2>
+    <p class="lead">Етап 1 — 40 балів, Етап 2 — 30 балів, Етап 3 — 30 балів. Підказки під критеріями показують, що додати.</p>
+    <div id="scoreDetail"></div>
+    <h3>Шкала результату</h3>
+    <table class="t" style="max-width:520px"><thead><tr><th>Бали</th><th>Рівень</th><th>Що означає</th></tr></thead><tbody>
+      <tr><td>90–100</td><td>Високий</td><td>План повний і узгоджений, готовий до використання</td></tr>
+      <tr><td>75–89</td><td>Достатній</td><td>План робочий, потрібні незначні доповнення</td></tr>
+      <tr><td>60–74</td><td>Середній</td><td>Є прогалини в узгодженості етапів</td></tr>
+      <tr><td>0–59</td><td>Початковий</td><td>План потребує доопрацювання</td></tr>
+    </tbody></table>
+  </div>
+</section>
+
+<!-- SUMMARY -->
+<section class="tabpane" id="pane-summary">
+  <div class="card">
+    <div class="noprint" style="display:flex;gap:8px;justify-content:flex-end;margin-bottom:8px">
+      <button class="btn small" id="copyBtn">Скопіювати текст</button>
+      <button class="btn small" id="docBtn">Завантажити у Word</button>
+      <button class="btn small" id="htmlBtn">Завантажити HTML</button>
+      <button class="btn small primary" id="printBtn">Друк / PDF</button>
+    </div>
+    <div class="hint warn noprint" id="printNote" style="display:none"></div>
+    <div class="summary-doc" id="summary"></div>
+  </div>
+</section>
+
+</main>
+
+<aside class="side">
+  <div class="card">
+    <div class="muted" style="font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:.06em">Оцінка вправи</div>
+    <div class="score-big" id="scoreBig">0<small> / 100</small></div>
+    <div class="bar"><span id="scoreBar" style="width:0"></span></div>
+    <div id="scoreLevel"></div>
+    <div class="part" id="scoreParts"></div>
+    <button class="btn small" style="margin-top:12px;width:100%" data-goto="score">Деталі та підказки</button>
+  </div>
+</aside>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+var STD = [{"title": "1. Пошук, подання, перетворення, аналіз, узагальнення та систематизація даних, критичне оцінювання інформації для розв’язання життєвих проблем", "general": [{"text": "Досліджує і оцінює вплив інформаційних технологій на своє життя, навколишній світ і розвиток", "code": "ІФО 1.1", "concrete": [{"text": "обґрунтовано обирає та доцільно використовує цифрові пристрої та/або інформаційні технології для розвʼязування задач з різних галузей, забезпечення життєвих потреб, спілкування, власного розвитку та навчання", "code": "12 ІФО 1.1.1", "basic": [{"text": "обґрунтовано обирає та доцільно використовує цифрові пристрої та/або інформаційні технології для розвʼязування задач з обраної галузі, зокрема під час здійснення професійної діяльності, забезпечення життєвих потреб, спілкування, власного розвитку та навчання", "code": "12 ІФО 1.1.1-1"}], "advanced": [{"text": "оцінює можливості, функціонал, обмеження, переваги використання інформаційних технологій для вирішення проблем обраної галузі", "code": "12 ІФО 1.1.1-1 П"}, {"text": "пояснює та наводить аргументи доцільності та ефективності використання цифрових пристроїв/інформаційних технологій в обраній галузі для вирішення життєвих, зокрема професійних, задач", "code": "12 ІФО 1.1.1-2 П"}, {"text": "доцільно добирає цифрові пристрої та/або інформаційні технології для забезпечення життєвих потреб, спілкування державною, рідною та іноземною мовами, власного розвитку і навчання", "code": "12 ІФО 1.1.1-3 П"}]}, {"text": "аналізує та оцінює сучасні тенденції розвитку інформаційних технологій у різних галузях", "code": "12 ІФО 1.1.2", "basic": [{"text": "аналізує та оцінює сучасні тенденції розвитку інформаційних технологій в обраній галузі, їх специфіку та обсяги впливу", "code": "12 ІФО 1.1.2-1"}], "advanced": [{"text": "наводить приклади застосування, пояснює перспективи використання та обмеження сучасних інформаційних технологій, а також оцінює їх вплив на власне життя і суспільство", "code": "12 ІФО 1.1.2-1 П"}, {"text": "пояснює та враховує переваги і ризики використання конкретних сучасних інформаційних технологій в обраній галузі", "code": "12 ІФО 1.1.2-2 П"}, {"text": "використовує доступні передові інформаційні технології для розвʼязування задач з обраної галузі", "code": "12 ІФО 1.1.2-3 П"}, {"text": "висловлює прогнози щодо розвитку обраної галузі під впливом інформаційних технологій", "code": "12 ІФО 1.1.2-4 П"}]}, {"text": "пояснює і враховує фактори, які впливають на розподіл і використання цифрових ресурсів у глобальному суспільстві", "code": "12 ІФО 1.1.3", "basic": [{"text": "пояснює фактори, які впливають на розподіл і використання цифрових ресурсів у глобальному суспільстві", "code": "12 ІФО 1.1.3-1"}], "advanced": [{"text": "наводить приклади факторів, які впливають на розподіл і використання цифрових ресурсів у глобальному суспільстві", "code": "12 ІФО 1.1.3-1 П"}, {"text": "розробляє критерії оцінювання переваг і негативних впливів комп’ютерних інновацій на особистий розвиток, суспільство та довкілля, аргументує висновки", "code": "12 ІФО 1.1.3-2 П"}, {"text": "описує суспільні проблеми, повʼязані з цифровим розривом та нерівним доступом до обчислювальних ресурсів", "code": "12 ІФО 1.1.3-3 П"}, {"text": "використовує галузеву термінологію та розширює словниковий запас, спілкуючись державною, рідною та іноземною мовами на тему інформаційних технологій", "code": "12 ІФО 1.1.3-4 П"}]}]}, {"text": "Знаходить, збирає, зберігає, представляє, перетворює, структурує, аналізує і узагальнює дані різних типів", "code": "ІФО 1.2", "concrete": [{"text": "розуміє та пояснює сутність інформаційних процесів, які виконуються в різних галузях", "code": "12 ІФО 1.2.1", "basic": [{"text": "розуміє та пояснює сутність інформаційних процесів, які виконуються в обраній галузі", "code": "12 ІФО 1.2.1-1"}], "advanced": [{"text": "аналізує інформаційні процеси, що здійснюються в інформаційних системах різних галузей", "code": "12 ІФО 1.2.1-1 П"}, {"text": "задовольняє власні інформаційні потреби, активно шукає нові рішення та ідеї, зокрема читаючи та аналізуючи текстові джерела", "code": "12 ІФО 1.2.1-2 П"}]}, {"text": "пояснює принципи кодування цифрових даних, які використовуються в різних галузях, і враховує їх під час створення інформаційних продуктів і розвʼязування задач", "code": "12 ІФО 1.2.2", "basic": [{"text": "пояснює особливості кодування цифрових даних, які використовуються в обраній галузі, і враховує їх під час створення інформаційних продуктів і розвʼязування задач", "code": "12 ІФО 1.2.2-1"}], "advanced": [{"text": "розуміє та пояснює принципи кодування і декодування цифрових даних, які використовуються в обраній галузі, і враховує їх під час створення інформаційних продуктів", "code": "12 ІФО 1.2.2-1 П"}, {"text": "пояснює принципи стиснення даних, обґрунтовано обирає метод стиснення, ураховуючи можливість їх втрати", "code": "12 ІФО 1.2.2-2 П"}, {"text": "пояснює особливості та загальні принципи подання даних у файлах різних форматів", "code": "12 ІФО 1.2.2-3 П"}, {"text": "обґрунтовано обирає формати файлів під час створення та збереження інформаційних продуктів з урахуванням принципів кодування цифрових даних, які використовуються в обраній галузі", "code": "12 ІФО 1.2.2-4 П"}]}, {"text": "досліджує та аналізує набори даних, взаємозв’язки та залежності між ними", "code": "12 ІФО 1.2.3", "basic": [{"text": "досліджує та аналізує набори даних, взаємозв’язки та залежності між ними", "code": "12 ІФО 1.2.3-1"}], "advanced": [{"text": "класифікує, структурує та узагальнює дані з обраної галузі, використовуючи відповідні методи та засоби", "code": "12 ІФО 1.2.3-1 П"}, {"text": "обирає ефективний спосіб пошуку, опрацювання та візуалізації структурованих даних", "code": "12 ІФО 1.2.3-2 П"}]}]}, {"text": "Будує інформаційні моделі об’єктів, явищ і процесів", "code": "ІФО 1.3", "concrete": [{"text": "створює, оцінює та використовує інформаційні моделі для розвʼязування задач з різних галузей, зокрема з використанням інформаційних технологій", "code": "12 ІФО 1.3.1", "basic": [{"text": "створює, оцінює та використовує інформаційні моделі для розвʼязування задач з обраної галузі, зокрема з використанням інформаційних технологій", "code": "12 ІФО 1.3.1-1"}], "advanced": [{"text": "пояснює різні способи подання обʼєктів галузі", "code": "12 ІФО 1.3.1-1 П"}, {"text": "будує і використовує інформаційні моделі для розв’язання проблем реального та віртуального світу, зокрема моделі “сутність — звʼязок”, із застосуванням інформаційних технологій", "code": "12 ІФО 1.3.1-2 П"}, {"text": "аналізує та оцінює інформаційну модель для розвʼязування задачі за власними критеріями", "code": "12 ІФО 1.3.1-3 П"}, {"text": "пояснює можливості та обмеження комп’ютерного моделювання", "code": "12 ІФО 1.3.1-4 П"}]}, {"text": "формує і пояснює власну інформаційну картину світу", "code": "12 ІФО 1.3.2", "basic": [{"text": "пояснює використання інформаційних систем в обраній галузі", "code": "12 ІФО 1.3.2-1"}], "advanced": [{"text": "розпізнає та класифікує інформаційні системи різних типів (соціальні, біологічні, технічні тощо) та пояснює взаємозвʼязки між ними", "code": "12 ІФО 1.3.2-1 П"}, {"text": "описує власне бачення світу як інформаційної системи", "code": "12 ІФО 1.3.2-2 П"}]}]}, {"text": "Критично оцінює інформацію, отриману з різних джерел", "code": "ІФО 1.4", "concrete": [{"text": "обґрунтовує власну позицію щодо достовірності інформації та надійності джерел, застосовуючи стратегії критичного мислення", "code": "12 ІФО 1.4.1", "basic": [{"text": "оцінює достовірність інформації та надійність її джерел, використовуючи надані критерії та пропонуючи власні", "code": "12 ІФО 1.4.1-1"}], "advanced": [{"text": "обґрунтовує власну позицію щодо достовірності інформації та надійності джерел, застосовуючи стратегії критичного мислення", "code": "12 ІФО 1.4.1-1П"}]}, {"text": "використовує стратегії захисту/протидії маніпуляціям, зокрема в цифровому світі", "code": "12 ІФО 1.4.2", "basic": [{"text": "використовує різні методи для захисту/протидії маніпуляціям, зокрема в цифровому світі", "code": "12 ІФО 1.4.2-1"}], "advanced": [{"text": "оцінює роль і вплив маніпуляцій і пропаганди в особистому та суспільному житті, навчальній діяльності, цифровому світі", "code": "12 ІФО 1.4.2-1 П"}, {"text": "аргументовано обирає методи і стратегії для розпізнавання маніпулятивних технік", "code": "12 ІФО 1.4.2-2 П"}, {"text": "розпізнає маніпулятивні впливи, які здійснюються цифровими та іншими каналами передавання інформації", "code": "12 ІФО 1.4.2-3 П"}, {"text": "описує, застосовує та за потреби розробляє стратегії захисту або протидії маніпуляціям, зокрема емоційним, у цифровому світі", "code": "12 ІФО 1.4.2-4 П"}, {"text": "діє незалежно, уміє долати власні упередження", "code": "12 ІФО 1.4.2-5 П"}]}]}]}, {"title": "2. Створення інформаційних продуктів і програм для ефективного розв’язання задач/проблем, творчого самовираження індивідуально і у співпраці з іншими особами за допомогою цифрових пристроїв чи без них", "general": [{"text": "Розробляє і реалізовує алгоритми", "code": "ІФО 2.1", "concrete": [{"text": "обирає відомі та розробляє власні алгоритми для розвʼязування задач з різних галузей", "code": "12 ІФО 2.1.1", "basic": [{"text": "пояснює та застосовує основні алгоритми, які типово застосовують для розвʼязування задач з обраної галузі", "code": "12 ІФО 2.1.1-1"}], "advanced": [{"text": "окреслює алгоритмічну складову задач з обраної галузі", "code": "12 ІФО 2.1.1-1 П"}, {"text": "обирає різні стратегії вирішення проблем (індуктивні, дедуктивні, евристичні, алгоритмічні)", "code": "12 ІФО 2.1.1-2 П"}, {"text": "аргументовано обирає та складає алгоритми для розвʼязування задач з обраної галузі", "code": "12 ІФО 2.1.1-3 П"}]}, {"text": "оцінює ефективність власних і відомих алгоритмів для розвʼязування задач з різних галузей", "code": "12 ІФО 2.1.2", "basic": [{"text": "оцінює ефективність власних і відомих алгоритмів для розвʼязування задач з обраної галузі за наданими критеріями", "code": "12 ІФО 2.1.2-1"}], "advanced": [{"text": "пояснює поняття часової та ємнісної складності алгоритмів і способи їх оцінювання", "code": "12 ІФО 2.1.2-1 П"}, {"text": "оцінює ефективність алгоритмів розвʼязування задач з обраної галузі, застосовуючи критерії часової та ємнісної складності", "code": "12 ІФО 2.1.2-2 П"}]}, {"text": "обґрунтовує вибір структур даних для розвʼязування задач з різних галузей", "code": "12 ІФО 2.1.3", "basic": [{"text": "використовує різні структури даних для розвʼязування типових задач з обраної галузі", "code": "12 ІФО 2.1.3-1"}], "advanced": [{"text": "аргументовано обирає структури даних для розвʼязування задач з обраної галузі", "code": "12 ІФО 2.1.3-1 П"}]}]}, {"text": "Створює і налагоджує програмні проекти", "code": "ІФО 2.2", "concrete": [{"text": "самостійно або в співпраці реалізовує розроблені алгоритми у програмних проектах для розв’язування задач з різних галузей", "code": "12 ІФО 2.2.1", "basic": [{"text": "у співпраці реалізовує алгоритми в програмних проектах для розвʼязування типових задач з обраної галузі", "code": "12 ІФО 2.2.1-1"}], "advanced": [{"text": "формулює очікуваний результат розробки та вимоги до програмного проекту для розвʼязування задач з обраної галузі", "code": "12 ІФО 2.2.1-1 П"}, {"text": "обґрунтовано обирає інформаційні технології для реалізації програмних проектів", "code": "12 ІФО 2.2.1-2 П"}, {"text": "описує етапи виконання комп’ютером коду високого рівня (компіляція, інтерпретація, оптимізація)", "code": "12 ІФО 2.2.1-3 П"}, {"text": "створює нові, розширює або змінює наявні програмні проекти", "code": "12 ІФО 2.2.1-4 П"}, {"text": "випробовує нові ідеї, обґрунтовано ризикує під час розроблення програмних проектів", "code": "12 ІФО 2.2.1-5 П"}]}, {"text": "тестує, налагоджує та вдосконалює програмні проекти, ураховуючи/ аналізуючи відгуки користувачів і зміни середовища розроблення та виконання", "code": "12 ІФО 2.2.2", "basic": [{"text": "тестує, налагоджує та пропонує вдосконалення програмних проектів", "code": "12 ІФО 2.2.2-1"}], "advanced": [{"text": "пропонує і застосовує методи перевірки коректності роботи програмного проекту", "code": "12 ІФО 2.2.2-1 П"}, {"text": "створює тестові приклади для перевірки різних сценаріїв роботи програмного проекту", "code": "12 ІФО 2.2.2-2 П"}, {"text": "самостійно або в співпраці налагоджує програмні проекти", "code": "12 ІФО 2.2.2-3 П"}, {"text": "активно шукає і пропонує конструктивні рішення для розвитку та перевірки ідей, удосконалення програмного проекту на основі власних оцінок, відгуків користувачів і зміни умов його реалізації", "code": "12 ІФО 2.2.2-4 П"}]}]}, {"text": "Розробляє модульні проекти", "code": "ІФО 2.3", "concrete": [{"text": "створює програмні проекти за модульною технологією індивідуально чи в проектній групі", "code": "12 ІФО 2.3.1", "basic": [{"text": "бере участь у створенні програмних проектів за модульною технологією в проектній групі", "code": "12 ІФО 2.3.1-1"}], "advanced": [{"text": "застосовує принципи декомпозиції та синтезу під час розвʼязування задач з обраної галузі", "code": "12 ІФО 2.3.1-1 П"}, {"text": "обґрунтовано обирає бібліотеки або інші зовнішні модулі для розвʼязування задач з обраної галузі", "code": "12 ІФО 2.3.1-2 П"}, {"text": "обґрунтовано та доцільно використовує функції, класи або інші компоненти в програмних проектах", "code": "12 ІФО 2.3.1-3 П"}, {"text": "інтегрує компоненти програмного проекту", "code": "12 ІФО 2.3.1-4 П"}, {"text": "документує програмний проект, що складається з окремих компонентів", "code": "12 ІФО 2.3.1-5 П"}]}]}, {"text": "Створює та опрацьовує інформаційні продукти з використанням даних різних типів", "code": "ІФО 2.4", "concrete": [{"text": "створює та вдосконалює інформаційні продукти для розвʼязування задач з різних галузей", "code": "12 ІФО 2.4.1", "basic": [{"text": "створює та вдосконалює інформаційні продукти для розвʼязування задач з обраної галузі з використанням кількох інформаційних технологій", "code": "12 ІФО 2.4.1-1"}], "advanced": [{"text": "обґрунтовано обирає комплекс програмних засобів для опрацювання даних різних типів у процесі створення інформаційних продуктів", "code": "12 ІФО 2.4.1-1 П"}, {"text": "створює та вдосконалює інформаційні продукти з використанням кількох інформаційних технологій", "code": "12 ІФО 2.4.1-2 П"}]}, {"text": "комбінує дані різних типів під час створення інформаційних продуктів", "code": "12 ІФО 2.4.2", "basic": [{"text": "комбінує дані різних типів під час створення інформаційних продуктів", "code": "12 ІФО 2.4.2-1"}], "advanced": [{"text": "обирає доречні типи даних для створення інформаційних продуктів", "code": "12 ІФО 2.4.2-1 П"}, {"text": "інтегрує різнотипні дані під час створення інформаційних продуктів", "code": "12 ІФО 2.4.2-2 П"}]}, {"text": "активно шукає і пропонує нестандартні та інноваційні рішення під час створення інформаційних продуктів", "code": "12 ІФО 2.4.3", "basic": [{"text": "самостійно опановує роботу з новими програмними продуктами", "code": "12 ІФО 2.4.3-1"}], "advanced": [{"text": "продукує нові ідеї щодо створення, удосконалення та застосування інформаційних продуктів, використовує ідеї інших і доопрацьовує їх", "code": "12 ІФО 2.4.3-1 П"}, {"text": "аналізує наявні розробки та шукає інноваційні рішення під час створення інформаційних продуктів", "code": "12 ІФО 2.4.3-2 П"}]}, {"text": "оцінює якість інформаційних продуктів для розв’язування задач з різних галузей", "code": "12 ІФО 2.4.4", "basic": [{"text": "оцінює якість інформаційних продуктів для розв’язування типових задач з обраної галузі", "code": "12 ІФО 2.4.4-1"}], "advanced": [{"text": "пропонує критерії оцінювання інформаційних продуктів та їх відповідності поставленій задачі", "code": "12 ІФО 2.4.4-1 П"}, {"text": "оцінює якість інформаційних продуктів на основі вироблених критеріїв", "code": "12 ІФО 2.4.4-2 П"}]}]}, {"text": "Співпрацює в команді для створення інформаційного продукту", "code": "ІФО 2.5", "concrete": [{"text": "демонструє здатність гнучко взаємодіяти в команді та пристосовуватися до нових умов під час розроблення проектів з використанням інформаційних технологій", "code": "12 ІФО 2.5.1", "basic": [{"text": "демонструє здатність взаємодіяти в команді під час розроблення проектів з використанням інформаційних технологій", "code": "12 ІФО 2.5.1-1"}], "advanced": [{"text": "оцінює роль і внесок кожного члена команди під час створення інформаційних продуктів", "code": "12 ІФО 2.5.1-1 П"}, {"text": "планує і організовує власну та командну діяльність під час розроблення проектів з використанням інформаційних технологій", "code": "12 ІФО 2.5.1-2 П"}, {"text": "бере активну участь у розробленні інформаційних продуктів у складі команди, надає належну оцінку ідеям, підтримку та допомогу за потреби", "code": "12 ІФО 2.5.1-3 П"}, {"text": "гнучко реагує на зміни умов і вимог під час створення інформаційних продуктів", "code": "12 ІФО 2.5.1-4 П"}]}, {"text": "розуміє ідеї та емоції інших членів команди та конструктивно реагує на них під час розроблення проектів з використанням інформаційних технологій", "code": "12 ІФО 2.5.2", "basic": [{"text": "розуміє ідеї та емоції інших членів команди та конструктивно реагує на них під час розроблення проектів з використанням інформаційних технологій", "code": "12 ІФО 2.5.2-1"}], "advanced": [{"text": "враховує різні погляди, національні та культурні особливості для прийняття зважених рішень під час створення інформаційного продукту", "code": "12 ІФО 2.5.2-1 П"}, {"text": "використовує та ефективно опрацьовує ідеї інших членів команди під час розроблення програмного проекту з належними посиланнями", "code": "12 ІФО 2.5.2-2 П"}, {"text": "розпізнає власний емоційний стан і емоційний стан членів команди, ураховує його вплив під час розроблення проектів з використанням інформаційних технологій", "code": "12 ІФО 2.5.2-3 П"}]}]}]}, {"title": "3. Організація та усвідомлене використання цифрових середовищ для доступу до інформації, спілкування та співпраці як творця та/або споживача", "general": [{"text": "Використовує широкий спектр цифрових пристроїв", "code": "ІФО 3.1", "concrete": [{"text": "самостійно опановує цифрові пристрої, досліджуючи їх можливості, та застосовує їх для розвʼязування задач з різних галузей", "code": "12 ІФО 3.1.1", "basic": [{"text": "досліджує можливості цифрових пристроїв з метою їх застосування для розв’язування типових задач з обраної галузі", "code": "12 ІФО 3.1.1-1"}], "advanced": [{"text": "пояснює принципи функціонування різних цифрових пристроїв і їх розвиток", "code": "12 ІФО 3.1.1-1 П"}, {"text": "обґрунтовує доцільність застосування різних цифрових пристроїв для розвʼязування задач з обраної галузі та використовує їх", "code": "12 ІФО 3.1.1-2 П"}, {"text": "демонструє здатність до самостійного опанування нових пристроїв і технологій", "code": "12 ІФО 3.1.1-3 П"}]}]}, {"text": "Організовує власне інформаційне середовище", "code": "ІФО 3.2", "concrete": [{"text": "обґрунтовано обирає технологічні рішення для організації власного інформаційного середовища під час розвʼязування задач з різних галузей", "code": "12 ІФО 3.2.1", "basic": [{"text": "організовує власне інформаційне середовище з метою ефективного розвʼязування типових задач з обраної галузі", "code": "12 ІФО 3.2.1-1"}], "advanced": [{"text": "аналізує інформаційні системи та їх компоненти, описує та порівнює їх функціонування і принципи організації", "code": "12 ІФО 3.2.1-1 П"}]}, {"text": "визначає та формулює можливі причини типових апаратних та/або програмних збоїв, пояснює спосіб їх усунення", "code": "12 ІФО 3.2.2", "basic": [{"text": "фіксує типові апаратні та/або програмні збої, описує їх можливі причини, пояснює спосіб їх усунення", "code": "12 ІФО 3.2.2-1"}], "advanced": [{"text": "описує можливі причини типових апаратних або програмних збоїв і способи їх усунення", "code": "12 ІФО 3.2.2-1 П"}, {"text": "діагностує апаратні або програмні збої, усуває типові несправності під контролем учителя", "code": "12 ІФО 3.2.2-2 П"}, {"text": "аналізує необхідність оновлення компонентів інформаційної системи", "code": "12 ІФО 3.2.2-3 П"}]}]}, {"text": "Використовує комунікаційні технології та мережі для власного розвитку, спілкування і співпраці", "code": "ІФО 3.3", "concrete": [{"text": "свідомо використовує технологічні засоби для індивідуальної або групової діяльності та комунікації", "code": "12 ІФО 3.3.1", "basic": [{"text": "обґрунтовано обирає та використовує технологічні засоби для індивідуальної або групової діяльності та комунікації", "code": "12 ІФО 3.3.1-1"}], "advanced": [{"text": "пропонує критерії вибору, обґрунтовано обирає, налаштовує та ефективно використовує технологічні засоби для індивідуальної або групової діяльності та комунікації", "code": "12 ІФО 3.3.1-1 П"}]}]}]}, {"title": "4. Усвідомлення результатів використання інформаційних технологій для себе, суспільства, навколишнього середовища і сталого розвитку суспільства, дотримання етичних і правових норм інформаційної взаємодії", "general": [{"text": "Обґрунтовує вплив технологій на навколишнє середовище і власний добробут, захищає себе і свій інформаційний простір", "code": "ІФО 4.1", "concrete": [{"text": "піклується про власну та громадську безпеку, добробут і здоровʼя під час використання інформаційних технологій", "code": "12 ІФО 4.1.1", "basic": [{"text": "піклується про власну безпеку, добробут і здоровʼя під час використання інформаційних технологій", "code": "12 ІФО 4.1.1-1"}], "advanced": [{"text": "розуміє проблему інформаційного перевантаження під час роботи в цифровому середовищі та описує його наслідки", "code": "12 ІФО 4.1.1-1 П"}, {"text": "описує способи регулювання власного інформаційного навантаження та застосовує їх (обмеження, тайм-менеджмент, відключення певних функцій програм, перемикання на інші види діяльності, фізичні вправи тощо)", "code": "12 ІФО 4.1.1-2 П"}, {"text": "використовує цифрові засоби та технології для забезпечення особистої та громадської безпеки в умовах надзвичайних ситуацій", "code": "12 ІФО 4.1.1-3 П"}]}, {"text": "обирає і застосовує стратегію кібербезпеки для власного інформаційного середовища", "code": "12 ІФО 4.1.2", "basic": [{"text": "обирає і застосовує політики кібербезпеки для власного інформаційного середовища", "code": "12 ІФО 4.1.2-1"}], "advanced": [{"text": "наводить приклади вразливостей інформаційних систем і можливих наслідків зловмисного їх використання", "code": "12 ІФО 4.1.2-1 П"}, {"text": "пояснює поняття конфіденційності, цілісності та доступності даних", "code": "12 ІФО 4.1.2-2 П"}, {"text": "порівнює заходи та засоби інформаційної безпеки за наданими критеріями та аргументовано обирає їх", "code": "12 ІФО 4.1.2-3 П"}, {"text": "застосовує засоби та стратегії захисту конфіденційності та цілісності даних", "code": "12 ІФО 4.1.2-4 П"}, {"text": "критично оцінює нові інформаційні технології щодо їх відповідності засадам кібербезпеки", "code": "12 ІФО 4.1.2-5 П"}]}, {"text": "враховує наслідки власних дій у цифровому середовищі та їх вплив на власну цифрову репутацію та цифрову репутацію інших осіб", "code": "12 ІФО 4.1.3", "basic": [{"text": "враховує наслідки власних дій у цифровому середовищі та їх вплив на власну цифрову репутацію та цифрову репутацію інших осіб", "code": "12 ІФО 4.1.3-1"}], "advanced": [{"text": "прогнозує наслідки дій у цифровому середовищі, їх вплив на власну цифрову репутацію та цифрову репутацію інших осіб", "code": "12 ІФО 4.1.3-1 П"}, {"text": "пояснює можливості впливу цифрової репутації на взаємини в реальному світі", "code": "12 ІФО 4.1.3-2 П"}, {"text": "враховує наслідки поширення інформації для особистої репутації або репутації групи, яку представляє", "code": "12 ІФО 4.1.3-3 П"}]}]}, {"text": "Усвідомлено дотримується норм соціальної, міжкультурної і міжособистісної взаємодії", "code": "ІФО 4.2", "concrete": [{"text": "дотримується норм соціальної, міжкультурної і міжособистісної взаємодії під час спілкування та співпраці в глобальному інформаційному просторі", "code": "12 ІФО 4.2.1", "basic": [{"text": "дотримується норм соціальної, міжкультурної і міжособистісної взаємодії під час спілкування та співпраці в інформаційному просторі", "code": "12 ІФО 4.2.1-1"}], "advanced": [{"text": "розуміє і враховує особливості (зокрема національні, мовні й культурні) аудиторії, з якою взаємодіє", "code": "12 ІФО 4.2.1-1 П"}, {"text": "адаптується під потреби аудиторії під час цифрової комунікації, зокрема з використанням програмних засобів штучного інтелекту та перекладу текстів", "code": "12 ІФО 4.2.1-2 П"}, {"text": "дотримується норм етичної поведінки під час цифрової комунікації", "code": "12 ІФО 4.2.1-3 П"}, {"text": "конструктивно реагує на агресивні висловлювання, зокрема в глобальному інформаційному просторі", "code": "12 ІФО 4.2.1-4 П"}, {"text": "наводить приклади стратегій запобігання та протидії кібербулінгу та застосовує їх за потреби", "code": "12 ІФО 4.2.1-5 П"}, {"text": "наводить приклади та розуміє упередження, повʼязані з використанням інформаційних технологій, і їх наслідки", "code": "12 ІФО 4.2.1-6 П"}]}, {"text": "враховує потребу в забезпеченні універсального дизайну під час використання інформаційних технологій і створення інформаційних продуктів", "code": "12 ІФО 4.2.2", "basic": [{"text": "враховує засади універсального дизайну під час використання інформаційних технологій і створення інформаційних продуктів", "code": "12 ІФО 4.2.2-1"}], "advanced": [{"text": "пояснює поняття універсального дизайну інформаційних продуктів і демонструє його реалізацію в обраній галузі", "code": "12 ІФО 4.2.2-1 П"}, {"text": "враховує засади універсального дизайну та ергономічності під час створення інформаційних продуктів", "code": "12 ІФО 4.2.2-2 П"}, {"text": "оцінює інформаційні технології та системи за критеріями інклюзивності, доступності та рівності", "code": "12 ІФО 4.2.2-3 П"}]}]}, {"text": "Усвідомлено дотримується норм правової взаємодії", "code": "ІФО 4.3", "concrete": [{"text": "дотримується норм законодавства, що регулює правові відносини у сфері інтелектуальної власності та використання інформаційних технологій", "code": "12 ІФО 4.3.1", "basic": [{"text": "дотримується норм законодавства, що регулює правові відносини у сфері інтелектуальної власності та використання інформаційних технологій", "code": "12 ІФО 4.3.1-1"}], "advanced": [{"text": "знає норми законодавства, що регулюють правові відносини у сфері інтелектуальної власності та використання інформаційних технологій", "code": "12 ІФО 4.3.1-1 П"}, {"text": "розпізнає різновиди прав інтелектуальної власності на інформаційні продукти та дотримується їх", "code": "12 ІФО 4.3.1-2 П"}, {"text": "пояснює призначення простих засобів захисту авторських прав і доречно застосовує їх", "code": "12 ІФО 4.3.1-3 П"}, {"text": "аргументовано обирає вид ліцензії програмних засобів та інформаційних продуктів для розвʼязання задач з обраної галузі", "code": "12 ІФО 4.3.1-4 П"}, {"text": "аргументовано пояснює суспільні та правові наслідки порушення прав інтелектуальної власності", "code": "12 ІФО 4.3.1-5 П"}, {"text": "пояснює особливості реалізації та захисту прав людини в контексті інформаційних технологій", "code": "12 ІФО 4.3.1-6 П"}, {"text": "обстоює особисті права на інтелектуальну власність з дотриманням норм права та етики", "code": "12 ІФО 4.3.1-7 П"}]}]}]}];
+var WL = [['W','W — куди й навіщо'],['H','H — зацікавити'],['E','E — оснастити'],['R','R — переосмислити'],['E2','E₂ — самооцінювання'],['T','T — адаптувати'],['O','O — упорядкувати']];
+var PHASES = ['Занурення','Набуття','Застосування','Компетентнісне завдання','Рефлексія'];
+var STORE = 'bd-informatics-profile-v1';
+
+function blank(){
+  return {level:'basic',
+    meta:{title:'',grade:'',hours:'',component:'',profile:'',mnp:'',mnpTopic:''},
+    s1:{results:[],orients:[],transfer:'',ideas:'',questions:'',knowledge:'',skills:''},
+    s2:{g:'',r:'',a:'',s:'',p:'',st:'',rubric:[{crit:'',code:'',weight:'',desc:''},{crit:'',code:'',weight:'',desc:''},{crit:'',code:'',weight:'',desc:''}],other:[{type:'',desc:'',code:''}],self:''},
+    s3:{lessons:[{phase:'Занурення',act:'',codes:[],wl:[],ev:''}],diff:''}};
+}
+
+/* ---------- Examples ---------- */
+var EX = {
+ basic: {level:'basic',
+  meta:{title:'Опрацювання наборів даних мовою Python: списки та словники',grade:'10',hours:'8',component:'Обов’язковий спільний компонент',profile:'',mnp:'',mnpTopic:''},
+  s1:{results:['12 ІФО 1.2.3','12 ІФО 2.1.1','12 ІФО 2.1.3','12 ІФО 2.2.2'],
+      orients:['12 ІФО 1.2.3-1','12 ІФО 2.1.1-1','12 ІФО 2.1.3-1','12 ІФО 2.2.2-1'],
+      transfer:'Учні зможуть самостійно написати невелику програму, яка опрацьовує реальний набір даних (наприклад, витрати родини за місяць чи результати опитування класу) і дає обґрунтовану відповідь на практичне запитання.',
+      ideas:'Учні розумітимуть, що спосіб зберігання даних (список чи словник) визначає, які запитання до даних поставити легко, а які складно.\nУчні розумітимуть, що програма корисна лише тоді, коли її результат перевірено на різних вхідних даних, зокрема незвичних.',
+      questions:'Як вибір способу зберігання даних впливає на те, що ми можемо про них дізнатися?\nЧому програма, яка «працює», може давати хибну відповідь?',
+      knowledge:'Список і словник як структури даних\nІндексація, зрізи, ключі та значення\nПеребирання елементів у циклі\nВбудовані функції len, sum, max, min, sorted',
+      skills:'Створює списки та словники з даних задачі\nОбчислює підсумкові показники набору даних\nТестує програму на кількох наборах вхідних даних\nЗнаходить і виправляє помилки в програмі'},
+  s2:{g:'Допомогти учнівській раді з’ясувати, як учні ліцею використовують смартфон під час навчання.',
+      r:'Аналітик даних учнівського самоврядування.',
+      a:'Учнівська рада ліцею.',
+      s:'Є файл з анонімними відповідями 60 учнів (клас, години на день, мета використання). Рада поставила три запитання; відповісти треба за допомогою програми, а не вручну.',
+      p:'Програма мовою Python, таблиця тестів (щонайменше 3 набори даних) і короткий звіт з відповідями на запитання ради.',
+      st:'Коректні обчислення, доречний вибір структур даних, перевірена програма, зрозумілий для ради звіт.',
+      rubric:[{crit:'Доречний вибір і використання структур даних',code:'12 ІФО 2.1.3-1',weight:'30',desc:'Дані зберігаються у списках/словниках відповідно до запитань; доступ до даних коректний і без дублювання.'},
+              {crit:'Аналіз даних і відповіді на запитання ради',code:'12 ІФО 1.2.3-1',weight:'30',desc:'Усі три показники обчислено правильно; виявлено щонайменше одну залежність між даними.'},
+              {crit:'Тестування та налагодження',code:'12 ІФО 2.2.2-1',weight:'25',desc:'Є три тестові набори, зокрема з порожніми чи нетиповими значеннями; знайдені помилки виправлено й описано.'},
+              {crit:'Застосування алгоритмів і зрозумілість звіту',code:'12 ІФО 2.1.1-1',weight:'15',desc:'Використано доречні алгоритми підрахунку й пошуку; звіт пояснює хід розв’язання мовою, зрозумілою раді.'}],
+      other:[{type:'Тест',desc:'Індексація, зрізи, методи списків і словників (10 запитань)',code:'12 ІФО 2.1.3-1'},
+             {type:'Практична робота',desc:'«Знайди помилку»: виправити три програми з логічними помилками',code:'12 ІФО 2.2.2-1'},
+             {type:'Формувальна перевірка',desc:'«Передбачення»: учні записують, що виведе програма, до її запуску',code:'12 ІФО 2.1.1-1'}],
+      self:'На першому уроці й після компетентнісного завдання учні заповнюють чек-лист «Я вмію…» за критеріями рубрики та пишуть, що зроблять інакше в наступній програмі.'},
+  s3:{lessons:[
+      {phase:'Занурення',act:'Питання «Скільки годин на день ви з телефоном — і як це перевірити?». Оголошення завдання для учнівської ради та рубрики. Чек-лист самооцінювання «до».',codes:['12 ІФО 1.2.3-1'],wl:['W','H','E2'],ev:'Самооцінювання'},
+      {phase:'Набуття',act:'Списки: створення, індексація, зрізи; демонстрація «я показую → робимо разом».',codes:['12 ІФО 2.1.3-1'],wl:['E','O'],ev:'Передбачення виводу'},
+      {phase:'Набуття',act:'Словники: ключі та значення; коли список, а коли словник — обговорення на прикладах.',codes:['12 ІФО 2.1.3-1'],wl:['E','R'],ev:'Квиток на вихід'},
+      {phase:'Застосування',act:'Підсумкові показники: сума, середнє, максимум, підрахунок за умовою. Завдання трьох рівнів складності.',codes:['12 ІФО 1.2.3-1','12 ІФО 2.1.1-1'],wl:['E','T'],ev:'Тест'},
+      {phase:'Застосування',act:'Тестування й налагодження: «Знайди помилку», складання тестових наборів.',codes:['12 ІФО 2.2.2-1'],wl:['E','R'],ev:'Практична робота «Знайди помилку»'},
+      {phase:'Компетентнісне завдання',act:'Робота в парах над програмою для учнівської ради; консультації вчителя.',codes:['12 ІФО 1.2.3-1','12 ІФО 2.1.3-1','12 ІФО 2.1.1-1'],wl:['E','T'],ev:'Чернетка програми'},
+      {phase:'Компетентнісне завдання',act:'Взаємне тестування програм за рубрикою, доопрацювання.',codes:['12 ІФО 2.2.2-1'],wl:['R','E2'],ev:'Взаємооцінювання за рубрикою'},
+      {phase:'Рефлексія',act:'Представлення звітів раді; повернення до ключових питань; самооцінювання «після».',codes:['12 ІФО 1.2.3-1'],wl:['E2','W'],ev:'Оцінка за рубрикою'}],
+      diff:'Картки-підказки з шаблонами коду для тих, кому потрібна підтримка; додаткове завдання — побудувати діаграму за отриманими даними; можливість обрати власний набір даних для компетентнісного завдання.'}},
+ advanced: {level:'advanced',
+  meta:{title:'Ефективність алгоритмів пошуку та сортування',grade:'11',hours:'10',component:'Обов’язковий компонент за профілем',profile:'STEM, академічне спрямування',mnp:'«Інформатика. 10–12 класи. Поглиблений рівень» (Арбузов М. О., Забазнова А. О.)',mnpTopic:'Звірте назву теми зі змістом МНП (приклад ілюстративний)'},
+  s1:{results:['12 ІФО 2.1.1','12 ІФО 2.1.2','12 ІФО 2.1.3','12 ІФО 2.2.2'],
+      orients:['12 ІФО 2.1.1-3 П','12 ІФО 2.1.2-1 П','12 ІФО 2.1.2-2 П','12 ІФО 2.1.3-1 П','12 ІФО 2.2.2-2 П'],
+      transfer:'Учні зможуть самостійно обрати й обґрунтувати алгоритм і структуру даних для задачі з великим обсягом даних (каталог, база записів, журнал подій), спираючись на оцінку часової складності та власний обчислювальний експеримент.',
+      ideas:'Учні розумітимуть, що ефективність алгоритму стає критичною не на малих даних, а тоді, коли їх обсяг зростає на порядки.\nУчні розумітимуть, що не існує найкращого алгоритму взагалі: є найкращий для конкретних даних, обмежень за часом і пам’яттю.\nУчні розумітимуть, що теоретичну оцінку складності варто підтверджувати експериментом на реальних даних.',
+      questions:'Чому програма, що миттєво працює на сотні записів, може «зависнути» на мільйоні?\nЯк переконливо довести, що один алгоритм кращий за інший?\nКоли варто пожертвувати пам’яттю заради швидкості?',
+      knowledge:'Лінійний і бінарний пошук\nСортування вибором, вставками, злиттям; вбудоване сортування\nO-нотація, часова та ємнісна складність\nКращий, середній і гірший випадки',
+      skills:'Оцінює часову складність алгоритму\nПроводить заміри часу виконання та будує графік залежності від обсягу даних\nСтворює тестові набори, зокрема граничні випадки\nАргументовано обирає алгоритм і структуру даних для задачі'},
+  s2:{g:'Обрати алгоритм пошуку й сортування для сервісу пошуку книжок шкільної бібліотеки, який має працювати швидко на каталозі, що постійно зростає.',
+      r:'Розробник програмного забезпечення.',
+      a:'Технічна рада: вчитель інформатики та запрошений IT-фахівець.',
+      s:'Каталог містить близько 50 000 записів і щороку збільшується; пошук за назвою виконується часто, нові книжки додаються рідко; на сервері обмежений обсяг пам’яті.',
+      p:'Технічний звіт: реалізація 2–3 алгоритмів, таблиця й графік замірів часу для різних обсягів даних, оцінка складності, тестові набори, обґрунтована рекомендація; захист звіту (5 хв).',
+      st:'Коректна оцінка складності, відтворюваний експеримент, повне тестування, переконливе обґрунтування з урахуванням обмежень.',
+      rubric:[{crit:'Оцінка часової та ємнісної складності',code:'12 ІФО 2.1.2-1 П',weight:'25',desc:'Для кожного алгоритму правильно визначено складність у гіршому й середньому випадках та пояснено, чому.'},
+              {crit:'Експериментальне порівняння ефективності',code:'12 ІФО 2.1.2-2 П',weight:'25',desc:'Заміри для щонайменше 4 обсягів даних, графік, висновок узгоджено з теоретичною оцінкою; розбіжності пояснено.'},
+              {crit:'Обґрунтування вибору структури даних',code:'12 ІФО 2.1.3-1 П',weight:'20',desc:'Порівняно щонайменше дві структури даних з урахуванням частоти операцій і обмежень пам’яті.'},
+              {crit:'Вибір і складання алгоритму',code:'12 ІФО 2.1.1-3 П',weight:'15',desc:'Рекомендований алгоритм реалізовано коректно; вибір аргументовано умовами задачі.'},
+              {crit:'Тестові приклади для різних сценаріїв',code:'12 ІФО 2.2.2-2 П',weight:'15',desc:'Тести охоплюють порожній каталог, один запис, відсутній елемент, дублікати, впорядковані та обернені дані.'}],
+      other:[{type:'Відкрита задача',desc:'Визначити складність трьох фрагментів коду та пояснити відповідь',code:'12 ІФО 2.1.2-1 П'},
+             {type:'Практична робота',desc:'Реалізація бінарного пошуку й набір тестів до нього',code:'12 ІФО 2.2.2-2 П'},
+             {type:'Формувальна перевірка',desc:'«Хто швидший?»: прогноз результату заміру до експерименту та порівняння',code:'12 ІФО 2.1.2-2 П'},
+             {type:'Тест',desc:'Структури даних і вартість операцій над ними',code:'12 ІФО 2.1.3-1 П'}],
+      self:'Учні ведуть дослідницький щоденник: на початку теми записують власну гіпотезу щодо найшвидшого алгоритму, після компетентнісного завдання оцінюють свій звіт за рубрикою й описують, як змінилося їхнє уявлення.'},
+  s3:{lessons:[
+      {phase:'Занурення',act:'Демонстрація: лінійний пошук на 10³ і 10⁶ записів. Ключове питання. Оголошення завдання для технічної ради та рубрики. Гіпотеза в щоденнику.',codes:['12 ІФО 2.1.2-1 П'],wl:['W','H','E2'],ev:'Запис гіпотези'},
+      {phase:'Набуття',act:'Лінійний і бінарний пошук; підрахунок кількості порівнянь.',codes:['12 ІФО 2.1.1-3 П','12 ІФО 2.1.2-1 П'],wl:['E','O'],ev:'Квиток на вихід'},
+      {phase:'Набуття',act:'O-нотація, часова й ємнісна складність; аналіз фрагментів коду.',codes:['12 ІФО 2.1.2-1 П'],wl:['E'],ev:'Відкрита задача на складність'},
+      {phase:'Набуття',act:'Сортування вибором, вставками, злиттям; візуалізація роботи алгоритмів.',codes:['12 ІФО 2.1.1-3 П'],wl:['E','T'],ev:'Передбачення кроків сортування'},
+      {phase:'Застосування',act:'Обчислювальний експеримент: заміри часу, побудова графіків; прогноз «Хто швидший?».',codes:['12 ІФО 2.1.2-2 П'],wl:['E','R'],ev:'Формувальна перевірка «Хто швидший?»'},
+      {phase:'Застосування',act:'Структури даних і вартість операцій: список, словник, множина; дискусія «пам’ять чи швидкість».',codes:['12 ІФО 2.1.3-1 П'],wl:['E','R','T'],ev:'Тест зі структур даних'},
+      {phase:'Застосування',act:'Тестування: граничні випадки, практична робота з бінарним пошуком.',codes:['12 ІФО 2.2.2-2 П'],wl:['E','O'],ev:'Практична робота'},
+      {phase:'Компетентнісне завдання',act:'Робота над технічним звітом у парах: реалізація, заміри, тести.',codes:['12 ІФО 2.1.1-3 П','12 ІФО 2.1.2-2 П','12 ІФО 2.2.2-2 П'],wl:['E','T'],ev:'Чернетка звіту'},
+      {phase:'Компетентнісне завдання',act:'Рецензування чернеток іншою парою за рубрикою; доопрацювання обґрунтування.',codes:['12 ІФО 2.1.3-1 П','12 ІФО 2.1.2-1 П'],wl:['R','E2'],ev:'Взаємооцінювання'},
+      {phase:'Рефлексія',act:'Захист звітів перед технічною радою; повернення до гіпотези в щоденнику й ключових питань.',codes:['12 ІФО 2.1.3-1 П','12 ІФО 2.1.1-3 П'],wl:['E2','W'],ev:'Оцінка за рубрикою, самооцінювання'}],
+      diff:'Змінні групи: учні, які впевнено володіють матеріалом, додатково досліджують швидке сортування та ємнісну складність; для інших — готові шаблони замірів часу й таблиці. Вибір мови подання звіту (текст, презентація, відео з демонстрацією коду).'}}
+};
+
+/* ---------- State ---------- */
+var state;
+try { state = JSON.parse(localStorage.getItem(STORE)) || blank(); } catch(e){ state = blank(); }
+if(state && state.meta){ if(state.meta.mnp===undefined) state.meta.mnp=''; if(state.meta.mnpTopic===undefined) state.meta.mnpTopic=''; }
+function save(){ try{ localStorage.setItem(STORE, JSON.stringify(state)); }catch(e){} }
+function deep(o){ return JSON.parse(JSON.stringify(o)); }
+function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
+function lines(s){ return String(s||'').split(/\n+/).map(function(x){return x.trim();}).filter(Boolean); }
+function getPath(p){ return p.split('.').reduce(function(o,k){return o[k];}, state); }
+function setPath(p,v){ var ks=p.split('.'), o=state; for(var i=0;i<ks.length-1;i++) o=o[ks[i]]; o[ks[ks.length-1]]=v; }
+function toast(t){ var el=document.getElementById('toast'); el.textContent=t; el.classList.add('show'); setTimeout(function(){el.classList.remove('show');},1600); }
+
+/* index of standard */
+var CONC = {}, ORIENT = {};
+STD.forEach(function(g,gi){ g.general.forEach(function(ge){ ge.concrete.forEach(function(c){
+  CONC[c.code] = {c:c, ge:ge, g:g, gi:gi+1};
+  c.basic.forEach(function(o){ ORIENT[o.code]={text:o.text, level:'basic', parent:c.code}; });
+  c.advanced.forEach(function(o){ ORIENT[o.code]={text:o.text, level:'advanced', parent:c.code}; });
+}); }); });
+function groupOf(code){ var o=ORIENT[code]; if(!o) return ''; return 'ГР '+CONC[o.parent].gi; }
+
+/* ---------- Tabs ---------- */
+function showTab(t){
+  document.querySelectorAll('#tabs button').forEach(function(b){ b.classList.toggle('on', b.dataset.tab===t); });
+  document.querySelectorAll('.tabpane').forEach(function(p){ p.style.display = p.id==='pane-'+t ? 'block':'none'; });
+  if(t==='summary') renderSummary();
+  if(t==='score') renderScore();
+  window.scrollTo({top:0});
+}
+document.getElementById('tabs').addEventListener('click',function(e){ var b=e.target.closest('button'); if(b) showTab(b.dataset.tab); });
+document.querySelectorAll('[data-goto]').forEach(function(b){ b.addEventListener('click',function(){ showTab(b.dataset.goto); }); });
+
+/* ---------- Bound fields ---------- */
+function fillBound(){
+  document.querySelectorAll('[data-bind]').forEach(function(el){ el.value = getPath(el.dataset.bind) || ''; });
+}
+document.querySelectorAll('[data-bind]').forEach(function(el){
+  el.addEventListener('input',function(){ setPath(el.dataset.bind, el.value); save(); renderScore(); });
+});
+
+/* ---------- Level ---------- */
+function renderLevel(){
+  document.querySelectorAll('#levelSeg button').forEach(function(b){ b.classList.toggle('on', b.dataset.l===state.level); });
+  document.getElementById('levelHint').innerHTML = state.level==='basic'
+    ? '<strong>Основний рівень.</strong> Для оцінювання використовуйте орієнтири з колонки «основний» (коди без літери П).'
+    : '<strong>Поглиблений рівень.</strong> Для оцінювання використовуйте орієнтири з колонки «поглиблений» (коди з літерою П). Орієнтири основного рівня можна додати як базові.';
+}
+document.getElementById('levelSeg').addEventListener('click',function(e){
+  var b=e.target.closest('button'); if(!b) return;
+  if(state.level===b.dataset.l) return;
+  state.level=b.dataset.l;
+  // re-select orientations for chosen level
+  var keep = state.s1.orients.filter(function(c){ return ORIENT[c] && ORIENT[c].level===state.level; });
+  state.s1.results.forEach(function(rc){
+    if(!keep.some(function(c){return ORIENT[c].parent===rc;})){
+      var list = state.level==='basic'?CONC[rc].c.basic:CONC[rc].c.advanced;
+      list.forEach(function(o){ keep.push(o.code); });
+    }
+  });
+  state.s1.orients = keep;
+  save(); renderAll(); toast(state.level==='basic'?'Рівень: основний':'Рівень: поглиблений');
+});
+
+/* ---------- Stage 1 tree ---------- */
+function renderTree(){
+  var html='';
+  STD.forEach(function(g,gi){
+    var nSel = 0;
+    g.general.forEach(function(ge){ ge.concrete.forEach(function(c){ if(state.s1.results.indexOf(c.code)>-1) nSel++; }); });
+    html += '<details class="grp"'+(nSel?' open':'')+'><summary>'+esc(g.title)+(nSel?' <span class="code">обрано: '+nSel+'</span>':'')+'</summary>';
+    g.general.forEach(function(ge){
+      var open = ge.concrete.some(function(c){return state.s1.results.indexOf(c.code)>-1;});
+      html += '<details class="gen"'+(open?' open':'')+'><summary>'+esc(ge.text)+' <span class="code">'+esc(ge.code)+'</span></summary>';
+      ge.concrete.forEach(function(c){
+        var sel = state.s1.results.indexOf(c.code)>-1;
+        html += '<div class="conc'+(sel?' sel':'')+'"><label><input type="checkbox" data-conc="'+esc(c.code)+'"'+(sel?' checked':'')+'> <span>'+esc(c.text)+' <span class="code">'+esc(c.code)+'</span></span></label>';
+        if(sel){
+          html += '<div class="orients">';
+          var lists = state.level==='basic' ? [['basic','Орієнтири · основний рівень',c.basic]] : [['advanced','Орієнтири · поглиблений рівень',c.advanced],['basic','Орієнтири · основний рівень (додатково)',c.basic]];
+          lists.forEach(function(L){
+            html += '<div class="lvl">'+L[1]+'</div>';
+            L[2].forEach(function(o){
+              var on = state.s1.orients.indexOf(o.code)>-1;
+              html += '<label><input type="checkbox" data-or="'+esc(o.code)+'"'+(on?' checked':'')+'> <span>'+esc(o.text)+' <span class="code">'+esc(o.code)+'</span></span></label>';
+            });
+          });
+          html += '</div>';
+        }
+        html += '</div>';
+      });
+      html += '</details>';
+    });
+    html += '</details>';
+  });
+  document.getElementById('stdTree').innerHTML = html;
+  var sl = state.s1.orients.map(function(c){ return '<span class="chip on" title="'+esc(ORIENT[c]?ORIENT[c].text:'')+'">'+esc(c)+'</span>'; }).join('');
+  document.getElementById('selList').innerHTML = sl || '<span class="empty">Ще нічого не обрано</span>';
+  document.getElementById('selCount').textContent = '('+state.s1.orients.length+')';
+}
+document.getElementById('stdTree').addEventListener('change',function(e){
+  var t=e.target;
+  if(t.dataset.conc){
+    var code=t.dataset.conc, i=state.s1.results.indexOf(code);
+    if(t.checked && i<0){
+      state.s1.results.push(code);
+      var list = state.level==='basic'?CONC[code].c.basic:CONC[code].c.advanced;
+      list.forEach(function(o){ if(state.s1.orients.indexOf(o.code)<0) state.s1.orients.push(o.code); });
+    } else if(!t.checked && i>-1){
+      state.s1.results.splice(i,1);
+      state.s1.orients = state.s1.orients.filter(function(c){ return ORIENT[c].parent!==code; });
+    }
+  } else if(t.dataset.or){
+    var oc=t.dataset.or, j=state.s1.orients.indexOf(oc);
+    if(t.checked && j<0) state.s1.orients.push(oc);
+    if(!t.checked && j>-1) state.s1.orients.splice(j,1);
+  }
+  save(); renderTree(); renderRubric(); renderOther(); renderLessons(); renderScore();
+});
+
+/* ---------- Stage 2 ---------- */
+function codeOptions(sel){
+  var o='<option value="">— оберіть —</option>';
+  state.s1.orients.forEach(function(c){ o+='<option value="'+esc(c)+'"'+(c===sel?' selected':'')+'>'+esc(c)+' · '+groupOf(c)+'</option>'; });
+  if(sel && state.s1.orients.indexOf(sel)<0) o+='<option value="'+esc(sel)+'" selected>'+esc(sel)+' (не обрано на Етапі 1)</option>';
+  return o;
+}
+function renderRubric(){
+  var tb=document.querySelector('#rubricTbl tbody'), h='';
+  state.s2.rubric.forEach(function(r,i){
+    h+='<tr><td><textarea data-rb="'+i+'" data-k="crit">'+esc(r.crit)+'</textarea></td>'+
+       '<td><select data-rb="'+i+'" data-k="code">'+codeOptions(r.code)+'</select><div class="muted" style="font-size:12px;margin-top:4px">'+esc(r.code&&ORIENT[r.code]?ORIENT[r.code].text:'')+'</div></td>'+
+       '<td><input type="number" min="0" max="100" data-rb="'+i+'" data-k="weight" value="'+esc(r.weight)+'"></td>'+
+       '<td><textarea data-rb="'+i+'" data-k="desc">'+esc(r.desc)+'</textarea></td>'+
+       '<td class="noprint"><button class="btn small danger" data-delrb="'+i+'" title="Видалити">✕</button></td></tr>';
+  });
+  tb.innerHTML=h; renderRubricSum();
+}
+function rubricSum(){ return state.s2.rubric.reduce(function(s,r){ return s+(Number(r.weight)||0); },0); }
+function renderRubricSum(){
+  var s=rubricSum(), el=document.getElementById('rubricSum');
+  el.innerHTML = 'Сума ваг: <span class="'+(s===100?'ok':'bad')+'">'+s+' / 100</span>'+(s===100?' ✓':' — має дорівнювати 100');
+}
+document.getElementById('rubricTbl').addEventListener('input',function(e){
+  var t=e.target; if(t.dataset.rb===undefined) return;
+  state.s2.rubric[+t.dataset.rb][t.dataset.k]=t.value; save(); renderRubricSum(); renderScore();
+  if(t.dataset.k==='code') renderRubric();
+});
+document.getElementById('rubricTbl').addEventListener('click',function(e){
+  var b=e.target.closest('[data-delrb]'); if(!b) return;
+  state.s2.rubric.splice(+b.dataset.delrb,1); save(); renderRubric(); renderScore();
+});
+document.getElementById('addCrit').addEventListener('click',function(){ state.s2.rubric.push({crit:'',code:'',weight:'',desc:''}); save(); renderRubric(); });
+
+function renderOther(){
+  var tb=document.querySelector('#otherTbl tbody'), h='';
+  var types=['Тест','Відкрита задача','Практична робота','Формувальна перевірка','Спостереження','Портфоліо / щоденник','Інше'];
+  state.s2.other.forEach(function(r,i){
+    var opts='<option value="">—</option>'+types.map(function(t){return '<option'+(t===r.type?' selected':'')+'>'+t+'</option>';}).join('');
+    h+='<tr><td><select data-ot="'+i+'" data-k="type">'+opts+'</select></td>'+
+       '<td><textarea data-ot="'+i+'" data-k="desc">'+esc(r.desc)+'</textarea></td>'+
+       '<td><select data-ot="'+i+'" data-k="code">'+codeOptions(r.code)+'</select></td>'+
+       '<td class="noprint"><button class="btn small danger" data-delot="'+i+'">✕</button></td></tr>';
+  });
+  tb.innerHTML=h;
+}
+document.getElementById('otherTbl').addEventListener('input',function(e){
+  var t=e.target; if(t.dataset.ot===undefined) return;
+  state.s2.other[+t.dataset.ot][t.dataset.k]=t.value; save(); renderScore();
+});
+document.getElementById('otherTbl').addEventListener('click',function(e){
+  var b=e.target.closest('[data-delot]'); if(!b) return;
+  state.s2.other.splice(+b.dataset.delot,1); save(); renderOther(); renderScore();
+});
+document.getElementById('addOther').addEventListener('click',function(){ state.s2.other.push({type:'',desc:'',code:''}); save(); renderOther(); });
+
+function to12(p){
+  p=Number(p);
+  if(isNaN(p)||p<0||p>100) return null;
+  var t=[[96,12],[90,11],[84,10],[78,9],[72,8],[66,7],[60,6],[50,5],[40,4],[30,3],[15,2],[0,1]];
+  for(var i=0;i<t.length;i++) if(p>=t[i][0]) return t[i][1];
+}
+document.getElementById('conv').addEventListener('input',function(){
+  var v=this.value, b=to12(v), out=document.getElementById('convOut');
+  if(v===''||b===null){ out.textContent=''; return; }
+  var lvl = b>=10?'високий':b>=7?'достатній':b>=4?'середній':'початковий';
+  out.innerHTML='≈ <strong>'+b+'</strong> балів за 12-бальною шкалою · рівень: '+lvl;
+});
+
+/* ---------- Stage 3 ---------- */
+function renderLessons(){
+  var h='';
+  state.s3.lessons.forEach(function(L,i){
+    var ph=PHASES.map(function(p){return '<option'+(p===L.phase?' selected':'')+'>'+p+'</option>';}).join('');
+    var chips=state.s1.orients.map(function(c){ return '<button class="chip'+(L.codes.indexOf(c)>-1?' on':'')+'" data-lc="'+i+'" data-code="'+esc(c)+'" title="'+esc(ORIENT[c]?ORIENT[c].text:'')+'">'+esc(c)+'</button>'; }).join('') || '<span class="empty">Спершу оберіть орієнтири на Етапі 1</span>';
+    var wl=WL.map(function(w){ return '<button class="chip wl'+(L.wl.indexOf(w[0])>-1?' on':'')+'" data-lw="'+i+'" data-w="'+w[0]+'" title="'+w[1]+'">'+(w[0]==='E2'?'E₂':w[0])+'</button>'; }).join('');
+    h+='<div class="lesson"><div class="lesson-head"><strong>Урок '+(i+1)+'</strong><select data-ls="'+i+'" data-k="phase" style="width:auto">'+ph+'</select>'+
+       '<span style="margin-left:auto" class="noprint"><button class="btn small" data-up="'+i+'" title="Вище">↑</button> <button class="btn small danger" data-dell="'+i+'">✕</button></span></div>'+
+       '<label class="f">Діяльність учнів</label><textarea data-ls="'+i+'" data-k="act">'+esc(L.act)+'</textarea>'+
+       '<div class="grid2"><div><label class="f">Орієнтири Стандарту</label><div class="chips">'+chips+'</div></div>'+
+       '<div><label class="f">WHERETO</label><div class="chips">'+wl+'</div></div></div>'+
+       '<label class="f">Доказ / перевірка на уроці <small>(необов’язково)</small></label><input type="text" data-ls="'+i+'" data-k="ev" value="'+esc(L.ev)+'"></div>';
+  });
+  document.getElementById('lessons').innerHTML=h;
+  renderWhere();
+}
+function whereCovered(){ var s={}; state.s3.lessons.forEach(function(L){ L.wl.forEach(function(w){s[w]=1;}); }); return WL.filter(function(w){return s[w[0]];}).length; }
+function renderWhere(){
+  var n=whereCovered(), hrs=Number(state.meta.hours)||0, nl=state.s3.lessons.length;
+  var t='Охоплено ознак WHERETO: <span class="'+(n===7?'ok':'bad')+'">'+n+' / 7</span>';
+  if(hrs) t+=' · Уроків: <span class="'+(nl===hrs?'ok':'bad')+'">'+nl+' з '+hrs+' год</span>';
+  document.getElementById('whereSum').innerHTML=t;
+}
+var lessonsEl=document.getElementById('lessons');
+lessonsEl.addEventListener('input',function(e){
+  var t=e.target; if(t.dataset.ls===undefined) return;
+  state.s3.lessons[+t.dataset.ls][t.dataset.k]=t.value; save(); renderScore();
+});
+lessonsEl.addEventListener('change',function(e){
+  var t=e.target; if(t.dataset.ls===undefined) return;
+  state.s3.lessons[+t.dataset.ls][t.dataset.k]=t.value; save(); renderScore();
+});
+lessonsEl.addEventListener('click',function(e){
+  var b=e.target.closest('button'); if(!b) return;
+  if(b.dataset.lc!==undefined){ var L=state.s3.lessons[+b.dataset.lc], c=b.dataset.code, i=L.codes.indexOf(c); if(i>-1)L.codes.splice(i,1); else L.codes.push(c); }
+  else if(b.dataset.lw!==undefined){ var L2=state.s3.lessons[+b.dataset.lw], w=b.dataset.w, j=L2.wl.indexOf(w); if(j>-1)L2.wl.splice(j,1); else L2.wl.push(w); }
+  else if(b.dataset.dell!==undefined){ state.s3.lessons.splice(+b.dataset.dell,1); }
+  else if(b.dataset.up!==undefined){ var k=+b.dataset.up; if(k>0){ var tmp=state.s3.lessons[k-1]; state.s3.lessons[k-1]=state.s3.lessons[k]; state.s3.lessons[k]=tmp; } }
+  else return;
+  save(); renderLessons(); renderScore();
+});
+document.getElementById('addLesson').addEventListener('click',function(){
+  var last=state.s3.lessons[state.s3.lessons.length-1];
+  state.s3.lessons.push({phase:last?last.phase:'Набуття',act:'',codes:[],wl:[],ev:''}); save(); renderLessons(); renderScore();
+});
+
+/* ---------- Scoring (100) ---------- */
+var CLOSED = /^(що таке|скільки|коли|хто|де|який рік|назвіть|перелічіть)\b/i;
+function score(){
+  var C=[]; function add(stage,name,max,got,tip){ got=Math.max(0,Math.min(max,Math.round(got*10)/10)); C.push({stage:stage,name:name,max:max,got:got,tip:got<max?tip:''}); }
+  var s1=state.s1, s2=state.s2, s3=state.s3, lv=state.level;
+  // Stage 1 — 40
+  var nRes=s1.results.length;
+  var lvlOK = s1.results.filter(function(rc){ return s1.orients.some(function(c){ return ORIENT[c] && ORIENT[c].parent===rc && ORIENT[c].level===lv; }); }).length;
+  add(1,'Обрано щонайменше 2 конкретні результати Стандарту',6, nRes>=2?6:nRes*3,'Позначте 2–4 конкретні результати Додатка 14.');
+  add(1,'Для кожного результату обрано орієнтири заявленого рівня',4, nRes?4*lvlOK/nRes:0, lv==='basic'?'Додайте орієнтири основного рівня до кожного результату.':'Додайте орієнтири з літерою П до кожного результату.');
+  var tr=s1.transfer.trim();
+  add(1,'Ціль перенесення: сформульовано',4, tr.length>=40?4:tr.length>=15?2:0,'Опишіть, що учні зможуть зробити самі (не менше одного повного речення).');
+  add(1,'Ціль перенесення: самостійність і реальна ситуація',4, (/самостійн/i.test(tr)?2:0)+(tr.length>=90?2:0),'Додайте слово «самостійно» та опишіть конкретну ситуацію поза уроком.');
+  var ideas=lines(s1.ideas);
+  add(1,'Щонайменше 2 великі ідеї',4, Math.min(ideas.length,2)*2,'Додайте ще велику ідею (кожна з нового рядка).');
+  add(1,'Великі ідеї — повні речення-узагальнення',4, ideas.length? 4*ideas.filter(function(x){return x.split(/\s+/).length>=7;}).length/ideas.length:0,'Сформулюйте ідеї як повні речення (7+ слів), а не як назви тем.');
+  var qs=lines(s1.questions);
+  add(1,'Щонайменше 2 ключові питання',3, Math.min(qs.length,2)*1.5,'Додайте ключове питання (кожне з нового рядка).');
+  add(1,'Ключові питання відкриті',4, qs.length? 4*qs.filter(function(q){return /\?\s*$/.test(q) && !CLOSED.test(q);}).length/qs.length:0,'Питання мають закінчуватися «?» і не починатися з «Що таке…», «Скільки…», «Коли…».');
+  add(1,'Знання та вміння',7, (lines(s1.knowledge).length>=2?3:lines(s1.knowledge).length*1.5)+(lines(s1.skills).length>=3?4:lines(s1.skills).length*4/3),'Наведіть щонайменше 2 знання та 3 уміння.');
+  // Stage 2 — 30
+  var gf=['g','r','a','s','p','st'].filter(function(k){return (s2[k]||'').trim().length>=10;}).length;
+  add(2,'Компетентнісне завдання: усі 6 елементів GRASPS',12, gf*2,'Заповніть усі поля GRASPS (щонайменше 10 символів кожне).');
+  var rb=s2.rubric.filter(function(r){return r.crit.trim();});
+  add(2,'Рубрика: щонайменше 3 критерії',3, Math.min(rb.length,3),'Додайте критерії до рубрики.');
+  add(2,'Кожен критерій прив’язано до орієнтира Стандарту',4, rb.length?4*rb.filter(function(r){return r.code && state.s1.orients.indexOf(r.code)>-1;}).length/rb.length:0,'Оберіть орієнтир Етапу 1 для кожного критерію.');
+  add(2,'Сума ваг рубрики = 100 балів',3, rubricSum()===100?3:0,'Скоригуйте ваги, щоб сума становила рівно 100.');
+  add(2,'Описано ознаки максимального балу',2, rb.length?2*rb.filter(function(r){return r.desc.trim().length>=20;}).length/rb.length:0,'Опишіть для кожного критерію, як виглядає робота на максимальний бал.');
+  var oth=s2.other.filter(function(o){return o.desc.trim();});
+  add(2,'Щонайменше 2 інші докази з орієнтирами',3, Math.min(oth.filter(function(o){return o.code;}).length,2)*1.5,'Додайте інші докази й прив’яжіть їх до орієнтирів.');
+  add(2,'Самооцінювання учнів',3, s2.self.trim().length>=30?3:s2.self.trim().length>=10?1.5:0,'Опишіть, коли й за чим учні оцінюють себе.');
+  // Stage 3 — 30
+  var Ls=s3.lessons, hrs=Number(state.meta.hours)||0;
+  add(3,'Кількість уроків відповідає годинам теми',4, hrs? (Ls.length===hrs?4:Math.abs(Ls.length-hrs)<=1?2:0) : (Ls.length>=4?2:0),'Вкажіть кількість годин у паспорті та сплануйте стільки ж уроків.');
+  add(3,'Кожен урок має діяльність і орієнтири Стандарту',6, Ls.length?6*Ls.filter(function(L){return L.act.trim().length>=15 && L.codes.length;}).length/Ls.length:0,'Опишіть діяльність і позначте орієнтири для кожного уроку.');
+  var phases={}; Ls.forEach(function(L){ if(L.act.trim()) phases[L.phase]=1;});
+  add(3,'Тема містить занурення, компетентнісне завдання й рефлексію',3, (phases['Занурення']?1:0)+(phases['Компетентнісне завдання']?1:0)+(phases['Рефлексія']?1:0),'Додайте урок(и) з фазами «Занурення», «Компетентнісне завдання», «Рефлексія».');
+  add(3,'Охоплено всі 7 ознак WHERETO',6, 6*whereCovered()/7,'Позначте відсутні ознаки WHERETO в уроках.');
+  var ors=s1.orients, inL={}, inE={};
+  Ls.forEach(function(L){L.codes.forEach(function(c){inL[c]=1;});});
+  s2.rubric.forEach(function(r){ if(r.code) inE[r.code]=1; }); s2.other.forEach(function(o){ if(o.code) inE[o.code]=1; });
+  add(3,'Узгодженість: кожен орієнтир відпрацьовується на уроках',4, ors.length?4*ors.filter(function(c){return inL[c];}).length/ors.length:0,'Деякі обрані орієнтири не позначено в жодному уроці.');
+  add(3,'Узгодженість: кожен орієнтир має доказ (рубрика чи інший доказ)',4, ors.length?4*ors.filter(function(c){return inE[c];}).length/ors.length:0,'Деякі обрані орієнтири не перевіряються жодним доказом Етапу 2.');
+  add(3,'Диференціація та адаптації',3, s3.diff.trim().length>=40?3:s3.diff.trim().length>=10?1.5:0,'Опишіть, як план враховує різні потреби та рівні учнів.');
+  return C;
+}
+function lvlOf(t){ return t>=90?['Високий','#e5f3ea','#2e7d4f']:t>=75?['Достатній','#e4eef6','#1f5f8b']:t>=60?['Середній','#fbefe2','#b5651d']:['Початковий','#f6e3e3','#b23a3a']; }
+function renderScore(){
+  var C=score(), tot=Math.round(C.reduce(function(s,c){return s+c.got;},0));
+  var parts=[1,2,3].map(function(s){ var g=C.filter(function(c){return c.stage===s;}); return [g.reduce(function(a,c){return a+c.got;},0), g.reduce(function(a,c){return a+c.max;},0)]; });
+  document.getElementById('scoreBig').innerHTML=tot+'<small> / 100</small>';
+  document.getElementById('scoreBar').style.width=tot+'%';
+  var L=lvlOf(tot);
+  document.getElementById('scoreLevel').innerHTML='<span class="lvlbadge" style="background:'+L[1]+';color:'+L[2]+'">Рівень: '+L[0]+'</span>';
+  document.getElementById('scoreParts').innerHTML=['Етап 1 · результати','Етап 2 · докази','Етап 3 · уроки'].map(function(n,i){
+    return '<div class="row"><span>'+n+'</span><strong>'+Math.round(parts[i][0])+' / '+parts[i][1]+'</strong></div><div class="bar"><span style="width:'+(parts[i][0]/parts[i][1]*100)+'%"></span></div>';
+  }).join('');
+  var d='';
+  [1,2,3].forEach(function(s){
+    d+='<h3>Етап '+s+' · '+Math.round(parts[s-1][0])+' / '+parts[s-1][1]+'</h3><ul class="crit">';
+    C.filter(function(c){return c.stage===s;}).forEach(function(c){
+      var full=c.got>=c.max;
+      d+='<li><span class="ico '+(full?'ok':'bad')+'">'+(full?'✓':'•')+'</span><span>'+esc(c.name)+'</span><span class="pts">'+(Math.round(c.got*10)/10)+' / '+c.max+'</span>'+(c.tip?'<span class="tip">'+esc(c.tip)+'</span>':'')+'</li>';
+    });
+    d+='</ul>';
+  });
+  document.getElementById('scoreDetail').innerHTML=d;
+  renderWhere();
+}
+
+/* ---------- Summary ---------- */
+function list(arr){ return arr.length?'<ul>'+arr.map(function(x){return '<li>'+esc(x)+'</li>';}).join('')+'</ul>':'<p class="empty">—</p>'; }
+function renderSummary(){
+  var s=state, m=s.meta, tot=Math.round(score().reduce(function(a,c){return a+c.got;},0));
+  var h='<h1>'+esc(m.title||'Тема без назви')+'</h1>';
+  h+='<p class="muted">Інформатика · '+(m.grade?esc(m.grade)+' клас · ':'')+(m.hours?esc(m.hours)+' год · ':'')+(s.level==='basic'?'основний рівень':'поглиблений рівень')+(m.component?' · '+esc(m.component):'')+(m.profile?' · '+esc(m.profile):'')+'</p>';
+  if(m.mnp) h+='<p class="muted">Модельна навчальна програма: '+esc(m.mnp)+(m.mnpTopic?' · тема: '+esc(m.mnpTopic):'')+'</p>';
+  h+='<p class="muted">Оцінка вправи: <strong>'+tot+' / 100</strong> ('+lvlOf(tot)[0].toLowerCase()+' рівень)</p>';
+  h+='<h2>Етап 1. Бажані результати</h2><h3>Встановлені цілі (Державний стандарт профільної середньої освіти, Додаток 14)</h3>';
+  if(s.s1.results.length){
+    h+='<ul>'; s.s1.results.forEach(function(rc){
+      var c=CONC[rc]; h+='<li><strong>'+esc(c.c.text)+'</strong> ['+esc(rc)+'] <span class="muted">('+esc('ГР '+c.gi)+')</span><ul>';
+      s.s1.orients.filter(function(o){return ORIENT[o].parent===rc;}).forEach(function(o){ h+='<li>'+esc(ORIENT[o].text)+' ['+esc(o)+']</li>'; });
+      h+='</ul></li>'; }); h+='</ul>';
+  } else h+='<p class="empty">—</p>';
+  h+='<h3>Ціль перенесення</h3><p>'+(esc(s.s1.transfer)||'<span class="empty">—</span>')+'</p>';
+  h+='<h3>Великі ідеї</h3>'+list(lines(s.s1.ideas))+'<h3>Ключові питання</h3>'+list(lines(s.s1.questions));
+  h+='<h3>Знання</h3>'+list(lines(s.s1.knowledge))+'<h3>Уміння</h3>'+list(lines(s.s1.skills));
+  h+='<h2>Етап 2. Докази</h2><h3>Компетентнісне завдання (GRASPS)</h3><ul>';
+  [['g','Мета'],['r','Роль'],['a','Аудиторія'],['s','Ситуація'],['p','Продукт'],['st','Стандарти успіху']].forEach(function(k){ h+='<li><strong>'+k[1]+':</strong> '+(esc(s.s2[k[0]])||'—')+'</li>'; });
+  h+='</ul><h3>Рубрика (100 балів)</h3><table class="t"><thead><tr><th>Критерій</th><th>Орієнтир</th><th>Бали</th><th>Ознаки максимального балу</th></tr></thead><tbody>';
+  s.s2.rubric.forEach(function(r){ h+='<tr><td>'+esc(r.crit)+'</td><td>'+esc(r.code)+(r.code?' · '+groupOf(r.code):'')+'</td><td>'+esc(r.weight)+'</td><td>'+esc(r.desc)+'</td></tr>'; });
+  h+='<tr><td colspan="2"><strong>Разом</strong></td><td><strong>'+rubricSum()+'</strong></td><td></td></tr></tbody></table>';
+  h+='<h3>Інші докази</h3>'+list(s.s2.other.filter(function(o){return o.desc;}).map(function(o){return (o.type?o.type+': ':'')+o.desc+(o.code?' ['+o.code+']':'');}));
+  h+='<h3>Самооцінювання</h3><p>'+(esc(s.s2.self)||'—')+'</p>';
+  h+='<h2>Етап 3. Навчальний досвід</h2><table class="t"><thead><tr><th>№</th><th>Фаза</th><th>Діяльність</th><th>Орієнтири</th><th>WHERETO</th><th>Доказ</th></tr></thead><tbody>';
+  s.s3.lessons.forEach(function(L,i){ h+='<tr><td>'+(i+1)+'</td><td>'+esc(L.phase)+'</td><td>'+esc(L.act)+'</td><td>'+esc(L.codes.join(', '))+'</td><td>'+esc(L.wl.map(function(w){return w==='E2'?'E₂':w;}).join(', '))+'</td><td>'+esc(L.ev)+'</td></tr>'; });
+  h+='</tbody></table><h3>Диференціація та адаптації</h3><p>'+(esc(s.s3.diff)||'—')+'</p>';
+  document.getElementById('summary').innerHTML=h;
+}
+function planTitle(){ return (state.meta.title||'План теми').replace(/[\\/:*?"<>|]+/g,' ').trim().slice(0,80)||'План теми'; }
+function buildDoc(forWord){
+  renderSummary();
+  var css='body{font-family:"Times New Roman",Times,serif;font-size:12pt;line-height:1.4;color:#000;margin:'+(forWord?'0':'24px auto;max-width:800px')+'}'+
+    'h1{font-size:18pt;margin:0 0 6pt}h2{font-size:14pt;margin:16pt 0 6pt}h3{font-size:12pt;margin:10pt 0 4pt}'+
+    'table{border-collapse:collapse;width:100%;margin:4pt 0}th,td{border:1px solid #000;padding:4pt;vertical-align:top;text-align:left;font-size:11pt}th{background:#eee}'+
+    '.muted{color:#444}.empty{color:#666;font-style:italic}ul{margin:2pt 0 6pt}'+
+    '@media print{.bar{display:none}}'+
+    '.bar{font-family:Arial,sans-serif;background:#e4eef6;border:1px solid #1f5f8b;border-radius:8px;padding:10px 14px;margin-bottom:16px}'+
+    '.bar button{font:inherit;font-weight:600;background:#1f5f8b;color:#fff;border:0;border-radius:6px;padding:6px 14px;cursor:pointer}';
+  var bar = forWord ? '' : '<div class="bar">Щоб зберегти PDF, натисніть <button onclick="window.print()">Друк / PDF</button> і оберіть «Зберегти як PDF».</div>';
+  return '<!DOCTYPE html><html lang="uk"><head><meta charset="UTF-8"><title>'+esc(planTitle())+'</title><style>'+css+'</style></head><body>'+bar+
+    document.getElementById('summary').innerHTML+'</body></html>';
+}
+function download(name, content, mime){
+  try{
+    var blob=new Blob(['﻿'+content],{type:mime});
+    var a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=name;
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    setTimeout(function(){ URL.revokeObjectURL(a.href); },4000);
+    toast('Файл «'+name+'» завантажується');
+  }catch(e){ showPrintNote(true); }
+}
+function showPrintNote(noDownload){
+  var n=document.getElementById('printNote');
+  n.innerHTML='<strong>Діалог друку заблоковано.</strong> Схоже, вправу відкрито у вбудованому перегляді (панель попереднього перегляду, пошта, LMS), де браузер не дозволяє друк. '+
+    (noDownload?'Завантаження теж недоступне: збережіть файл вправи на комп’ютер, відкрийте його в Chrome, Edge або Firefox і натисніть «Друк / PDF» ще раз. Або скористайтеся кнопкою «Скопіювати текст».'
+               :'Що зробити: натисніть «Завантажити у Word» або «Завантажити HTML» (завантажений HTML-файл має власну кнопку друку), або відкрийте файл вправи безпосередньо в браузері.');
+  n.style.display='block';
+}
+var printed=false;
+window.addEventListener('beforeprint',function(){ printed=true; });
+document.getElementById('printBtn').addEventListener('click',function(){
+  renderSummary(); document.getElementById('printNote').style.display='none';
+  printed=false;
+  try{ window.print(); }catch(e){}
+  // if no print dialog opened (sandboxed frame), try a separate window, then explain
+  setTimeout(function(){
+    if(printed) return;
+    var w=null;
+    try{ w=window.open('','_blank'); }catch(e){}
+    if(w && w.document){
+      try{ w.document.open(); w.document.write(buildDoc(false)); w.document.close(); w.focus(); setTimeout(function(){ try{w.print();}catch(e){} },400); return; }catch(e){}
+    }
+    showPrintNote(false);
+  },700);
+});
+document.getElementById('docBtn').addEventListener('click',function(){ download(planTitle()+'.doc', buildDoc(true), 'application/msword'); });
+document.getElementById('htmlBtn').addEventListener('click',function(){ download(planTitle()+'.html', buildDoc(false), 'text/html'); });
+document.getElementById('copyBtn').addEventListener('click',function(){
+  renderSummary(); var txt=document.getElementById('summary').innerText;
+  function ok(){ toast('Текст плану скопійовано'); }
+  if(navigator.clipboard&&navigator.clipboard.writeText) navigator.clipboard.writeText(txt).then(ok,function(){fb(txt);ok();}); else {fb(txt);ok();}
+  function fb(t){ var a=document.createElement('textarea'); a.value=t; document.body.appendChild(a); a.select(); try{document.execCommand('copy');}catch(e){} document.body.removeChild(a); }
+});
+
+/* ---------- Examples / reset ---------- */
+var pending=null, undoState=null, undoTimer=null;
+function hasWork(){ var s=state; return !!(s.s1.results.length||s.s1.transfer||s.s2.g||s.meta.title||s.s3.lessons.some(function(L){return L.act;})); }
+function disarm(){
+  if(!pending) return;
+  clearTimeout(pending.timer);
+  pending.btn.textContent=pending.label; pending.btn.classList.remove('arm');
+  pending=null;
+}
+// each button has its own confirmation: first click arms only that button
+function confirmAction(btn, question){
+  if(!hasWork()){ disarm(); return true; }
+  if(pending && pending.btn===btn){ disarm(); return true; }
+  disarm();
+  pending={btn:btn, label:btn.textContent, timer:setTimeout(disarm,5000)};
+  btn.textContent=question; btn.classList.add('arm');
+  return false;
+}
+function offerUndo(){
+  var u=document.getElementById('undoBtn');
+  u.style.display='inline-block';
+  clearTimeout(undoTimer); undoTimer=setTimeout(function(){ u.style.display='none'; undoState=null; },15000);
+}
+document.querySelectorAll('[data-example]').forEach(function(b){
+  b.addEventListener('click',function(){
+    if(!confirmAction(b,'Замінити поточні дані? Натисніть ще раз')) return;
+    var had=hasWork(); if(had) undoState=deep(state);
+    state=deep(EX[b.dataset.example]); save(); renderAll(); showTab('s1');
+    toast(b.dataset.example==='basic'?'Завантажено приклад 1 · основний рівень':'Завантажено приклад 2 · поглиблений рівень');
+    if(had) offerUndo();
+  });
+});
+document.getElementById('resetBtn').addEventListener('click',function(){
+  var b=this;
+  if(!confirmAction(b,'Видалити всі дані? Натисніть ще раз')) return;
+  if(hasWork()) undoState=deep(state);
+  state=blank(); save(); renderAll(); showTab('intro'); toast('Форму очищено');
+  if(undoState) offerUndo();
+});
+document.getElementById('undoBtn').addEventListener('click',function(){
+  if(!undoState) return;
+  state=undoState; undoState=null; save(); renderAll(); showTab('s1');
+  this.style.display='none'; clearTimeout(undoTimer); toast('Попередні дані повернуто');
+});
+// clicking anywhere else cancels a pending confirmation
+document.addEventListener('click',function(e){ if(pending && !pending.btn.contains(e.target)) disarm(); }, true);
+
+function renderAll(){ fillBound(); renderLevel(); renderTree(); renderRubric(); renderOther(); renderLessons(); renderScore(); }
+renderAll(); showTab('intro');
+</script>
+</body>
+</html>
